@@ -20,5 +20,9 @@
         <entry name="cfgHorizontalLayout" type="Bool">
             <default>false</default>
         </entry>
+
+        <entry name="cfgCacheRoot" type="Path">
+            <default>$HOME/.cache</default>
+        </entry>
     </group>
 </kcfg>

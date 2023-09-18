@@ -12,9 +12,11 @@ Item {
     property string descriptionAlignment: Plasmoid.configuration.descriptionAlignment
     property bool cfgHorizontalLayout: Plasmoid.configuration.cfgHorizontalLayout
     property int cfgFontSize: Plasmoid.configuration.cfgFontSize
+    // path without leading slash
+    property string cfgCacheRoot: Plasmoid.configuration.cfgCacheRoot
     // @TODO make path configurable
     // @TODO move to ~/.cache per default
-    property string coverImagePath: "/tmp"
+    property string coverImagePath: "/com.siezi.plasma.mpdWidget"
     property string appLastError: ""
 
     Layout.preferredWidth: 300
@@ -84,8 +86,8 @@ Item {
             cmd += ' "' + plasmoid.file('', 'scripts/downloadCover.sh') + '"';
             cmd += ' ' + mpdHost;
             cmd += ' "' + mpdState.mpdFile.replace(/"/g, '\\"') + '"';
-            cmd += ' ' + root.coverImagePath;
-            cmd += ' com.siezi.plasma-mpd.cover';
+            cmd += ' ' + cfgCacheRoot + root.coverImagePath;
+            cmd += ' cover';
             // @TODO setting to disable caching option
             cmd += ' yes';
             cmd += ' #readpicture';

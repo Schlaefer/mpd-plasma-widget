@@ -7,8 +7,7 @@
 # 4: Prefix for cover file name
 # 5: Caching "yes"
 
-# We assume that albums have the same cover, saving only one cover per album, not for
-# every song.
+# We assume that albums have the same cover, saving only one cover per album, not for every song.
 hash="uncached"
 if [ "${5}" = "yes" ]; then
     album="$(mpc --host="${1}" -f '%album%' | head -n -2)"
@@ -28,9 +27,8 @@ if [ ! -f "${coverPath}" ] || [ ! "${5}" = "yes" ]; then
     mpc --host=${1} readpicture "${2}" > "${coverPath}"
 
     if [ "${5}" = "yes" ]; then
-        # @TODO cache limit low for testing at the moment
         # Clear out old cache files so they don't stay around forever
-        find "${3}" -type f -name "${4}-*" -mtime +0 -exec rm "{}" \; 2>/dev/null
+        find "${3}" -type f -name "${4}-*" -mtime +1 -exec rm "{}" \; 2>/dev/null
     fi
 fi
 

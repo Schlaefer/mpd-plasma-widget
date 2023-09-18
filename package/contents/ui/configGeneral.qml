@@ -1,5 +1,6 @@
 import QtQuick 2.0
 import QtQuick.Controls 1.4
+import QtQuick.Dialogs 1.0
 import QtQuick.Layouts 1.0
 import org.kde.kirigami 2.4 as Kirigami
 
@@ -10,6 +11,7 @@ Kirigami.FormLayout {
     property alias cfg_descriptionAlignment: descriptionAlignment.selected
     property alias cfg_cfgHorizontalLayout: cfgHorizontalLayout.checked
     property alias cfg_cfgFontSize: cfgFontSize.text
+    property alias cfg_cfgCacheRoot: fileDialog.folder
 
     TextField {
         id: mpdHost
@@ -76,12 +78,10 @@ Kirigami.FormLayout {
     }
 
     GroupBox {
-        Kirigami.FormData.label: i18n("Layout:")
+        Kirigami.FormData.label: i18n("Horizontal Layout:")
 
         CheckBox {
             id: cfgHorizontalLayout
-
-            text: i18n("Horizontal")
         }
 
     }
@@ -91,6 +91,35 @@ Kirigami.FormLayout {
 
         Kirigami.FormData.label: i18n("Font Size")
         placeholderText: i18n("13")
+    }
+
+    RowLayout {
+        Kirigami.FormData.label: i18n("Cache Root Path:")
+
+        TextField {
+            id: cfgCacheRootText
+
+            text: fileDialog.folder
+            placeholderText: i18n("No file selected.")
+            Layout.preferredWidth: 250
+        }
+
+        Button {
+            text: "Select Directory"
+            onClicked: fileDialog.open()
+        }
+
+        FileDialog {
+            id: fileDialog
+
+            title: "Please choose a directory"
+            folder: shortcuts.home
+            selectFolder: true
+            onAccepted: {
+                plasmoid.configuration.selectedDirectory = fileDialog.fileUrl;
+            }
+        }
+
     }
 
 }
