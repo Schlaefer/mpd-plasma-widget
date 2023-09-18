@@ -22,9 +22,20 @@ fi
 # Use hash as cover identifier in path
 coverPath="${3}/${4}-${hash}"
 
-if [ ! -f "${coverPath}" ] || [ ! "${5}" = "yes" ]; then
-    # Request and save new cover
+# Running multiple widget instances on the same system: Some other widget on the same
+# system already started to request a cover, so this instance wont and waits instead.
+# @TODO Prevent a permanent lock.
+lockfile="${3}/${4}-lock"
+if [ -f "${lockfile}" ]; then
+    while [ -f "${lockfile}" ]; do
+        sleep 0.1
+    done 
+fi
+
+if [ ! -f "${coverPath}" ]; then
+    touch "${lockfile}"
     mpc --host=${1} readpicture "${2}" > "${coverPath}"
+    rm "${lockfile}"
 
     if [ "${5}" = "yes" ]; then
         # Clear out old cache files so they don't stay around forever
