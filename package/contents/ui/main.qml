@@ -39,10 +39,13 @@ Item {
         }
 
         function startup() {
+            update()
+            mpdStateIdleLoopTimer.start();
+        }
+
+        function update() {
             mpdState.getInfo();
             mpdState.getVolume();
-            mpdStateIdleLoopTimer.stop();
-            mpdStateIdleLoopTimer.start();
         }
 
         function getVolume() {
@@ -87,6 +90,29 @@ Item {
             repeat: false
             onTriggered: {
                 mpdStateExecutable.exec('mpc --host=' + mpdHost + ' idle player mixer #idleLoop');
+            }
+        }
+
+        Timer {
+            id: mpdStateWatchDogTimer
+
+            property int lastRun: Date.now() / 1000
+
+            interval: 2000
+            running: true
+            repeat: true
+            onTriggered: {
+                if ((2 * interval/1000 + lastRun) < (Date.now()/1000)) {
+
+                    mpdStateExecutable.sources.forEach((source) => {
+                        if (source.includes("#readpicture")) {
+                            mpdStateExecutable.disconnectSource(source)
+                        }
+                        mpdState.update()
+                    });
+                    console.log('watchtimer did run.');
+                }
+                lastRun = Date.now() / 1000
             }
         }
 
@@ -300,7 +326,6 @@ Item {
 
             wrapMode: Text.Wrap
             Layout.fillWidth: true
-            color: "red"
             visible: text.length > 0
 
             Connections {

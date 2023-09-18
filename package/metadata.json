@@ -12,7 +12,7 @@
         "Id": "com.siezi.plasma.mpdWidget",
         "Name": "MPD Plasma Widget",
         "Version": "1",
-        "Website": "https://github.com/Zren/plasmoid-helloworldplugin"
+        "Website": "https://www.pling.com/p/2086390"
     },
     "X-Plasma-API": "declarativeappletscript",
     "X-Plasma-MainScript": "ui/main.qml",
