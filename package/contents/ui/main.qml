@@ -92,6 +92,8 @@ Item {
             mpdStateExecutable.exec(cmd);
         }
 
+        // Mpc idle loop. After a mpc-event is registered and handled almost
+        // immediately reconnect the shut down connection.
         Timer {
             id: mpdStateIdleLoopTimer
 
@@ -103,12 +105,19 @@ Item {
             }
         }
 
+        // Handles network issues. E.g. if the network card needs a few seconds to
+        // become available after a system resume. Or the device is moved in and out
+        // of places with the mpd server (un)available.
         Timer {
             id: mpdStateNetworkTimeout
 
             interval: 500
             running: false
             onTriggered: {
+                // Gradually increase reconnect time until we find a minimum time
+                // necessary for a device stationary within the mpd network (desktop).
+                // At worst try a reconnect every minute (devices leaving the
+                // local network like laptops).
                 if (interval < 60000) {
                     interval = interval + 500
                 }
@@ -116,6 +125,8 @@ Item {
             }
         }
 
+        // Watchdog for system sleep/wake cycles. If we detect a "lost timespan" we
+        // assume the mpc idle connection is no longer valid and needs a reconnect.
         Timer {
             id: mpdStateReconnectTimer
 
@@ -248,10 +259,11 @@ Item {
             value: mpdState.mpdVolume
             Layout.fillHeight: cfgHorizontalLayout
             Layout.fillWidth: !cfgHorizontalLayout
+            // @TODO There must be a way to do this
             Layout.maximumWidth: cfgHorizontalLayout ? 15 : 40000
             Layout.leftMargin: !cfgHorizontalLayout ? 10 : 0
             Layout.rightMargin: !cfgHorizontalLayout ? 10 : 0
-            // Orientation bugged? Disabled on small layout for now
+            // Orientation bugged? Disabled on horizontal layout for now
             // See: https://bugs.kde.org/show_bug.cgi?id=474611
             // orientation: cfgHorizontalLayout ? Qt.Vertical : Qt.Horizontal
             visible: !cfgHorizontalLayout
@@ -260,7 +272,8 @@ Item {
             // Leave at 1. Otherwise the slider fights with mpd if mpd sends a value that doesn't fit the step size.
             stepSize: 1
             onValueChanged: {
-                // Don't send again the if just got the "mixer" event value from our own value change
+                // Don't trigger a send to mpd again if just received the "mixer"
+                // event value from our own slider value change.
                 if (volumeSlider.value !== mpdState.mpdVolume)
                     mpdState.setVolume(value);
 

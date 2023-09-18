@@ -7,7 +7,8 @@
 # 4: Prefix for cover file name
 # 5: Caching "yes"
 
-# We assume that albums have the same cover, saving only one cover per album, not for every song.
+# We assume that albums have the same cover, saving only one cover per album, not for
+# every song.
 hash="uncached"
 if [ "${5}" = "yes" ]; then
     album="$(mpc --host="${1}" -f '%album%' | head -n -2)"
