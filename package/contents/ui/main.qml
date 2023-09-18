@@ -43,6 +43,13 @@ Item {
             mpdStateIdleLoopTimer.start();
         }
 
+        function reconnect() {
+            mpdStateExecutable.sources.forEach((source) => {
+                mpdStateExecutable.disconnectSource(source)
+            });
+            mpdState.update()
+        }
+
         function update() {
             mpdState.getInfo();
             mpdState.getVolume();
@@ -94,7 +101,20 @@ Item {
         }
 
         Timer {
-            id: mpdStateWatchDogTimer
+            id: mpdStateNetworkTimeout
+
+            interval: 500
+            running: false
+            onTriggered: {
+                if (intervall < 60000) {
+                    intervall = intervall + 500
+                }
+                mpdState.reconnect()
+            }
+        }
+
+        Timer {
+            id: mpdStateReconnectTimer
 
             property int lastRun: Date.now() / 1000
 
@@ -103,14 +123,7 @@ Item {
             repeat: true
             onTriggered: {
                 if ((2 * interval/1000 + lastRun) < (Date.now()/1000)) {
-
-                    mpdStateExecutable.sources.forEach((source) => {
-                        if (source.includes("#readpicture")) {
-                            mpdStateExecutable.disconnectSource(source)
-                        }
-                        mpdState.update()
-                    });
-                    console.log('watchtimer did run.');
+                    mpdState.reconnect()
                 }
                 lastRun = Date.now() / 1000
             }
@@ -147,8 +160,10 @@ Item {
 
             function onExited(exitCode, exitStatus, stdout, stderr, source) {
                 root.appLastError = stderr || "";
-                if (stderr !== "")
+                if (stderr !== "")  {
+                    mpdStateNetworkTimeout.start()
                     return ;
+                }
 
                 if (source.includes("#idleLoop")) {
                     if (stdout.includes('player'))
@@ -324,6 +339,7 @@ Item {
         PlasmaComponents.Label {
             id: notification
 
+            horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.Wrap
             Layout.fillWidth: true
             visible: text.length > 0
