@@ -9,6 +9,9 @@ Item {
     id: root
 
     property string mpdHost: Plasmoid.configuration.mpdHost
+    property string descriptionAlignment: Plasmoid.configuration.descriptionAlignment
+    property bool cfgHorizontalLayout: Plasmoid.configuration.cfgHorizontalLayout
+    property int cfgFontSize: Plasmoid.configuration.cfgFontSize
     // @TODO make path configurable
     // @TODO move to ~/.cache per default
     property string coverImagePath: "/tmp"
@@ -197,8 +200,8 @@ Item {
     // Main layout of the widget
     GridLayout {
         anchors.fill: parent
-        columns: parent.height > 350 ? 1 : 3
-        rows: parent.height > 350 ? 3 : 1
+        columns: cfgHorizontalLayout ? 3 : 1
+        rows: cfgHorizontalLayout ? 1 : 3
 
         // Cover Image
         Image {
@@ -243,13 +246,15 @@ Item {
             property bool dontSendRequestOnRead: false
 
             value: mpdState.mpdVolume
-            Layout.fillHeight: parent.height <= 350
-            Layout.fillWidth: parent.height > 350
-            Layout.maximumWidth: parent.height > 350 ? 400000 : 15
+            Layout.fillHeight: cfgHorizontalLayout
+            Layout.fillWidth: !cfgHorizontalLayout
+            Layout.maximumWidth: cfgHorizontalLayout ? 15 : 40000
+            Layout.leftMargin: !cfgHorizontalLayout ? 10 : 0
+            Layout.rightMargin: !cfgHorizontalLayout ? 10 : 0
             // Orientation bugged? Disabled on small layout for now
             // See: https://bugs.kde.org/show_bug.cgi?id=474611
-            // orientation: parent.height > 350 ? Qt.Horizontal : Qt.Vertical
-            visible: parent.height > 350
+            // orientation: cfgHorizontalLayout ? Qt.Vertical : Qt.Horizontal
+            visible: !cfgHorizontalLayout
             minimumValue: 0
             maximumValue: 100
             // Leave at 1. Otherwise the slider fights with mpd if mpd sends a value that doesn't fit the step size.
@@ -277,6 +282,8 @@ Item {
         ColumnLayout {
             id: descriptionContainer
 
+            Layout.leftMargin: cfgFontSize
+            Layout.rightMargin: cfgFontSize
             Layout.fillWidth: true
             Layout.fillHeight: true
 
@@ -302,8 +309,9 @@ Item {
             PlasmaComponents.Label {
                 id: songTitle
 
+                font.pixelSize: cfgFontSize
                 font.weight: Font.Bold
-                horizontalAlignment: Text.AlignHCenter
+                horizontalAlignment: descriptionAlignment == 2  ? Text.AlignRight : (descriptionAlignment == 1  ? Text.AlignHCenter : Text.AlignLeft)
                 wrapMode: Text.Wrap
                 Layout.fillWidth: true
             }
@@ -311,7 +319,8 @@ Item {
             PlasmaComponents.Label {
                 id: songArtist
 
-                horizontalAlignment: Text.AlignHCenter
+                font.pixelSize: cfgFontSize
+                horizontalAlignment: descriptionAlignment == 2  ? Text.AlignRight : (descriptionAlignment == 1  ? Text.AlignHCenter : Text.AlignLeft)
                 wrapMode: Text.Wrap
                 visible: text.length > 0
                 Layout.fillWidth: true
@@ -320,7 +329,8 @@ Item {
             PlasmaComponents.Label {
                 id: songAlbum
 
-                horizontalAlignment: Text.AlignHCenter
+                font.pixelSize: cfgFontSize
+                horizontalAlignment: descriptionAlignment == 2  ? Text.AlignRight : (descriptionAlignment == 1  ? Text.AlignHCenter : Text.AlignLeft)
                 wrapMode: Text.Wrap
                 Layout.fillWidth: true
             }
@@ -328,7 +338,8 @@ Item {
             PlasmaComponents.Label {
                 id: songYear
 
-                horizontalAlignment: Text.AlignHCenter
+                font.pixelSize: cfgFontSize
+                horizontalAlignment: descriptionAlignment == 2  ? Text.AlignRight : (descriptionAlignment == 1  ? Text.AlignHCenter : Text.AlignLeft)
                 visible: text.length > 0
                 Layout.fillWidth: true
             }
