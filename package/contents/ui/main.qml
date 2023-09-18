@@ -106,8 +106,8 @@ Item {
             interval: 500
             running: false
             onTriggered: {
-                if (intervall < 60000) {
-                    intervall = intervall + 500
+                if (interval < 60000) {
+                    interval = interval + 500
                 }
                 mpdState.reconnect()
             }
