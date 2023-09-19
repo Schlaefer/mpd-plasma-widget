@@ -14,13 +14,11 @@ Item {
     property int cfgFontSize: Plasmoid.configuration.cfgFontSize
     // path without leading slash
     property string cfgCacheRoot: Plasmoid.configuration.cfgCacheRoot
-    // @TODO make path configurable
-    // @TODO move to ~/.cache per default
-    property string coverImagePath: "/com.siezi.plasma.mpdWidget"
+    property bool cfgCacheMultiple: Plasmoid.configuration.cfgCacheMultiple
     property string appLastError: ""
 
     Layout.preferredWidth: 300
-    Layout.preferredHeight: 400
+    Layout.preferredHeight: 410
     // Allow user to toggle background transparency
     Plasmoid.backgroundHints: PlasmaCore.Types.StandardBackground | PlasmaCore.Types.ConfigurableBackground
     Component.onCompleted: {
@@ -86,11 +84,11 @@ Item {
             cmd += ' "' + plasmoid.file('', 'scripts/downloadCover.sh') + '"';
             cmd += ' ' + mpdHost;
             cmd += ' "' + mpdState.mpdFile.replace(/"/g, '\\"') + '"';
-            cmd += ' ' + cfgCacheRoot + root.coverImagePath;
+            cmd += ' "' + cfgCacheRoot + '"'
             cmd += ' cover';
-            // @TODO setting to disable caching option
-            cmd += ' yes';
+            cmd += ' ' + (cfgCacheMultiple ? 'yes' : 'no');
             cmd += ' #readpicture';
+
             mpdStateExecutable.exec(cmd);
         }
 
@@ -365,7 +363,6 @@ Item {
         PlasmaComponents.Label {
             id: notification
 
-            horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.Wrap
             Layout.fillWidth: true
             visible: text.length > 0

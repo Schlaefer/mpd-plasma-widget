@@ -11,7 +11,7 @@
         "Icon": "mpd",
         "Id": "com.siezi.plasma.mpdWidget",
         "Name": "MPD Plasma Widget",
-        "Version": "1.4",
+        "Version": "1.5",
         "Website": "https://www.pling.com/p/2086390"
     },
     "X-Plasma-API": "declarativeappletscript",

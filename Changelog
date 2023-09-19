@@ -1,0 +1,21 @@
+# 1.5
+- Makes cover cache root configurable (defaults to $HOME/.cache)
+- Option to enable/disable cover caching
+- Improves cover loading if multiple widget instances are running
+- Layout tweaks
+
+# 1.4
+- Improve reconnect to mpd server on device wake
+- Added some layout and appearance configs to widget settings
+
+# 1.3
+- Improve network connection robustness
+
+# 1.2
+- 1.1 didn't update properly through plasma, maybe this fixes it (still figuring out the pling workflow)
+
+# 1.1
+- Improve sleep/wake robustness
+
+# 1.0
+- Initial Release

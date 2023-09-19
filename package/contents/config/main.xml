@@ -14,7 +14,7 @@
         </entry>
 
         <entry name="cfgFontSize" type="Int">
-            <default>14</default>
+            <default>13</default>
         </entry>
 
         <entry name="cfgHorizontalLayout" type="Bool">
@@ -22,7 +22,11 @@
         </entry>
 
         <entry name="cfgCacheRoot" type="Path">
-            <default>$HOME/.cache</default>
+            <default>$HOME/.cache/com.siezi.plasma.mpdWidget</default>
+        </entry>
+
+        <entry name="cfgCacheMultiple" type="Bool">
+            <default>true</default>
         </entry>
     </group>
 </kcfg>

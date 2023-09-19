@@ -11,19 +11,73 @@ Kirigami.FormLayout {
     property alias cfg_descriptionAlignment: descriptionAlignment.selected
     property alias cfg_cfgHorizontalLayout: cfgHorizontalLayout.checked
     property alias cfg_cfgFontSize: cfgFontSize.text
-    property alias cfg_cfgCacheRoot: fileDialog.folder
+    property alias cfg_cfgCacheRoot: cfgCacheRoot.cleanPath
+    property alias cfg_cfgCacheMultiple: cfgCacheMultiple.checked
+
+    Item {
+        Kirigami.FormData.label: "MPD Connection"
+        Kirigami.FormData.isSection: true
+    }
 
     TextField {
         id: mpdHost
 
-        Kirigami.FormData.label: i18n("MPD Server Host Address:")
-        placeholderText: i18n("192.168.1.….")
+        Kirigami.FormData.label: i18n("MPD Server Address:")
+        placeholderText: i18n("192.168.y.x")
+        Layout.preferredWidth: 200
+    }
+
+    Item {
+        Kirigami.FormData.label: "Local Covers"
+        Kirigami.FormData.isSection: true
+    }
+
+    RowLayout {
+        Kirigami.FormData.label: i18n("Path for cover directory:")
+
+        TextField {
+            id: cfgCacheRootText
+
+            text: cfgCacheRoot.cleanPath
+            placeholderText: i18n("No file selected.")
+            Layout.preferredWidth: 200
+        }
+
+        Button {
+            text: "Select Directory"
+            onClicked: cfgCacheRoot.open()
+        }
+
+        FileDialog {
+            id: cfgCacheRoot
+
+            property string cleanPath
+
+            selectFolder: true
+            title: "Please choose a directory"
+            folder: shortcuts.home
+            onAccepted: {
+                cleanPath = decodeURIComponent(cfgCacheRoot.fileUrl.toString().replace(/^file:\/\//, ""));
+            }
+        }
+
+    }
+
+    CheckBox {
+        id: cfgCacheMultiple
+
+        Kirigami.FormData.label: i18n("Cache covers for a while:")
+    }
+
+    Item {
+        Kirigami.FormData.label: "Visuals"
+        Kirigami.FormData.isSection: true
     }
 
     GroupBox {
         Kirigami.FormData.label: i18n("Text Alignment:")
 
-        ColumnLayout {
+        RowLayout {
             id: descriptionAlignment
 
             property int selected
@@ -77,13 +131,10 @@ Kirigami.FormLayout {
 
     }
 
-    GroupBox {
+    CheckBox {
+        id: cfgHorizontalLayout
+
         Kirigami.FormData.label: i18n("Horizontal Layout:")
-
-        CheckBox {
-            id: cfgHorizontalLayout
-        }
-
     }
 
     TextField {
@@ -91,6 +142,7 @@ Kirigami.FormLayout {
 
         Kirigami.FormData.label: i18n("Font Size")
         placeholderText: i18n("13")
+        Layout.preferredWidth: 200
     }
 
     RowLayout {
@@ -99,24 +151,26 @@ Kirigami.FormLayout {
         TextField {
             id: cfgCacheRootText
 
-            text: fileDialog.folder
+            text: cfgCacheRoot.cleanPath
             placeholderText: i18n("No file selected.")
             Layout.preferredWidth: 250
         }
 
         Button {
             text: "Select Directory"
-            onClicked: fileDialog.open()
+            onClicked: cfgCacheRoot.open()
         }
 
         FileDialog {
-            id: fileDialog
+            id: cfgCacheRoot
 
+            property string cleanPath
+
+            selectFolder: true
             title: "Please choose a directory"
             folder: shortcuts.home
-            selectFolder: true
             onAccepted: {
-                plasmoid.configuration.selectedDirectory = fileDialog.fileUrl;
+                cleanPath = decodeURIComponent(cfgCacheRoot.fileUrl.toString().replace(/^file:\/\//, ""));
             }
         }
 
