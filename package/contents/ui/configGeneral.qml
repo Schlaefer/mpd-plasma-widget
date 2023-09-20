@@ -33,7 +33,7 @@ Kirigami.FormLayout {
     }
 
     RowLayout {
-        Kirigami.FormData.label: i18n("Path for cover directory:")
+        Kirigami.FormData.label: i18n("Path to Cover Folder:")
 
         TextField {
             id: cfgCacheRootText
@@ -44,7 +44,7 @@ Kirigami.FormLayout {
         }
 
         Button {
-            text: "Select Directory"
+            text: "Select Folder"
             onClicked: cfgCacheRoot.open()
         }
 
@@ -54,7 +54,7 @@ Kirigami.FormLayout {
             property string cleanPath
 
             selectFolder: true
-            title: "Please choose a directory"
+            title: "Please Choose a Folder"
             folder: shortcuts.home
             onAccepted: {
                 cleanPath = decodeURIComponent(cfgCacheRoot.fileUrl.toString().replace(/^file:\/\//, ""));
@@ -72,6 +72,12 @@ Kirigami.FormLayout {
     Item {
         Kirigami.FormData.label: "Visuals"
         Kirigami.FormData.isSection: true
+    }
+
+    CheckBox {
+        id: cfgHorizontalLayout
+
+        Kirigami.FormData.label: i18n("Horizontal Layout:")
     }
 
     GroupBox {
@@ -131,16 +137,10 @@ Kirigami.FormLayout {
 
     }
 
-    CheckBox {
-        id: cfgHorizontalLayout
-
-        Kirigami.FormData.label: i18n("Horizontal Layout:")
-    }
-
     TextField {
         id: cfgFontSize
 
-        Kirigami.FormData.label: i18n("Font Size")
+        Kirigami.FormData.label: i18n("Font Size:")
         placeholderText: i18n("13")
         Layout.preferredWidth: 200
     }

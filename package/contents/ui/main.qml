@@ -85,7 +85,7 @@ Item {
             cmd += ' ' + mpdHost;
             cmd += ' "' + mpdState.mpdFile.replace(/"/g, '\\"') + '"';
             cmd += ' "' + cfgCacheRoot + '"'
-            cmd += ' cover';
+            cmd += ' mpdcover';
             cmd += ' ' + (cfgCacheMultiple ? 'yes' : 'no');
             cmd += ' #readpicture';
 

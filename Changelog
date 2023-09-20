@@ -1,5 +1,5 @@
 # 1.5
-- Makes cover cache root configurable (defaults to $HOME/.cache)
+- Makes cover directory configurable
 - Option to enable/disable cover caching
 - Improves cover loading if multiple widget instances are running
 - Layout tweaks
