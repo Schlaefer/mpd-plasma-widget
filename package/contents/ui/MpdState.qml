@@ -254,9 +254,9 @@ Item {
                     mpdRoot.getQueue();
                     mpdRoot.getPlaylists();
                     // Mpc spams a new "playlist" event for every song added to the
-                    // queue. That means dozens if an album is added by another
-                    // client, to fast for us to catch the last "player" event. We
-                    // have to check what is playing after the queue changes.
+                    // queue, so maybe dozens if e.g. an album/playlist is added.
+                    // That's to fast for us to catch the last "player" event. We have
+                    // to check what is playing after the queue changes.
                     mpdRoot.getInfo();
                 }
             } else if (source.includes("#getVolume")) {
