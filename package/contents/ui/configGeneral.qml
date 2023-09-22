@@ -145,35 +145,4 @@ Kirigami.FormLayout {
         Layout.preferredWidth: 200
     }
 
-    RowLayout {
-        Kirigami.FormData.label: i18n("Cache Root Path:")
-
-        TextField {
-            id: cfgCacheRootText
-
-            text: cfgCacheRoot.cleanPath
-            placeholderText: i18n("No file selected.")
-            Layout.preferredWidth: 250
-        }
-
-        Button {
-            text: "Select Directory"
-            onClicked: cfgCacheRoot.open()
-        }
-
-        FileDialog {
-            id: cfgCacheRoot
-
-            property string cleanPath
-
-            selectFolder: true
-            title: "Please choose a directory"
-            folder: shortcuts.home
-            onAccepted: {
-                cleanPath = decodeURIComponent(cfgCacheRoot.fileUrl.toString().replace(/^file:\/\//, ""));
-            }
-        }
-
-    }
-
 }
