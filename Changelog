@@ -1,3 +1,9 @@
+# 1.7
+- Improves song representation if album or artist is missing in Queue view
+
+# 1.6
+- Adds queue management (click on song info)
+
 # 1.5
 - Makes cover directory configurable
 - Option to enable/disable cover caching

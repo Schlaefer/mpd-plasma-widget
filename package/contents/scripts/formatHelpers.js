@@ -17,3 +17,16 @@ function album(mpdItem) {
 
     return album
 }
+
+function oneLine(mpdItem) {
+    let line = []
+    line.push(album(mpdItem))
+    line.push(title(mpdItem))
+    line.push(artist(mpdItem))
+
+    line = line.filter((value) => {
+        return value
+    });
+
+    return line.join(" - ")
+}

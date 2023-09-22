@@ -47,7 +47,8 @@ Kirigami.ScrollablePage {
                     Layout.fillWidth: true
                     height: Math.max(implicitHeight, Kirigami.Units.iconSizes.smallMedium)
                     font.bold: mpd.mpdFile == model.file ? true : false
-                    text: FormatHelpers.album(model) + " - " + FormatHelpers.title(model) + " - " + FormatHelpers.artist(model)
+                    text: FormatHelpers.oneLine(model)
+
                     wrapMode: Text.Wrap
                 }
 
