@@ -43,13 +43,41 @@ Kirigami.ScrollablePage {
             ]
 
             contentItem: RowLayout {
-                Label {
-                    Layout.fillWidth: true
-                    height: Math.max(implicitHeight, Kirigami.Units.iconSizes.smallMedium)
-                    font.bold: mpd.mpdFile == model.file ? true : false
-                    text: FormatHelpers.oneLine(model)
+                RowLayout {
+                    Image {
+                        id: image
 
-                    wrapMode: Text.Wrap
+                        Layout.preferredHeight: 30
+                        Layout.preferredWidth: 30
+                        mipmap: true
+                        fillMode: Image.PreserveAspectFit
+                        // @TODO spams error if file does not exits
+                        source: mpd.getCoverFilePath(model)
+
+                        Connections {
+                            function onMpdCoverFileChanged() {
+                                if (image.status !== Image.Error)
+                                    return ;
+
+                                if ((mpd.mpdInfo.album === model.album) || (mpd.mpdInfo.file === model.file)) {
+                                    image.source = '';
+                                    image.source = mpd.mpdCoverFile;
+                                }
+                            }
+
+                            target: mpd
+                        }
+
+                    }
+
+                    Label {
+                        Layout.fillWidth: true
+                        height: Math.max(implicitHeight, Kirigami.Units.iconSizes.smallMedium)
+                        font.bold: mpd.mpdFile == model.file ? true : false
+                        text: FormatHelpers.oneLine(model)
+                        wrapMode: Text.Wrap
+                    }
+
                 }
 
             }

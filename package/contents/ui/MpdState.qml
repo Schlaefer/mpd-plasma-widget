@@ -117,25 +117,39 @@ Item {
         mpdCommandQueue.add("mpc --host=" + mpdRoot.mpdHost + " load \"" + playlist + "\"");
     }
 
+    function getCoverFileName(itemInfo) {
+        let hash = "uncached" 
+        if (mpdRoot.cacheMultiple) {
+            // We assume that albums have the same cover, saving only one cover per
+            // album, not for every song.
+            hash = Qt.btoa(itemInfo.album || itemInfo.file).replace(/\//g, '-');
+        }
+
+        return getCoverFilePrefix() + hash
+    }
+
+    // @TODO refactor this whole cover path mess
+    function getCoverFilePrefix()
+    {
+        return "mpdcover-"
+    }
+
+    function getCoverFilePath(itemInfo) {
+        // @TODO figure out how to get path separator
+        return mpdRoot.cacheRoot + '/' + mpdRoot.getCoverFileName(itemInfo)
+    }
+
     function getCover() {
-        let coverPrefix = "mpdcover-";
         let cmd = '';
         cmd += 'bash';
         cmd += ' "' + mpdRoot.scriptRoot + '/downloadCover.sh"';
         cmd += ' ' + mpdRoot.mpdHost;
         cmd += ' "' + mpdRoot.mpdFile.replace(/"/g, '\\"') + '"';
         cmd += ' "' + mpdRoot.cacheRoot + '"';
-        cmd += ' ' + coverPrefix;
+        cmd += ' ' + mpdRoot.getCoverFilePrefix();
         cmd += ' ' + (mpdRoot.cacheMultiple ? 'yes' : 'no');
-        let coverFile = "uncached";
-        if (mpdRoot.cacheMultiple) {
-            // We assume that albums have the same cover, saving only one cover per
-            // album, not for every song.
-            coverFile = Qt.btoa(mpdRoot.mpdInfo.album || mpdRoot.mpdInfo.file);
-        }
-        cmd += ' "' + coverPrefix + coverFile + '"';
+        cmd += ' "' + mpdRoot.getCoverFileName(mpdRoot.mpdInfo) + '"';
         cmd += ' #readpicture';
-        console.log(cmd)
         mpdRootExecutable.exec(cmd);
     }
 

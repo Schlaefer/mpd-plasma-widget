@@ -40,7 +40,7 @@ if [ ! -f "${coverPath}" -o "${5}" != "yes" ]; then
     # @TODO move to seperate command and call from QML timer
     if [ "${5}" = "yes" ]; then
         # Clear out old cache files so they don't stay around forever
-        find "${3}" -type f -name "${4}-*" -mtime +1 -exec rm "{}" \; 2>/dev/null
+        find "${3}" -type f -name "${4}-*" -mtime +7 -exec rm "{}" \; 2>/dev/null
     fi
 fi
 
