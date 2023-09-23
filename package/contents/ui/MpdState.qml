@@ -95,7 +95,7 @@ Item {
 
     function playPlaylist(playlist) {
         clearPlaylist();
-        addPlaylistToQueue(playlist)
+        addPlaylistToQueue(playlist);
         playInQueue(1);
     }
 
@@ -118,15 +118,24 @@ Item {
     }
 
     function getCover() {
+        let coverPrefix = "mpdcover-";
         let cmd = '';
         cmd += 'bash';
         cmd += ' "' + mpdRoot.scriptRoot + '/downloadCover.sh"';
         cmd += ' ' + mpdRoot.mpdHost;
         cmd += ' "' + mpdRoot.mpdFile.replace(/"/g, '\\"') + '"';
         cmd += ' "' + mpdRoot.cacheRoot + '"';
-        cmd += ' mpdcover';
+        cmd += ' ' + coverPrefix;
         cmd += ' ' + (mpdRoot.cacheMultiple ? 'yes' : 'no');
+        let coverFile = "uncached";
+        if (mpdRoot.cacheMultiple) {
+            // We assume that albums have the same cover, saving only one cover per
+            // album, not for every song.
+            coverFile = Qt.btoa(mpdRoot.mpdInfo.album || mpdRoot.mpdInfo.file);
+        }
+        cmd += ' "' + coverPrefix + coverFile + '"';
         cmd += ' #readpicture';
+        console.log(cmd)
         mpdRootExecutable.exec(cmd);
     }
 
@@ -240,9 +249,8 @@ Item {
                 return ;
             }
             if (source.includes("#idleLoop")) {
-                if (stdout.includes('player')) {
+                if (stdout.includes('player'))
                     mpdRoot.getInfo();
-                }
 
                 if (stdout.includes('mixer'))
                     mpdRoot.getVolume();
@@ -272,8 +280,8 @@ Item {
             } else if (source.includes("#readpicture")) {
                 mpdRoot.mpdCoverFile = stdout;
             } else if (source.includes("#getQueue")) {
-                let queue = JSON.parse("{" + stdout.slice(0, -2) + "}")
-                mpdRoot.mpdQueue = queue ;
+                let queue = JSON.parse("{" + stdout.slice(0, -2) + "}");
+                mpdRoot.mpdQueue = queue;
             } else if (source.includes("#getPlaylists")) {
                 let playlists = stdout.split("\n");
                 playlists = playlists.filter((value) => {
@@ -294,7 +302,7 @@ Item {
     }
 
     Connections {
-        function onMpdFileChanged() {
+        function onMpdInfoChanged() {
             mpdRoot.getCover();
         }
 

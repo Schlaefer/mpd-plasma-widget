@@ -6,25 +6,14 @@
 # 3: Path to cover directory
 # 4: Prefix for cover file name
 # 5: Caching "yes"
-
-# We assume that albums have the same cover, saving only one cover per album, not for every song.
-hash="uncached"
-if [ "${5}" = "yes" ]; then
-    album="$(mpc --host="${1}" -f '%album%' | head -n -2)"
-    if [ -z "${album}" ]; then
-        hashBase="${2}"
-    else
-        hashBase="${album}"
-    fi
-    hash="$(echo -n "${hashBase}" | md5sum | cut -d' ' -f1)"
-fi
+# 6: filename
 
 # Create cover path
 if [ ! -d "${3}" ]; then
     mkdir -p "${3}"
 fi
 # Use hash as cover identifier in path
-coverPath="${3}/${4}-${hash}"
+coverPath="${3}/${6}"
 
 # Running multiple widget instances on the same system: Some other widget on the same
 # system already started to request a cover, so this instance wont and waits instead.
@@ -48,7 +37,7 @@ if [ ! -f "${coverPath}" -o "${5}" != "yes" ]; then
     touch "${lockfile}"
     mpc --host=${1} readpicture "${2}" >"${coverPath}"
     rm "${lockfile}"
-
+    # @TODO move to seperate command and call from QML timer
     if [ "${5}" = "yes" ]; then
         # Clear out old cache files so they don't stay around forever
         find "${3}" -type f -name "${4}-*" -mtime +1 -exec rm "{}" \; 2>/dev/null
