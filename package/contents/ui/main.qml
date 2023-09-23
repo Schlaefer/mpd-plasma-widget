@@ -1,9 +1,6 @@
-import "../scripts/formatHelpers.js" as FormatHelpers
 import QtQuick 2.15
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.0
-import org.kde.kirigami 2.20 as Kirigami
-import org.kde.plasma.components 2.0 as PlasmaComponents
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.plasmoid 2.0
 
