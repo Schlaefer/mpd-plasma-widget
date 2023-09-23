@@ -12,7 +12,7 @@ Kirigami.FormLayout {
     property alias cfg_cfgHorizontalLayout: cfgHorizontalLayout.checked
     property alias cfg_cfgFontSize: cfgFontSize.text
     property alias cfg_cfgCacheRoot: cfgCacheRoot.cleanPath
-    property alias cfg_cfgCacheMultiple: cfgCacheMultiple.checked
+    property alias cfg_cfgCacheForDays: cfgCacheForDays.value
 
     Item {
         Kirigami.FormData.label: "MPD Connection"
@@ -63,11 +63,12 @@ Kirigami.FormLayout {
 
     }
 
-    CheckBox {
-        id: cfgCacheMultiple
+    SpinBox {
+        id: cfgCacheForDays
 
-        Kirigami.FormData.label: i18n("Cache covers for a while:")
+        Kirigami.FormData.label: "Cache Covers for Days:"
     }
+
 
     Item {
         Kirigami.FormData.label: "Visuals"

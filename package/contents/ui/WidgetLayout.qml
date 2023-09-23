@@ -6,6 +6,7 @@ import org.kde.plasma.components 2.0 as PlasmaComponents
 
 GridLayout {
     property var mpd
+    property var coverManager
 
     columns: cfgHorizontalLayout ? 3 : 1
     rows: cfgHorizontalLayout ? 1 : 3
@@ -20,7 +21,6 @@ GridLayout {
         Layout.fillHeight: true
         Layout.maximumWidth: height > height ? width : height
         fillMode: Image.PreserveAspectFit
-        source: mpd.mpdCoverFile
 
         MouseArea {
             anchors.fill: parent
@@ -33,16 +33,31 @@ GridLayout {
             }
         }
 
+        Timer {
+            id: coverCheck
+            interval: 500
+            repeat: true
+            triggeredOnStart: true
+            onTriggered: {
+                let cover = coverManager.getCover(mpd.mpdInfo);
+                if (cover) {
+                    stop()
+                    // @TODO there must be a better way to force an update
+                    // Leave for uncached version which doesn't change file name
+                    coverImage.source = "";
+                    coverImage.source = cover;
+                }
+            }
+        }
+
         Connections {
-            function onMpdCoverFileChanged() {
-                // @TODO there must be a better way to force an update
-                // Leave for uncached version which doesn't change file name
-                coverImage.source = "";
-                coverImage.source = mpd.mpdCoverFile;
+            function onMpdInfoChanged() {
+                coverCheck.start()
             }
 
             target: mpd
         }
+
 
     }
 

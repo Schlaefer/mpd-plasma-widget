@@ -13,7 +13,7 @@ Item {
     property int cfgFontSize: Plasmoid.configuration.cfgFontSize
     // path without leading slash
     property string cfgCacheRoot: Plasmoid.configuration.cfgCacheRoot
-    property bool cfgCacheMultiple: Plasmoid.configuration.cfgCacheMultiple
+    property string cfgCacheForDays: Plasmoid.configuration.cfgCacheForDays
     property string appLastError: ""
 
     Layout.preferredWidth: 300
@@ -21,22 +21,28 @@ Item {
     // Allow user to toggle background transparency
     Plasmoid.backgroundHints: PlasmaCore.Types.StandardBackground | PlasmaCore.Types.ConfigurableBackground
     Component.onCompleted: {
-        mpdState.startup();
+        // mpdState.startup();
     }
 
     Connections {
         function onMpdHostChanged() {
             mpdState.startup();
         }
+    }
 
+    CoverManager {
+        id: coverManager
+
+        mpd: mpdState
+        coverDirectory: root.cfgCacheRoot
+        cacheForDays: cfgCacheForDays
     }
 
     MpdState {
         id: mpdState
 
+        coverManager: coverManager
         mpdHost: root.mpdHost
-        cacheRoot: root.cfgCacheRoot
-        cacheMultiple: root.cfgCacheMultiple
         scriptRoot: plasmoid.file('', 'scripts/')
     }
 
@@ -44,6 +50,7 @@ Item {
     WidgetLayout {
         anchors.fill: parent
         mpd: mpdState
+        coverManager: coverManager
     }
 
     WidgetApplication {

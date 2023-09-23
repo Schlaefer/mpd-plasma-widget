@@ -7,13 +7,12 @@ import org.kde.plasma.core 2.0 as PlasmaCore
 Item {
     id: mpdRoot
 
+    // @TODO solve via signal instead of passing
+    property var coverManager
     property string scriptRoot
-    property string cacheRoot: ""
-    property bool cacheMultiple: true
     property string mpdHost: ""
     property string mpdFile: ""
     property int mpdVolume: 0
-    property string mpdCoverFile: ""
     property var mpdInfo: {
     }
     property var mpdQueue: {
@@ -115,38 +114,15 @@ Item {
         mpdCommandQueue.add("mpc --host=" + mpdRoot.mpdHost + " load \"" + playlist + "\"");
     }
 
-    function getCoverFileName(itemInfo) {
-        let hash = "uncached" 
-        if (mpdRoot.cacheMultiple) {
-            // We assume that albums have the same cover, saving only one cover per
-            // album, not for every song.
-            hash = Qt.btoa(itemInfo.album || itemInfo.file).replace(/\//g, '-');
-        }
-
-        return getCoverFilePrefix() + hash
-    }
-
-    // @TODO refactor this whole cover path mess
-    function getCoverFilePrefix()
-    {
-        return "mpdcover-"
-    }
-
-    function getCoverFilePath(itemInfo) {
-        // @TODO figure out how to get path separator
-        return mpdRoot.cacheRoot + '/' + mpdRoot.getCoverFileName(itemInfo)
-    }
-
-    function getCover() {
+    function getCover(title, ctitle, root, prefix) {
         let cmd = '';
         cmd += 'bash';
         cmd += ' "' + mpdRoot.scriptRoot + '/downloadCover.sh"';
         cmd += ' ' + mpdRoot.mpdHost;
-        cmd += ' "' + mpdRoot.mpdFile.replace(/"/g, '\\"') + '"';
-        cmd += ' "' + mpdRoot.cacheRoot + '"';
-        cmd += ' ' + mpdRoot.getCoverFilePrefix();
-        cmd += ' ' + (mpdRoot.cacheMultiple ? 'yes' : 'no');
-        cmd += ' "' + mpdRoot.getCoverFileName(mpdRoot.mpdInfo) + '"';
+        cmd += ' "' + title.replace(/"/g, '\\"') + '"';
+        cmd += ' "' + root + '"';
+        cmd += ' ' + prefix;
+        cmd += ' "' + ctitle.replace('/', '\\\\/') + '"';
         cmd += ' #readpicture';
         mpdRootExecutable.exec(cmd);
     }
@@ -290,7 +266,7 @@ Item {
                 mpdRoot.mpdFile = data.file;
                 mpdRoot.mpdInfo = data;
             } else if (source.includes("#readpicture")) {
-                mpdRoot.mpdCoverFile = stdout;
+                coverManager.markFetched(stdout)
             } else if (source.includes("#getQueue")) {
                 let queue = JSON.parse("{" + stdout.slice(0, -2) + "}");
                 mpdRoot.mpdQueue = queue;
@@ -311,14 +287,6 @@ Item {
         }
 
         target: mpdRootExecutable
-    }
-
-    Connections {
-        function onMpdInfoChanged() {
-            mpdRoot.getCover();
-        }
-
-        target: mpdRoot
     }
 
 }

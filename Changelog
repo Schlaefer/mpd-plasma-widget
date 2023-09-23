@@ -1,3 +1,8 @@
+# 1.8
+- Adds covers to songs in queue
+- Removes setting for disabling cover cache (required now)
+- Adds setting for how long to cache covers
+
 # 1.7
 - Improves song representation if album or artist is missing in Queue view
 

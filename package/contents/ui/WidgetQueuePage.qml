@@ -49,21 +49,27 @@ Kirigami.ScrollablePage {
                         Layout.preferredWidth: 30
                         mipmap: true
                         fillMode: Image.PreserveAspectFit
-                        // @TODO spams error if file does not exits
-                        source: mpd.getCoverFilePath(model)
+                        Component.onCompleted: {
+                            coverCheck.start();
+                        }
 
-                        Connections {
-                            function onMpdCoverFileChanged() {
-                                if (image.status !== Image.Error)
-                                    return ;
+                        Timer {
+                            id: coverCheck
 
-                                if ((mpd.mpdInfo.album === model.album) || (mpd.mpdInfo.file === model.file)) {
-                                    image.source = '';
-                                    image.source = mpd.mpdCoverFile;
+                            interval: 2000
+                            repeat: true
+                            triggeredOnStart: true
+                            onTriggered: {
+                                // @TODO import covermanager properly
+                                let cover = mpd.coverManager.getCover(model);
+                                if (cover) {
+                                    stop();
+                                    // @TODO there must be a better way to force an update
+                                    // Leave for uncached version which doesn't change file name
+                                    image.source = "";
+                                    image.source = cover;
                                 }
                             }
-
-                            target: mpd
                         }
 
                     }

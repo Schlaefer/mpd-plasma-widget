@@ -25,8 +25,9 @@
             <default>$HOME/.cache/com.siezi.plasma.mpdWidget</default>
         </entry>
 
-        <entry name="cfgCacheMultiple" type="Bool">
-            <default>true</default>
+        <entry name="cfgCacheForDays" type="Int">
+            <default>1</default>
         </entry>
+
     </group>
 </kcfg>
