@@ -39,7 +39,7 @@ GridLayout {
             repeat: true
             triggeredOnStart: true
             onTriggered: {
-                let cover = coverManager.getCover(mpd.mpdInfo);
+                let cover = coverManager.getCover(mpd.mpdInfo, 1);
                 if (cover) {
                     stop()
                     // @TODO there must be a better way to force an update

@@ -1,3 +1,4 @@
+import "../scripts/coverHelpers.js" as CoverHelpers
 import QtQuick 2.15 as QQ2
 import org.kde.plasma.core 2.0 as PlasmaCore
 
@@ -5,23 +6,22 @@ QQ2.Item {
     id: coverManager
 
     property var covers
-    property var fetching
+    property var fetchQueue
+    property bool fetching: false
     property string coverDirectory
     property string filePrefix: "mpdcover-"
     property var mpd
     property int cacheForDays
 
-    function getCover(item) {
+    function getCover(item, priority = 100) {
         let title = getId(item);
         if (title in covers)
             return encodeURIComponent(covers[title].path);
 
-        if (title in fetching)
+        if (fetchQueue.has(title))
             return false;
 
-        coverManager.fetching[title] = {
-        };
-        mpd.getCover(item.file, getCoverFileName(item), coverDirectory, filePrefix);
+        fetchQueue.add(title, item, priority);
         return false;
     }
 
@@ -52,27 +52,43 @@ QQ2.Item {
         coverManager.covers[id] = {
             "path": coverPath
         };
-        delete fetching[id];
+        coverManager.fetchQueue.delete(id)
+        fetching = false;
     }
 
     QQ2.Component.onCompleted: {
         covers = {
         };
-        fetching = {
-        };
+        fetchQueue = new CoverHelpers.FetchQueue();
+        fetching = false;
         coverManager.getLocalCovers();
     }
 
     // Clean cover cage
-    // @TODO make time configurable in settings
     QQ2.Timer {
         running: true
         interval: 86400
         repeat: true
         triggeredOnStart: true
         onTriggered: {
-            let cmd = 'find "' + coverDirectory + '" -type f -name "' + filePrefix + '*" -mtime +' + cacheForDays + ' -exec rm "{}" \;';
+            let cmd = 'find "' + coverDirectory + '" -type f -name "' + filePrefix + '*" -mtime +' + cacheForDays + ' -exec rm "{}" \; #rotateCoverCache';
             coverManagerExecutable.exec(cmd);
+        }
+    }
+
+    QQ2.Timer {
+        running: true
+        repeat: true
+        // @TODO better start
+        interval: 200
+        triggeredOnStart: true
+        onTriggered: {
+            let itemToFetch = fetchQueue.next()
+            if (fetching || !itemToFetch)
+                return ;
+
+            fetching = true;
+            mpd.getCover(itemToFetch.file, getCoverFileName(itemToFetch), coverDirectory, filePrefix);
         }
     }
 
@@ -111,6 +127,8 @@ QQ2.Item {
                     };
                 });
                 mpd.startup();
+            } else if (source.includes("#rotateCoverCache")) {
+                coverManager.getLocalCovers();
             }
         }
 

@@ -16,7 +16,7 @@ coverPath="${3}/${5}"
 
 # Running multiple widget instances on the same system: Some other widget on the same
 # system already started to request a cover, so this instance wont and waits instead.
-lockfile="${3}/${4}lock"
+lockfile="${coverPath}.lock"
 if [ -f "${lockfile}" ]; then
     i=1
     # Observed worst case download time so far 30 seconds
