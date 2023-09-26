@@ -22,20 +22,21 @@ Kirigami.ScrollablePage {
             backgroundColor: mpd.mpdFile == model.file ? Kirigami.Theme.highlightColor : Kirigami.Theme.backgroundColor
             width: ListView.view ? ListView.view.width : implicitWidth
             onClicked: {
+
             }
             actions: [
                 Kirigami.Action {
                     icon.name: "media-play"
                     text: "Play Now"
                     onTriggered: {
-                        mpd.playInQueue(model.position);
+                        mpd.playInQueue(model.position)
                     }
                 },
                 Kirigami.Action {
                     icon.name: "edit-delete"
                     text: "Remove from Queue"
                     onTriggered: {
-                        mpd.removeFromQueue(model.position);
+                        mpd.removeFromQueue(model.position)
                     }
                 }
             ]
@@ -50,7 +51,7 @@ Kirigami.ScrollablePage {
                         mipmap: true
                         fillMode: Image.PreserveAspectFit
                         Component.onCompleted: {
-                            coverCheck.start();
+                            coverCheck.start()
                         }
 
                         Timer {
@@ -61,33 +62,34 @@ Kirigami.ScrollablePage {
                             triggeredOnStart: true
                             onTriggered: {
                                 // @TODO import covermanager properly
-                                let cover = mpd.coverManager.getCover(model);
-                                if (cover) {
-                                    stop();
-                                    // @TODO there must be a better way to force an update
-                                    // Leave for uncached version which doesn't change file name
-                                    image.source = "";
-                                    image.source = cover;
+                                let cover = coverManager.getCover(model)
+                                if (typeof (cover) === 'undefined') {
+                                    return
                                 }
+                                stop()
+                                if (cover === null) {
+                                    return
+                                }
+
+                                // @TODO there must be a better way to force an update
+                                // Leave for uncached version which doesn't change file name
+                                image.source = ""
+                                image.source = cover
                             }
                         }
-
                     }
 
                     Label {
                         Layout.fillWidth: true
-                        height: Math.max(implicitHeight, Kirigami.Units.iconSizes.smallMedium)
+                        height: Math.max(implicitHeight,
+                                         Kirigami.Units.iconSizes.smallMedium)
                         font.bold: mpd.mpdFile == model.file ? true : false
                         text: FormatHelpers.oneLine(model)
                         wrapMode: Text.Wrap
                     }
-
                 }
-
             }
-
         }
-
     }
 
     ListView {
@@ -97,22 +99,19 @@ Kirigami.ScrollablePage {
 
         Connections {
             function onMpdQueueChanged() {
-                queueList.model.clear();
+                queueList.model.clear()
                 for (let i in mpdState.mpdQueue) {
-                    queueList.model.append(mpdState.mpdQueue[i]);
+                    queueList.model.append(mpdState.mpdQueue[i])
                 }
             }
 
             target: mpd
         }
 
-        model: ListModel {
-        }
-
+        model: ListModel {}
     }
 
     footer: WidgetQueueFooter {
         mpd: queuePage.mpd
     }
-
 }

@@ -14,19 +14,20 @@ Item {
     // path without leading slash
     property string cfgCacheRoot: Plasmoid.configuration.cfgCacheRoot
     property string cfgCacheForDays: Plasmoid.configuration.cfgCacheForDays
+    property string cfgCornerRadius: Plasmoid.configuration.cfgCornerRadius
+    property string cfgShadowSpread: Plasmoid.configuration.cfgShadowSpread
+    property string cfgShadowColor: Plasmoid.configuration.cfgShadowColor
     property string appLastError: ""
 
     Layout.preferredWidth: 300
     Layout.preferredHeight: 410
     // Allow user to toggle background transparency
-    Plasmoid.backgroundHints: PlasmaCore.Types.StandardBackground | PlasmaCore.Types.ConfigurableBackground
-    Component.onCompleted: {
-        // mpdState.startup();
-    }
+    Plasmoid.backgroundHints: PlasmaCore.Types.StandardBackground
+                              | PlasmaCore.Types.ConfigurableBackground
 
     Connections {
         function onMpdHostChanged() {
-            mpdState.startup();
+            mpdState.startup()
         }
     }
 
@@ -51,6 +52,9 @@ Item {
         anchors.fill: parent
         mpd: mpdState
         coverManager: coverManager
+        cornerRadius: cfgCornerRadius
+        shadowSpread: cfgShadowSpread
+        shadowColor: cfgShadowColor
     }
 
     WidgetApplication {
@@ -58,5 +62,4 @@ Item {
 
         mpd: mpdState
     }
-
 }

@@ -17,15 +17,20 @@ class FetchQueue {
      */
     add(id, data, priority) {
         this._queue[id] = {
-            data: data,
+            // Looks silly. But alas sometimes if you just do a "data: data" it will
+            // store the whole queue-item as empty and therefore undefined. Don't know
+            // why. Looks like there could be an issue if the key is a file-ID instead
+            // of the album?? -  Spend to much time on it already. This works.
+            data: {
+                "file": data.file,
+                "album": data.album
+            },
             priority: priority
         }
     }
 
     /**
      * Returns the next item in the queue by highest priority
-     * 
-     * @TODO queue ID is implicit only by a data property handled elsewhere(tm)
      * 
      * @returns Data of the item in the queue
      */
@@ -36,11 +41,13 @@ class FetchQueue {
 
         let nextItem
         keys.forEach(key => {
-            if (!nextItem)
+            if (!nextItem) {
                 nextItem = this._queue[key]
+            }
             else {
-                if (this._queue[key].priority > nextItem.priority)
+                if (this._queue[key].priority > nextItem.priority) {
                     nextItem = this._queue[key]
+                }
             }
         }, this)
 

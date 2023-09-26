@@ -13,55 +13,75 @@ QQ2.Item {
     property var mpd
     property int cacheForDays
 
+
+    /**
+     * @return {mixed}
+     *  - string: Path to cover image
+     *  - undefined: No cover information known (yet)
+     *  - null: No cover available
+     */
     function getCover(item, priority = 100) {
-        let title = getId(item);
-        if (title in covers)
-            return encodeURIComponent(covers[title].path);
+        let title = getId(item)
+        if (title in covers) {
+            if (covers[title] === null) {
+                return null
+            } else {
+                return encodeURIComponent(covers[title].path)
+            }
+        }
 
-        if (fetchQueue.has(title))
-            return false;
+        if (fetchQueue.has(title)) {
+            return undefined
+        }
 
-        fetchQueue.add(title, item, priority);
-        return false;
+        fetchQueue.add(title, item, priority)
+        return undefined
     }
 
     function getLocalCovers() {
-        let cmd = 'find ' + coverDirectory + ' -name "' + coverManager.filePrefix + '*" #getLocalCovers';
-        coverManagerExecutable.exec(cmd);
+        let cmd = 'find ' + coverDirectory + ' -name "'
+            + coverManager.filePrefix + '*" #getLocalCovers'
+        coverManagerExecutable.exec(cmd)
     }
 
     function getId(itemInfo) {
-        return (itemInfo.album || itemInfo.file);
+        return (itemInfo.album || itemInfo.file)
     }
 
     function getCoverFileName(itemInfo) {
         // We assume that albums have the same cover, saving only one cover per
         // album, not for every song.
-        let hash = encodeURIComponent(getId(itemInfo));
-        return filePrefix + hash;
+        let hash = encodeURIComponent(getId(itemInfo))
+        return filePrefix + hash
     }
 
     function idFromCoverPath(path) {
-        let id = path.replace(coverDirectory + '/' + filePrefix, '');
-        id = decodeURIComponent(id);
-        return id;
+        let id = path.replace(coverDirectory + '/' + filePrefix, '')
+        id = decodeURIComponent(id)
+        return id
+    }
+
+    function noData(coverPath) {
+        let id = idFromCoverPath(coverPath)
+        coverManager.covers[id] = null
+        coverManager.fetchQueue.delete(id)
+        fetching = false
     }
 
     function markFetched(coverPath) {
-        let id = idFromCoverPath(coverPath);
+        let id = idFromCoverPath(coverPath)
         coverManager.covers[id] = {
             "path": coverPath
-        };
+        }
         coverManager.fetchQueue.delete(id)
-        fetching = false;
+        fetching = false
     }
 
     QQ2.Component.onCompleted: {
-        covers = {
-        };
-        fetchQueue = new CoverHelpers.FetchQueue();
-        fetching = false;
-        coverManager.getLocalCovers();
+        covers = {}
+        fetchQueue = new CoverHelpers.FetchQueue()
+        fetching = false
+        coverManager.getLocalCovers()
     }
 
     // Clean cover cage
@@ -71,8 +91,9 @@ QQ2.Item {
         repeat: true
         triggeredOnStart: true
         onTriggered: {
-            let cmd = 'find "' + coverDirectory + '" -type f -name "' + filePrefix + '*" -mtime +' + cacheForDays + ' -exec rm "{}" \; #rotateCoverCache';
-            coverManagerExecutable.exec(cmd);
+            let cmd = 'find "' + coverDirectory + '" -type f -name "' + filePrefix
+                + '*" -mtime +' + cacheForDays + ' -exec rm "{}" \; #rotateCoverCache'
+            coverManagerExecutable.exec(cmd)
         }
     }
 
@@ -80,15 +101,27 @@ QQ2.Item {
         running: true
         repeat: true
         // @TODO better start
-        interval: 200
+        interval: 1000
         triggeredOnStart: true
         onTriggered: {
-            let itemToFetch = fetchQueue.next()
-            if (fetching || !itemToFetch)
-                return ;
 
-            fetching = true;
-            mpd.getCover(itemToFetch.file, getCoverFileName(itemToFetch), coverDirectory, filePrefix);
+            // Alas we can't return, we just have to pound the fetch again, and
+            // again, and again because Plasmacore.DataSource loves to terminate
+            // scripts early. It just does it. We can't rely that an exec with a
+            // long fetching of cover is making it through and we being informed
+            // about it. Luckily the datasource recognizes the same cmd in the
+            // executable and ignores it if it is already/still running.
+
+            // if (fetching) {
+            // return;
+            // }
+            let itemToFetch = fetchQueue.next()
+            if (!itemToFetch)
+                return
+
+            fetching = true
+            mpd.getCover(itemToFetch.file, getCoverFileName(itemToFetch),
+                         coverDirectory, filePrefix)
         }
     }
 
@@ -98,41 +131,40 @@ QQ2.Item {
         signal exited(int exitCode, int exitStatus, string stdout, string stderr, string sourceName)
 
         function exec(cmd) {
-            connectSource(cmd);
+            connectSource(cmd)
         }
 
         engine: "executable"
         connectedSources: []
         onNewData: {
-            var exitCode = data["exit code"];
-            var exitStatus = data["exit status"];
-            var stdout = data["stdout"];
-            var stderr = data["stderr"];
-            exited(exitCode, exitStatus, stdout, stderr, sourceName);
-            disconnectSource(sourceName); // cmd finished
+            var exitCode = data["exit code"]
+            var exitStatus = data["exit status"]
+            var stdout = data["stdout"]
+            var stderr = data["stderr"]
+            exited(exitCode, exitStatus, stdout, stderr, sourceName)
+            disconnectSource(sourceName) // cmd finished
         }
     }
 
     QQ2.Connections {
         function onExited(exitCode, exitStatus, stdout, stderr, source) {
             if (source.includes("#getLocalCovers")) {
-                let lines = stdout.split("\n");
-                lines.forEach((line) => {
-                    if (!line)
-                        return ;
+                let lines = stdout.split("\n")
+                lines.forEach(line => {
+                                  if (!line)
+                                  return
 
-                    let id = coverManager.idFromCoverPath(line);
-                    coverManager.covers[id] = {
-                        "path": line
-                    };
-                });
-                mpd.startup();
+                                  let id = coverManager.idFromCoverPath(line)
+                                  coverManager.covers[id] = {
+                                      "path": line
+                                  }
+                              })
+                mpd.startup()
             } else if (source.includes("#rotateCoverCache")) {
-                coverManager.getLocalCovers();
+                coverManager.getLocalCovers()
             }
         }
 
         target: coverManagerExecutable
     }
-
 }

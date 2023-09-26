@@ -1,8 +1,9 @@
 import QtQuick 2.0
-import QtQuick.Controls 1.4
+import QtQuick.Controls 2.5
 import QtQuick.Dialogs 1.0
 import QtQuick.Layouts 1.0
 import org.kde.kirigami 2.4 as Kirigami
+import org.kde.kquickcontrols 2.0 as KQControls
 
 Kirigami.FormLayout {
     id: page
@@ -13,6 +14,9 @@ Kirigami.FormLayout {
     property alias cfg_cfgFontSize: cfgFontSize.text
     property alias cfg_cfgCacheRoot: cfgCacheRoot.cleanPath
     property alias cfg_cfgCacheForDays: cfgCacheForDays.value
+    property alias cfg_cfgCornerRadius: cfgCornerRadius.value
+    property alias cfg_cfgShadowSpread: cfgShadowSpread.value
+    property alias cfg_cfgShadowColor: cfgShadowColor.color
 
     Item {
         Kirigami.FormData.label: "MPD Connection"
@@ -57,10 +61,10 @@ Kirigami.FormLayout {
             title: "Please Choose a Folder"
             folder: shortcuts.home
             onAccepted: {
-                cleanPath = decodeURIComponent(cfgCacheRoot.fileUrl.toString().replace(/^file:\/\//, ""));
+                cleanPath = decodeURIComponent(cfgCacheRoot.fileUrl.toString(
+                                                   ).replace(/^file:\/\//, ""))
             }
         }
-
     }
 
     SpinBox {
@@ -68,7 +72,6 @@ Kirigami.FormLayout {
 
         Kirigami.FormData.label: "Cache Covers for Days:"
     }
-
 
     Item {
         Kirigami.FormData.label: "Visuals"
@@ -91,13 +94,9 @@ Kirigami.FormLayout {
 
             Component.onCompleted: {
                 if (selected === 1)
-                    descriptionAlignmentCenter.checked = true;
+                    descriptionAlignmentCenter.checked = true
                 else if (selected === 2)
-                    descriptionAlignmentRight.checked = true;
-            }
-
-            ExclusiveGroup {
-                id: tabPositionGroup
+                    descriptionAlignmentRight.checked = true
             }
 
             RadioButton {
@@ -105,10 +104,9 @@ Kirigami.FormLayout {
 
                 text: "Left"
                 checked: true
-                exclusiveGroup: tabPositionGroup
                 onClicked: {
-                    focus = true;
-                    descriptionAlignment.selected = 0;
+                    focus = true
+                    descriptionAlignment.selected = 0
                 }
             }
 
@@ -116,10 +114,9 @@ Kirigami.FormLayout {
                 id: descriptionAlignmentCenter
 
                 text: "Center"
-                exclusiveGroup: tabPositionGroup
                 onClicked: {
-                    focus = true;
-                    descriptionAlignment.selected = 1;
+                    focus = true
+                    descriptionAlignment.selected = 1
                 }
             }
 
@@ -127,15 +124,12 @@ Kirigami.FormLayout {
                 id: descriptionAlignmentRight
 
                 text: "Right"
-                exclusiveGroup: tabPositionGroup
                 onClicked: {
-                    focus = true;
-                    descriptionAlignment.selected = 2;
+                    focus = true
+                    descriptionAlignment.selected = 2
                 }
             }
-
         }
-
     }
 
     TextField {
@@ -146,4 +140,22 @@ Kirigami.FormLayout {
         Layout.preferredWidth: 200
     }
 
+    SpinBox {
+        id: cfgCornerRadius
+
+        to: 10000
+        Kirigami.FormData.label: "Corner Radius:"
+    }
+
+    RowLayout {
+        Kirigami.FormData.label: "Shadow Size and Color:"
+        SpinBox {
+            id: cfgShadowSpread
+        }
+
+        KQControls.ColorButton {
+            id: cfgShadowColor
+            showAlphaChannel: true
+        }
+    }
 }

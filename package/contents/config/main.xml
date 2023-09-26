@@ -29,5 +29,17 @@
             <default>1</default>
         </entry>
 
+        <entry name="cfgCornerRadius" type="Int">
+            <default>0</default>
+        </entry>
+
+        <entry name="cfgShadowSpread" type="Int">
+            <default>0</default>
+        </entry>
+
+        <entry name="cfgShadowColor" type="Color">
+            <default>#888888</default>
+        </entry>
+
     </group>
 </kcfg>
