@@ -26,7 +26,7 @@ Kirigami.ScrollablePage {
             }
             actions: [
                 Kirigami.Action {
-                    icon.name: "media-play"
+                    icon.name: "media-playback-start"
                     text: "Play Now"
                     onTriggered: {
                         mpd.playInQueue(model.position)

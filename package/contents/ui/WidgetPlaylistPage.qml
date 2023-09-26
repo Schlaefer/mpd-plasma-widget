@@ -23,14 +23,14 @@ Kirigami.ScrollablePage {
             width: ListView.view ? ListView.view.width : implicitWidth
             actions: [
                 Kirigami.Action {
-                    icon.name: "media-play"
+                    icon.name: "media-playback-start"
                     text: "Replace Queue"
                     onTriggered: {
                         mpd.playPlaylist(model.title);
                     }
                 },
                 Kirigami.Action {
-                    icon.name: "add"
+                    icon.name: "list-add"
                     text: "Add to Queue"
                     onTriggered: {
                         mpd.addPlaylistToQueue(model.title);
