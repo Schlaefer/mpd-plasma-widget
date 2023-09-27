@@ -100,12 +100,40 @@ Kirigami.ScrollablePage {
 
         delegate: delegateComponent
 
+        // Scroll without animation when active item changes
+        highlightMoveDuration: 0
+
+        function showCurrentItemInList() {
+            if (!appWindow.visible) {
+                return
+            }
+            let i
+            for (i = 0; i < model.count; i++) {
+                if (model.get(i).file == mpd.mpdFile) {
+                    break
+                }
+            }
+            queueList.positionViewAtIndex(i, ListView.Center)
+            queueList.currentIndex = i
+        }
+
+        // onCountChanged: {
+        // }
+        Connections {
+            function onVisibleChanged() {
+                queueList.showCurrentItemInList()
+            }
+
+            target: appWindow
+        }
+
         Connections {
             function onMpdQueueChanged() {
                 queueList.model.clear()
                 for (let i in mpdState.mpdQueue) {
                     queueList.model.append(mpdState.mpdQueue[i])
                 }
+                queueList.showCurrentItemInList()
             }
 
             target: mpd
