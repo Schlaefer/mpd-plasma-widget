@@ -8,6 +8,7 @@ Kirigami.ScrollablePage {
     id: queuePage
 
     property var mpd
+    property var coverManager
 
     visible: false
     title: qsTr("Queue")
@@ -18,23 +19,22 @@ Kirigami.ScrollablePage {
         Kirigami.SwipeListItem {
             id: listItem
 
-            alternatingBackground: true
-            backgroundColor: mpd.mpdFile == model.file ? Kirigami.Theme.highlightColor : Kirigami.Theme.backgroundColor
             width: ListView.view ? ListView.view.width : implicitWidth
-            onClicked: {
+            alternatingBackground: true
+            alternateBackgroundColor: mpd.mpdFile == model.file ? Kirigami.Theme.highlightColor : Kirigami.Theme.alternateBackgroundColor
+            backgroundColor: mpd.mpdFile == model.file ? Kirigami.Theme.highlightColor : Kirigami.Theme.backgroundColor
 
-            }
             actions: [
                 Kirigami.Action {
                     icon.name: "media-playback-start"
-                    text: "Play Now"
+                    text: qsTr("Play Now")
                     onTriggered: {
                         mpd.playInQueue(model.position)
                     }
                 },
                 Kirigami.Action {
                     icon.name: "edit-delete"
-                    text: "Remove from Queue"
+                    text: qsTr("Remove from Queue")
                     onTriggered: {
                         mpd.removeFromQueue(model.position)
                     }
@@ -50,32 +50,35 @@ Kirigami.ScrollablePage {
                         Layout.preferredWidth: 30
                         mipmap: true
                         fillMode: Image.PreserveAspectFit
-                        Component.onCompleted: {
-                            coverCheck.start()
+
+                        function setCover(coverPath) {
+                            if (coverPath === null) {
+                                return false
+                            }
+                            image.source = coverPath
                         }
 
-                        Timer {
-                            id: coverCheck
-
-                            interval: 2000
-                            repeat: true
-                            triggeredOnStart: true
-                            onTriggered: {
-                                // @TODO import covermanager properly
-                                let cover = coverManager.getCover(model)
-                                if (typeof (cover) === 'undefined') {
-                                    return
-                                }
-                                stop()
-                                if (cover === null) {
-                                    return
-                                }
-
-                                // @TODO there must be a better way to force an update
-                                // Leave for uncached version which doesn't change file name
-                                image.source = ""
-                                image.source = cover
+                        function onGotCover(coverPath) {
+                            if (!coverManager) {
+                                return
                             }
+                            let cover = queuePage.coverManager.getCover(model)
+                            if (typeof (cover) === 'undefined') {
+                                return false
+                            }
+                            queuePage.coverManager.gotCover.disconnect(
+                                        onGotCover)
+                            setCover(cover)
+                        }
+
+                        Component.onCompleted: {
+                            let cover = coverManager.getCover(model)
+                            if (cover) {
+                                setCover(cover)
+
+                                return
+                            }
+                            coverManager.gotCover.connect(onGotCover)
                         }
                     }
 

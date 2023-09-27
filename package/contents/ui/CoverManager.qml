@@ -5,6 +5,8 @@ import org.kde.plasma.core 2.0 as PlasmaCore
 QQ2.Item {
     id: coverManager
 
+    signal gotCover(var status)
+
     property var covers
     property var fetchQueue
     property bool fetching: false
@@ -61,20 +63,19 @@ QQ2.Item {
         return id
     }
 
-    function noData(coverPath) {
+    function markFetched(coverPath, success) {
         let id = idFromCoverPath(coverPath)
-        coverManager.covers[id] = null
-        coverManager.fetchQueue.delete(id)
-        fetching = false
-    }
-
-    function markFetched(coverPath) {
-        let id = idFromCoverPath(coverPath)
-        coverManager.covers[id] = {
-            "path": coverPath
+        let item = null
+        if (success) {
+            item = {
+                "path": coverPath
+            }
         }
+        coverManager.covers[id] = item
         coverManager.fetchQueue.delete(id)
         fetching = false
+
+        gotCover(coverPath)
     }
 
     QQ2.Component.onCompleted: {
@@ -87,7 +88,7 @@ QQ2.Item {
     // Clean cover cage
     QQ2.Timer {
         running: true
-        interval: 86400
+        interval: 86400000
         repeat: true
         triggeredOnStart: true
         onTriggered: {

@@ -7,16 +7,18 @@ Kirigami.ApplicationWindow {
     id: appWindow
 
     property var mpd
+    property var coverManager
 
-    flags: Qt.Popup | Qt.Dialog
+    flags: Qt.Widget
     visible: false
-    title: "MPD"
+    title: qsTr("MPD")
     pageStack.initialPage: queuePage
 
     WidgetQueuePage {
         id: queuePage
 
         mpd: appWindow.mpd
+        coverManager: appWindow.coverManager
     }
 
     WidgetPlaylistPage {
@@ -29,7 +31,7 @@ Kirigami.ApplicationWindow {
         actions: [
             Kirigami.Action {
                 iconName: "media-play"
-                text: "Queue"
+                text: qsTr("Queue")
                 checked: queuePage.visible
                 onTriggered: {
                     if (!queuePage.visible) {
@@ -40,7 +42,7 @@ Kirigami.ApplicationWindow {
             },
             Kirigami.Action {
                 iconName: "view-media-playlist"
-                text: "Playlists"
+                text: qsTr("Playlists")
                 checked: playlistPage.visible
                 onTriggered: {
                     if (!playlistPage.visible) {

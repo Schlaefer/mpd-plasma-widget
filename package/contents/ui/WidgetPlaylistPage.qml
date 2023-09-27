@@ -24,14 +24,14 @@ Kirigami.ScrollablePage {
             actions: [
                 Kirigami.Action {
                     icon.name: "media-playback-start"
-                    text: "Replace Queue"
+                    text: qsTr("Replace Queue")
                     onTriggered: {
                         mpd.playPlaylist(model.title);
                     }
                 },
                 Kirigami.Action {
                     icon.name: "list-add"
-                    text: "Add to Queue"
+                    text: qsTr("Add to Queue")
                     onTriggered: {
                         mpd.addPlaylistToQueue(model.title);
                     }

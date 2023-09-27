@@ -14,8 +14,8 @@ Item {
     // path without leading slash
     property string cfgCacheRoot: Plasmoid.configuration.cfgCacheRoot
     property string cfgCacheForDays: Plasmoid.configuration.cfgCacheForDays
-    property string cfgCornerRadius: Plasmoid.configuration.cfgCornerRadius
-    property string cfgShadowSpread: Plasmoid.configuration.cfgShadowSpread
+    property int cfgCornerRadius: Plasmoid.configuration.cfgCornerRadius
+    property int cfgShadowSpread: Plasmoid.configuration.cfgShadowSpread
     property string cfgShadowColor: Plasmoid.configuration.cfgShadowColor
     property string appLastError: ""
 
@@ -61,5 +61,6 @@ Item {
         id: popupDialog
 
         mpd: mpdState
+        coverManager: coverManager
     }
 }

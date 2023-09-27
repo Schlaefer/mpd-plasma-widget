@@ -11,7 +11,7 @@ Kirigami.FormLayout {
     property alias cfg_mpdHost: mpdHost.text
     property alias cfg_descriptionAlignment: descriptionAlignment.selected
     property alias cfg_cfgHorizontalLayout: cfgHorizontalLayout.checked
-    property alias cfg_cfgFontSize: cfgFontSize.text
+    property alias cfg_cfgFontSize: cfgFontSize.value
     property alias cfg_cfgCacheRoot: cfgCacheRoot.cleanPath
     property alias cfg_cfgCacheForDays: cfgCacheForDays.value
     property alias cfg_cfgCornerRadius: cfgCornerRadius.value
@@ -19,7 +19,7 @@ Kirigami.FormLayout {
     property alias cfg_cfgShadowColor: cfgShadowColor.color
 
     Item {
-        Kirigami.FormData.label: "MPD Connection"
+        Kirigami.FormData.label: i18n("MPD Connection")
         Kirigami.FormData.isSection: true
     }
 
@@ -32,7 +32,7 @@ Kirigami.FormLayout {
     }
 
     Item {
-        Kirigami.FormData.label: "Local Covers"
+        Kirigami.FormData.label: i18n("Local Covers")
         Kirigami.FormData.isSection: true
     }
 
@@ -48,7 +48,7 @@ Kirigami.FormLayout {
         }
 
         Button {
-            text: "Select Folder"
+            text: i18n("Select Folder")
             onClicked: cfgCacheRoot.open()
         }
 
@@ -58,7 +58,7 @@ Kirigami.FormLayout {
             property string cleanPath
 
             selectFolder: true
-            title: "Please Choose a Folder"
+            title: i18n("Please Choose a Folder")
             folder: shortcuts.home
             onAccepted: {
                 cleanPath = decodeURIComponent(cfgCacheRoot.fileUrl.toString(
@@ -70,11 +70,11 @@ Kirigami.FormLayout {
     SpinBox {
         id: cfgCacheForDays
 
-        Kirigami.FormData.label: "Cache Covers for Days:"
+        Kirigami.FormData.label: i18n("Cache Covers for Days:")
     }
 
     Item {
-        Kirigami.FormData.label: "Visuals"
+        Kirigami.FormData.label: i18n("Visuals")
         Kirigami.FormData.isSection: true
     }
 
@@ -102,7 +102,7 @@ Kirigami.FormLayout {
             RadioButton {
                 id: descriptionAlignmentLeft
 
-                text: "Left"
+                text: i18n("Left")
                 checked: true
                 onClicked: {
                     focus = true
@@ -113,7 +113,7 @@ Kirigami.FormLayout {
             RadioButton {
                 id: descriptionAlignmentCenter
 
-                text: "Center"
+                text: i18n("Center")
                 onClicked: {
                     focus = true
                     descriptionAlignment.selected = 1
@@ -123,7 +123,7 @@ Kirigami.FormLayout {
             RadioButton {
                 id: descriptionAlignmentRight
 
-                text: "Right"
+                text: i18n("Right")
                 onClicked: {
                     focus = true
                     descriptionAlignment.selected = 2
@@ -132,23 +132,22 @@ Kirigami.FormLayout {
         }
     }
 
-    TextField {
+    SpinBox {
         id: cfgFontSize
 
+        to: 1000
         Kirigami.FormData.label: i18n("Font Size:")
-        placeholderText: i18n("13")
-        Layout.preferredWidth: 200
     }
 
     SpinBox {
         id: cfgCornerRadius
 
         to: 10000
-        Kirigami.FormData.label: "Corner Radius:"
+        Kirigami.FormData.label: i18n("Corner Radius:")
     }
 
     RowLayout {
-        Kirigami.FormData.label: "Shadow Size and Color:"
+        Kirigami.FormData.label: i18n("Shadow Size and Color:")
         SpinBox {
             id: cfgShadowSpread
         }

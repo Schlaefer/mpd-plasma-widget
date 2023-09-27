@@ -7,7 +7,6 @@ import org.kde.plasma.core 2.0 as PlasmaCore
 Item {
     id: mpdRoot
 
-    // @TODO solve via signal instead of passing
     property var coverManager
     property string scriptRoot
     property string mpdHost: ""
@@ -259,12 +258,7 @@ Item {
             }
 
             if (source.includes("#readpicture")) {
-                if (stderr.includes("No data")) {
-                    coverManager.noData(stdout)
-                } else {
-                    coverManager.markFetched(stdout)
-                }
-
+                coverManager.markFetched(stdout, !stderr.includes("No data"))
                 return
             }
 

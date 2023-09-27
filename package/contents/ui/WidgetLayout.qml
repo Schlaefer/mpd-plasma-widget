@@ -56,34 +56,23 @@ GridLayout {
             // Layout.fillWidth: true
             // Layout.fillHeight: true
             Layout.maximumWidth: height > height ? width : height
-            fillMode: Image.PreserveAspectFit
-
             // @TODO
             // fillMode: Image.PreserveAspectCrop
-            Timer {
-                id: coverCheck
-                interval: 500
-                repeat: true
-                triggeredOnStart: true
-                onTriggered: {
-                    let cover = coverManager.getCover(mpd.mpdInfo, 1)
-                    if (typeof (cover) === 'undefined') {
-                        return
-                    }
-                    stop()
-                    if (cover === null) {
-                        return
-                    }
-                    // @TODO there must be a better way to force an update
-                    // Leave for uncached version which doesn't change file name
-                    coverImage.source = ""
-                    coverImage.source = cover
+            fillMode: Image.PreserveAspectFit
+
+            function updateCover() {
+                let cover = coverManager.getCover(mpd.mpdInfo, 1)
+                if (!cover) {
+                    coverManager.gotCover.connect(updateCover)
+                    return
                 }
+                coverManager.gotCover.disconnect(updateCover)
+                coverImage.source = cover
             }
 
             Connections {
                 function onMpdInfoChanged() {
-                    coverCheck.start()
+                    coverImage.updateCover()
                 }
 
                 target: mpd
