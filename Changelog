@@ -1,5 +1,6 @@
 # 1.11
 - Selects currently playing item when Queue window is shown
+- Uses generic media-controller icon included in breeze as widget-symbol-icon
 
 # 1.10
 - Performance improvements, bugfixes and code cleanup. 

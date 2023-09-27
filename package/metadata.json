@@ -8,7 +8,7 @@
         ],
         "Category": "Multimedia",
         "Description": "Shows and controls mpd instance.",
-        "Icon": "mpd",
+        "Icon": "org.kde.plasma.mediacontroller",
         "Id": "com.siezi.plasma.mpdWidget",
         "Name": "MPD Plasma Widget",
         "Version": "1.10",
