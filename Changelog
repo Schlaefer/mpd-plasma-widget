@@ -1,6 +1,14 @@
-# 1.11
+# 2.0
+- Shows generic album-icon if no cover is available
 - Selects currently playing item when Queue window is shown
-- Uses generic media-controller icon included in breeze as widget-symbol-icon
+- Uses breeze's generic media-controller icon as widget-symbol-icon
+- Adds setting for transparent background in widget configuration
+- Improves drop-shadow drawing
+- Changes font-size control from pixel to point measure. Adjust the value down if you previously changed it. New default value is 10 (was 13).
+- Informs about empty play queue
+- Improves cover fetching time
+- Lot-o-Codecleanup & minor layout tweaks
+- Bumps version to 2.0. Hopefully that will unclog the store.kde.org update issues. Also I would consider this a solid "1.0" if we had started out with 0.x instead of 1.x before.
 
 # 1.10
 - Performance improvements, bugfixes and code cleanup. 

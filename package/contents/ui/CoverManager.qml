@@ -10,10 +10,7 @@ QQ2.Item {
     property var covers
     property var fetchQueue
     property bool fetching: false
-    property string coverDirectory
     property string filePrefix: "mpdcover-"
-    property var mpd
-    property int cacheForDays
 
 
     /**
@@ -37,12 +34,13 @@ QQ2.Item {
         }
 
         fetchQueue.add(title, item, priority)
+        fetchingQueueTimer.start()
         return undefined
     }
 
     function getLocalCovers() {
-        let cmd = 'find ' + coverDirectory + ' -name "'
-            + coverManager.filePrefix + '*" #getLocalCovers'
+        let cmd = 'find ' + cfgCacheRoot + ' -name "' + coverManager.filePrefix
+            + '*" #getLocalCovers'
         coverManagerExecutable.exec(cmd)
     }
 
@@ -58,7 +56,7 @@ QQ2.Item {
     }
 
     function idFromCoverPath(path) {
-        let id = path.replace(coverDirectory + '/' + filePrefix, '')
+        let id = path.replace(cfgCacheRoot + '/' + filePrefix, '')
         id = decodeURIComponent(id)
         return id
     }
@@ -82,47 +80,53 @@ QQ2.Item {
         covers = {}
         fetchQueue = new CoverHelpers.FetchQueue()
         fetching = false
-        coverManager.getLocalCovers()
+        coverRotateTimer.start()
     }
 
-    // Clean cover cage
+    // Rotate cover cache
     QQ2.Timer {
-        running: true
-        interval: 86400000
+        id: coverRotateTimer
+        running: false
+        interval: 10800000
         repeat: true
         triggeredOnStart: true
         onTriggered: {
-            let cmd = 'find "' + coverDirectory + '" -type f -name "' + filePrefix
-                + '*" -mtime +' + cacheForDays + ' -exec rm "{}" \; #rotateCoverCache'
+            let cmd = 'find "' + cfgCacheRoot + '" -type f -name "' + filePrefix
+                + '*" -mtime +' + cfgCacheForDays + ' -exec rm "{}" \; #rotateCoverCache'
             coverManagerExecutable.exec(cmd)
         }
     }
 
+    // Trigger fetching new covers
     QQ2.Timer {
-        running: true
+        id: fetchingQueueTimer
+        running: false
         repeat: true
-        // @TODO better start
-        interval: 1000
+        interval: 100
         triggeredOnStart: true
         onTriggered: {
 
-            // Alas we can't return, we just have to pound the fetch again, and
-            // again, and again because Plasmacore.DataSource loves to terminate
-            // scripts early. It just does it. We can't rely that an exec with a
-            // long fetching of cover is making it through and we being informed
-            // about it. Luckily the datasource recognizes the same cmd in the
-            // executable and ignores it if it is already/still running.
-
+            // Alas we can't return, we just have to pound the fetch again, and again,
+            // and again … because Plasmacore.DataSource.exec loves to terminate
+            // scripts early. It just does it. We can't be sure that a fetch did
+            // actually make it through. Luckily PlamaCore.DataSource.exec recognizes
+            // if the same cmd was started before, is still running and therefore
+            // doesn't start it again. So there's no penalty trying to start it
+            // another time.
+            // @MAYBE Check if we can catch if we don't get an expected stdout (e.g.
+            // path) on the fetch result
             // if (fetching) {
             // return;
             // }
             let itemToFetch = fetchQueue.next()
-            if (!itemToFetch)
+            if (!itemToFetch) {
+                fetchingQueueTimer.stop()
                 return
+            }
 
             fetching = true
-            mpd.getCover(itemToFetch.file, getCoverFileName(itemToFetch),
-                         coverDirectory, filePrefix)
+            mpdState.getCover(itemToFetch.file, getCoverFileName(itemToFetch),
+                              cfgCacheRoot, filePrefix)
         }
     }
 
@@ -152,15 +156,16 @@ QQ2.Item {
             if (source.includes("#getLocalCovers")) {
                 let lines = stdout.split("\n")
                 lines.forEach(line => {
-                                  if (!line)
-                                  return
+                                  if (!line) {
+                                      return
+                                  }
 
                                   let id = coverManager.idFromCoverPath(line)
                                   coverManager.covers[id] = {
                                       "path": line
                                   }
                               })
-                mpd.startup()
+                mpdState.startup()
             } else if (source.includes("#rotateCoverCache")) {
                 coverManager.getLocalCovers()
             }

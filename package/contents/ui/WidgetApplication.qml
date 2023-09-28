@@ -5,10 +5,6 @@ import org.kde.kirigami 2.20 as Kirigami
 
 Kirigami.ApplicationWindow {
     id: appWindow
-
-    property var mpd
-    property var coverManager
-
     flags: Qt.Widget
     visible: false
     title: qsTr("MPD")
@@ -16,15 +12,10 @@ Kirigami.ApplicationWindow {
 
     WidgetQueuePage {
         id: queuePage
-
-        mpd: appWindow.mpd
-        coverManager: appWindow.coverManager
     }
 
     WidgetPlaylistPage {
         id: playlistPage
-
-        mpd: appWindow.mpd
     }
 
     footer: Kirigami.NavigationTabBar {

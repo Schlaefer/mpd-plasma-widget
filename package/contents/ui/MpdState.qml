@@ -7,9 +7,7 @@ import org.kde.plasma.core 2.0 as PlasmaCore
 Item {
     id: mpdRoot
 
-    property var coverManager
     property string scriptRoot
-    property string mpdHost: ""
     property string mpdFile: ""
     property int mpdVolume: 0
     property var mpdInfo: {
@@ -47,60 +45,43 @@ Item {
     }
 
     function getVolume() {
-        mpdRootExecutable.exec(
-                    "mpc --host=" + mpdRoot.mpdHost + " volume" + " #getVolume")
+        mpcExec("volume" + " #getVolume")
     }
 
     function setVolume(value) {
-        mpdRootExecutable.exec(
-                    "mpc --host=" + mpdRoot.mpdHost + " volume " + value + " #update")
-    }
-
-    function run(cmd) {
-        mpdCommandQueue.add(cmd)
+        mpcExec("volume " + value + " #update")
     }
 
     function getInfo() {
-        mpdRootExecutable.exec(
-                    "mpc --host=" + mpdRoot.mpdHost
-                    + " -f '{[\\n\"artist\": \"%artist%\", ][\\n\"albumartist\": \"%albumartist%\", ][\\n\"album\": \"%album%\", ][\\n\"tracknumber\": \"%track%\", ]\\n\"title\": \"%title%\", [\\n\"date\": \"%date%\", ]\\n\"file\": \"%file%\"\\n}' | head -n -2 #getInfo")
+        mpcExec("-f '{[\\n\"artist\": \"%artist%\", ][\\n\"albumartist\": \"%albumartist%\", ][\\n\"album\": \"%album%\", ][\\n\"tracknumber\": \"%track%\", ]\\n\"title\": \"%title%\", [\\n\"date\": \"%date%\", ]\\n\"file\": \"%file%\"\\n}' | head -n -2 #getInfo")
     }
 
     function removeFromQueue(position) {
-        mpdCommandQueue.add(
-                    "mpc --host=" + mpdRoot.mpdHost + " del " + position)
+        mpdCommandQueue.add("del " + position)
     }
 
     function playNext() {
-        mpdRootExecutable.exec("mpc --host=" + mpdRoot.mpdHost + " next")
+        mpcExec("next")
     }
 
     function toggle() {
-        mpdRootExecutable.exec("mpc --host=" + mpdRoot.mpdHost + " toggle")
+        mpcExec("toggle")
     }
 
     function clearPlaylist() {
-        mpdCommandQueue.add("mpc --host=" + mpdRoot.mpdHost + " clear")
+        mpdCommandQueue.add("clear")
     }
 
     function getQueue() {
-        mpdRootExecutable.exec(
-                    "mpc --host=" + mpdRoot.mpdHost
-                    + " playlist -f '\"%file%\": {[\\n\"artist\": \"%artist%\", ][\\n\"albumartist\": \"%albumartist%\", ][\\n\"album\": \"%album%\", ][\\n\"tracknumber\": \"%track%\", ]\\n\"title\": \"%title%\", [\\n\"date\": \"%date%\", ]\\n\"file\": \"%file%\",\\n\"position\": \"%position%\"},' #getQueue")
-    }
-
-    function debugJournal(msg) {
-        mpdRootExecutable.exec('echo "' + msg + '" | systemd-cat -p err;')
+        mpcExec("playlist -f '\"%file%\": {[\\n\"artist\": \"%artist%\", ][\\n\"albumartist\": \"%albumartist%\", ][\\n\"album\": \"%album%\", ][\\n\"tracknumber\": \"%track%\", ]\\n\"title\": \"%title%\", [\\n\"date\": \"%date%\", ]\\n\"file\": \"%file%\",\\n\"position\": \"%position%\"},' #getQueue")
     }
 
     function playInQueue(title) {
-        mpdCommandQueue.add(
-                    "sleep 1 && mpc --host=" + mpdRoot.mpdHost + " play \"" + title + "\"")
+        mpdCommandQueue.add("play \"" + title + "\"")
     }
 
     function getPlaylists() {
-        mpdRootExecutable.exec(
-                    "mpc --host=" + mpdRoot.mpdHost + " lsplaylist #getPlaylists")
+        mpcExec("lsplaylist #getPlaylists")
     }
 
     function playPlaylist(playlist) {
@@ -110,39 +91,42 @@ Item {
     }
 
     function getOptions() {
-        mpdRootExecutable.exec(
-                    "mpc --host=" + mpdRoot.mpdHost
-                    + " status '{\"consume\": \"%consume%\", \"random\": \"%random%\"}' #getOptions")
+        mpcExec("status '{\"consume\": \"%consume%\", \"random\": \"%random%\"}' #getOptions")
     }
 
     function toggleRandom() {
         let newState = mpdRoot.mpdOptions.random === "on" ? "off" : "on"
-        mpdCommandQueue.add(
-                    "mpc --host=" + mpdRoot.mpdHost + " random " + newState)
+        mpdCommandQueue.add("random " + newState)
     }
 
     function toggleConsume() {
         let newState = mpdRoot.mpdOptions.consume === "on" ? "off" : "on"
-        mpdCommandQueue.add(
-                    "mpc --host=" + mpdRoot.mpdHost + " consume " + newState)
+        mpdCommandQueue.add("consume " + newState)
     }
 
     function addPlaylistToQueue(playlist) {
-        mpdCommandQueue.add(
-                    "mpc --host=" + mpdRoot.mpdHost + " load \"" + playlist + "\"")
+        mpdCommandQueue.add("load \"" + playlist + "\"")
     }
 
     function getCover(title, ctitle, root, prefix) {
         let cmd = ''
         cmd += '/usr/bin/env bash'
         cmd += ' "' + mpdRoot.scriptRoot + '/downloadCover.sh"'
-        cmd += ' ' + mpdRoot.mpdHost
+        cmd += ' ' + cfgMpdHost
         cmd += ' "' + title.replace(/"/g, '\\"') + '"'
         cmd += ' "' + root + '"'
         cmd += ' ' + prefix
         cmd += ' "' + ctitle.replace('/', '\\\\/') + '"'
         cmd += ' #readpicture'
         mpdRootExecutable.exec(cmd)
+    }
+
+    function countQueue() {
+        return Object.keys(mpdRoot.mpdQueue).length
+    }
+
+    function mpcExec(cmd) {
+        mpdRootExecutable.exec("mpc --host=" + cfgMpdHost + " " + cmd)
     }
 
     // Throttle commands so we don't miss results on the event loop because we
@@ -152,19 +136,21 @@ Item {
 
         property var cmdQueue: []
 
+        interval: 500
+        running: true
+        repeat: true
+
         function add(cmd) {
             cmdQueue.push(cmd)
         }
 
-        interval: 500
-        running: true
-        repeat: true
         onTriggered: {
-            if (cmdQueue.length === 0)
+            if (cmdQueue.length === 0) {
                 return
+            }
 
             let cmd = cmdQueue.shift()
-            mpdRootExecutable.exec(cmd)
+            mpdRoot.mpcExec(cmd)
         }
     }
 
@@ -176,10 +162,9 @@ Item {
         interval: 10
         running: false
         repeat: false
+
         onTriggered: {
-            mpdRootExecutable.exec(
-                        'mpc --host=' + mpdRoot.mpdHost
-                        + ' idle player mixer playlist options #idleLoop')
+            mpdRoot.mpcExec('idle player mixer playlist options #idleLoop')
         }
     }
 
@@ -250,17 +235,23 @@ Item {
         }
 
         function onExited(exitCode, exitStatus, stdout, stderr, source) {
-            root.appLastError = stderr || ""
+            root.appLastError = ""
 
-            if (stderr !== "" && !stderr.includes("No data")) {
-                mpdRootNetworkTimeout.start()
-                return
+            if (stderr !== "") {
+                // "No data is a successful request, but mpd didn't have any data.
+                if (!stderr.includes("No data")) {
+                    mpdRootNetworkTimeout.start()
+                    root.appLastError = stderr
+                    return
+                }
             }
 
             if (source.includes("#readpicture")) {
                 coverManager.markFetched(stdout, !stderr.includes("No data"))
                 return
             }
+
+            root.appLastError = stderr || ""
 
             if (source.includes("#idleLoop")) {
                 if (stdout.includes('player'))
@@ -279,6 +270,7 @@ Item {
                     // queue, so maybe dozens if e.g. an album/playlist is added.
                     // That's to fast for us to catch the last "player" event. We have
                     // to check what is playing after the queue changes.
+                    // @MAYBE Performance: could be throttled (with a timer?) so we don't constantly trigger a the queue/playlists refresh
                     mpdRoot.getInfo()
                 }
             } else if (source.includes("#getVolume")) {

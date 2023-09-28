@@ -7,60 +7,45 @@ import org.kde.plasma.plasmoid 2.0
 Item {
     id: root
 
-    property string mpdHost: Plasmoid.configuration.mpdHost
-    property string descriptionAlignment: Plasmoid.configuration.descriptionAlignment
     property bool cfgHorizontalLayout: Plasmoid.configuration.cfgHorizontalLayout
-    property int cfgFontSize: Plasmoid.configuration.cfgFontSize
-    // path without leading slash
-    property string cfgCacheRoot: Plasmoid.configuration.cfgCacheRoot
-    property string cfgCacheForDays: Plasmoid.configuration.cfgCacheForDays
+    property bool cfgSolidBackground: Plasmoid.configuration.cfgSolidBackground
     property int cfgCornerRadius: Plasmoid.configuration.cfgCornerRadius
+    property int cfgFontSize: Plasmoid.configuration.cfgFontSize
     property int cfgShadowSpread: Plasmoid.configuration.cfgShadowSpread
+    property string cfgAlignment: Plasmoid.configuration.cfgAlignment
+    property string cfgCacheForDays: Plasmoid.configuration.cfgCacheForDays
+    property string cfgCacheRoot: Plasmoid.configuration.cfgCacheRoot // without trailing slash
+    property string cfgMpdHost: Plasmoid.configuration.cfgMpdHost
     property string cfgShadowColor: Plasmoid.configuration.cfgShadowColor
+
     property string appLastError: ""
 
     Layout.preferredWidth: 300
     Layout.preferredHeight: 410
-    // Allow user to toggle background transparency
-    Plasmoid.backgroundHints: PlasmaCore.Types.StandardBackground
-                              | PlasmaCore.Types.ConfigurableBackground
+    Plasmoid.backgroundHints: cfgSolidBackground ? PlasmaCore.Types.StandardBackground : PlasmaCore.Types.NoBackground
 
     Connections {
-        function onMpdHostChanged() {
+        function onCfgMpdHostChanged() {
             mpdState.startup()
         }
     }
 
     CoverManager {
         id: coverManager
-
-        mpd: mpdState
-        coverDirectory: root.cfgCacheRoot
-        cacheForDays: cfgCacheForDays
     }
 
     MpdState {
         id: mpdState
-
-        coverManager: coverManager
-        mpdHost: root.mpdHost
         scriptRoot: plasmoid.file('', 'scripts/')
     }
 
-    // Main layout of the widget
+    // Widget shown on desktop
     WidgetLayout {
         anchors.fill: parent
-        mpd: mpdState
-        coverManager: coverManager
-        cornerRadius: cfgCornerRadius
-        shadowSpread: cfgShadowSpread
-        shadowColor: cfgShadowColor
     }
 
+    // Popup Dialog
     WidgetApplication {
         id: popupDialog
-
-        mpd: mpdState
-        coverManager: coverManager
     }
 }

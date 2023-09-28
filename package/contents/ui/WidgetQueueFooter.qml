@@ -3,8 +3,6 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 GroupBox {
-    property var mpd
-
     RowLayout {
         anchors.right: parent.right
 
@@ -13,14 +11,13 @@ GroupBox {
 
             icon.name: "media-playlist-shuffle"
             text: qsTr("Random")
-            onClicked: mpd.toggleRandom()
+            onClicked: mpdState.toggleRandom()
 
             Connections {
                 function onMpdOptionsChanged() {
-                    random.checked = mpd.mpdOptions.random === "on";
+                    random.checked = mpdState.mpdOptions.random === "on";
                 }
-
-                target: mpd
+                target: mpdState
             }
 
         }
@@ -30,14 +27,13 @@ GroupBox {
 
             icon.name: "tool-eraser-symbolic"
             text: qsTr("Consume")
-            onClicked: mpd.toggleConsume()
+            onClicked: mpdState.toggleConsume()
 
             Connections {
                 function onMpdOptionsChanged() {
-                    consume.checked = mpd.mpdOptions.consume === "on";
+                    consume.checked = mpdState.mpdOptions.consume === "on";
                 }
-
-                target: mpd
+                target: mpdState
             }
 
         }

@@ -6,10 +6,6 @@ import org.kde.kirigami 2.20 as Kirigami
 
 Kirigami.ScrollablePage {
     id: queuePage
-
-    property var mpd
-    property var coverManager
-
     visible: false
     title: qsTr("Queue")
 
@@ -21,22 +17,22 @@ Kirigami.ScrollablePage {
 
             width: ListView.view ? ListView.view.width : implicitWidth
             alternatingBackground: true
-            alternateBackgroundColor: mpd.mpdFile == model.file ? Kirigami.Theme.highlightColor : Kirigami.Theme.alternateBackgroundColor
-            backgroundColor: mpd.mpdFile == model.file ? Kirigami.Theme.highlightColor : Kirigami.Theme.backgroundColor
+            alternateBackgroundColor: mpdState.mpdFile == model.file ? Kirigami.Theme.highlightColor : Kirigami.Theme.alternateBackgroundColor
+            backgroundColor: mpdState.mpdFile == model.file ? Kirigami.Theme.highlightColor : Kirigami.Theme.backgroundColor
 
             actions: [
                 Kirigami.Action {
                     icon.name: "media-playback-start"
                     text: qsTr("Play Now")
                     onTriggered: {
-                        mpd.playInQueue(model.position)
+                        mpdState.playInQueue(model.position)
                     }
                 },
                 Kirigami.Action {
                     icon.name: "edit-delete"
                     text: qsTr("Remove from Queue")
                     onTriggered: {
-                        mpd.removeFromQueue(model.position)
+                        mpdState.removeFromQueue(model.position)
                     }
                 }
             ]
@@ -59,14 +55,15 @@ Kirigami.ScrollablePage {
                         }
 
                         function onGotCover(coverPath) {
-                            if (!coverManager) {
+                            // @BOGUS Why did we do that? What's happening here?
+                            if (typeof(coverManager) === "undefined") {
                                 return
                             }
-                            let cover = queuePage.coverManager.getCover(model)
+                            let cover = coverManager.getCover(model)
                             if (typeof (cover) === 'undefined') {
                                 return false
                             }
-                            queuePage.coverManager.gotCover.disconnect(
+                            coverManager.gotCover.disconnect(
                                         onGotCover)
                             setCover(cover)
                         }
@@ -86,7 +83,7 @@ Kirigami.ScrollablePage {
                         Layout.fillWidth: true
                         height: Math.max(implicitHeight,
                                          Kirigami.Units.iconSizes.smallMedium)
-                        font.bold: mpd.mpdFile == model.file ? true : false
+                        font.bold: mpdState.mpdFile == model.file ? true : false
                         text: FormatHelpers.oneLine(model)
                         wrapMode: Text.Wrap
                     }
@@ -109,7 +106,7 @@ Kirigami.ScrollablePage {
             }
             let i
             for (i = 0; i < model.count; i++) {
-                if (model.get(i).file == mpd.mpdFile) {
+                if (model.get(i).file == mpdState.mpdFile) {
                     break
                 }
             }
@@ -135,14 +132,12 @@ Kirigami.ScrollablePage {
                 }
                 queueList.showCurrentItemInList()
             }
-
-            target: mpd
+            target: mpdState
         }
 
         model: ListModel {}
     }
 
     footer: WidgetQueueFooter {
-        mpd: queuePage.mpd
     }
 }

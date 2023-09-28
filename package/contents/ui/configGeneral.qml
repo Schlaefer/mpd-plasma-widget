@@ -8,8 +8,8 @@ import org.kde.kquickcontrols 2.0 as KQControls
 Kirigami.FormLayout {
     id: page
 
-    property alias cfg_mpdHost: mpdHost.text
-    property alias cfg_descriptionAlignment: descriptionAlignment.selected
+    property alias cfg_cfgMpdHost: cfgMpdHost.text
+    property alias cfg_cfgAlignment: cfgAlignment.selected
     property alias cfg_cfgHorizontalLayout: cfgHorizontalLayout.checked
     property alias cfg_cfgFontSize: cfgFontSize.value
     property alias cfg_cfgCacheRoot: cfgCacheRoot.cleanPath
@@ -17,6 +17,7 @@ Kirigami.FormLayout {
     property alias cfg_cfgCornerRadius: cfgCornerRadius.value
     property alias cfg_cfgShadowSpread: cfgShadowSpread.value
     property alias cfg_cfgShadowColor: cfgShadowColor.color
+    property alias cfg_cfgSolidBackground: cfgSolidBackground.checked
 
     Item {
         Kirigami.FormData.label: i18n("MPD Connection")
@@ -24,7 +25,7 @@ Kirigami.FormLayout {
     }
 
     TextField {
-        id: mpdHost
+        id: cfgMpdHost
 
         Kirigami.FormData.label: i18n("MPD Server Address:")
         placeholderText: i18n("192.168.y.x")
@@ -79,6 +80,12 @@ Kirigami.FormLayout {
     }
 
     CheckBox {
+        id: cfgSolidBackground
+
+        Kirigami.FormData.label: i18n("Solid Background:")
+    }
+
+    CheckBox {
         id: cfgHorizontalLayout
 
         Kirigami.FormData.label: i18n("Horizontal Layout:")
@@ -88,45 +95,45 @@ Kirigami.FormLayout {
         Kirigami.FormData.label: i18n("Text Alignment:")
 
         RowLayout {
-            id: descriptionAlignment
+            id: cfgAlignment
 
             property int selected
 
             Component.onCompleted: {
                 if (selected === 1)
-                    descriptionAlignmentCenter.checked = true
+                    cfgAlignmentCenter.checked = true
                 else if (selected === 2)
-                    descriptionAlignmentRight.checked = true
+                    cfgAlignmentRight.checked = true
             }
 
             RadioButton {
-                id: descriptionAlignmentLeft
+                id: cfgAlignmentLeft
 
                 text: i18n("Left")
                 checked: true
                 onClicked: {
                     focus = true
-                    descriptionAlignment.selected = 0
+                    cfgAlignment.selected = 0
                 }
             }
 
             RadioButton {
-                id: descriptionAlignmentCenter
+                id: cfgAlignmentCenter
 
                 text: i18n("Center")
                 onClicked: {
                     focus = true
-                    descriptionAlignment.selected = 1
+                    cfgAlignment.selected = 1
                 }
             }
 
             RadioButton {
-                id: descriptionAlignmentRight
+                id: cfgAlignmentRight
 
                 text: i18n("Right")
                 onClicked: {
                     focus = true
-                    descriptionAlignment.selected = 2
+                    cfgAlignment.selected = 2
                 }
             }
         }

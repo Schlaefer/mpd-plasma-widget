@@ -5,9 +5,6 @@ import org.kde.kirigami 2.20 as Kirigami
 
 Kirigami.ScrollablePage {
     id: playlistPage
-
-    property var mpd
-
     visible: false
     title: qsTr("Playlists")
 
@@ -26,14 +23,14 @@ Kirigami.ScrollablePage {
                     icon.name: "media-playback-start"
                     text: qsTr("Replace Queue")
                     onTriggered: {
-                        mpd.playPlaylist(model.title);
+                        mpdState.playPlaylist(model.title);
                     }
                 },
                 Kirigami.Action {
                     icon.name: "list-add"
                     text: qsTr("Add to Queue")
                     onTriggered: {
-                        mpd.addPlaylistToQueue(model.title);
+                        mpdState.addPlaylistToQueue(model.title);
                     }
                 }
             ]
@@ -42,7 +39,7 @@ Kirigami.ScrollablePage {
                 Label {
                     Layout.fillWidth: true
                     height: Math.max(implicitHeight, Kirigami.Units.iconSizes.smallMedium)
-                    font.bold: mpd.mpdFile == model.file ? true : false
+                    font.bold: mpdState.mpdFile == model.file ? true : false
                     text: model.title
                     wrapMode: Text.Wrap
                 }
@@ -61,7 +58,7 @@ Kirigami.ScrollablePage {
         Connections {
             function onMpdPlaylistsChanged() {
                 playlistList.model.clear();
-                let playlists = mpd.mpdPlaylists;
+                let playlists = mpdState.mpdPlaylists;
                 for (let i in playlists) {
                     playlistList.model.append({
                         "title": playlists[i]
@@ -69,7 +66,7 @@ Kirigami.ScrollablePage {
                 }
             }
 
-            target: mpd
+            target: mpdState
         }
 
         model: ListModel {
