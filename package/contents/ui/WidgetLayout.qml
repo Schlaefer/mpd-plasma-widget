@@ -90,6 +90,7 @@ GridLayout {
 
             WidgetLabel {
                 id: songArtist
+                visible: notification.text.length === 0
 
                 Connections {
                     function onMpdInfoChanged() {
@@ -106,6 +107,7 @@ GridLayout {
 
             WidgetLabel {
                 id: songAlbum
+                visible: notification.text.length === 0
 
                 Connections {
                     function onMpdInfoChanged() {

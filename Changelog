@@ -1,3 +1,10 @@
+# 3.0
+- Checks if mpc is found before trying to execute commands with it.
+- Shows instruction message if mpc isn't found.
+- Improves check and reconnect if mpd-server is not found
+- Improves check and reconnect if network isn't available
+- Sticking with major version numbers, since this seems more robust on pling(?)
+
 # 2.0
 - Shows generic album-icon if no cover is available
 - Selects currently playing item when Queue window is shown

@@ -26,7 +26,7 @@ Item {
 
     Connections {
         function onCfgMpdHostChanged() {
-            mpdState.startup()
+            mpdState.connect()
         }
     }
 

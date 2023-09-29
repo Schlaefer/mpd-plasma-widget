@@ -11,7 +11,7 @@
         "Icon": "org.kde.plasma.mediacontroller",
         "Id": "com.siezi.plasma.mpdWidget",
         "Name": "MPD Plasma Widget",
-        "Version": "2.0",
+        "Version": "3.0",
         "Website": "https://www.pling.com/p/2086390"
     },
     "X-Plasma-API": "declarativeappletscript",

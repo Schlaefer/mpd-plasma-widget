@@ -7,6 +7,8 @@ import org.kde.plasma.core 2.0 as PlasmaCore
 Item {
     id: mpdRoot
 
+    property bool mpcAvailable: false
+    property bool mpcConnectionAvailable: false
     property string scriptRoot
     property string mpdFile: ""
     property int mpdVolume: 0
@@ -23,19 +25,112 @@ Item {
 
     }
 
-    function startup() {
-        update()
-        mpdRootIdleLoopTimer.start()
+
+    /**
+     * Starts the bootstrap process of a fresh connection to the mpd instance
+     */
+    function connect() {
+        if (mpcAvailable !== true) {
+            mpdRoot.checkMpcAvailable()
+            return
+        }
+
+        disconnect()
+        checkMpcConnectionAvailable()
     }
 
-    function reconnect() {
+
+    /**
+     * Stops the current connection to the mpd instance
+     */
+    function disconnect() {
         mpdRootExecutable.sources.forEach(source => {
                                               mpdRootExecutable.disconnectSource(
                                                   source)
                                           })
-        mpdRoot.update()
+        mpdRoot.mpcConnectionAvailable = false
+        mpdRootIdleLoopTimer.stop()
     }
 
+
+    /**
+     * Inits check if mpc binary available on the host system
+     */
+    function checkMpcAvailable() {
+        mpdRootExecutable.exec('which mpc #checkMpcAvailable')
+    }
+
+
+    /**
+     * Evaluates result if mpc binary is available on the host system
+     *
+     * Bootstraps MpdState executation if mpc binary is found. If so try to connect.
+     */
+    function onExecCheckMpcAvailable(exitCode, exitStatus, stdout, stderr) {
+        if (exitCode !== 0) {
+            root.appLastError = qsTr(
+                        "'mpc' binary wasn't found. - Please install mpc on your system. It is probably available in your system's package manager.")
+
+            return
+        }
+
+        mpdRoot.mpcAvailable = true
+        mpdRoot.connect()
+    }
+
+
+    /**
+     * Inits request if mpc is able to connect to mpd
+     */
+    function checkMpcConnectionAvailable() {
+        if (mpcAvailable !== true) {
+            return
+        }
+
+        mpdRootExecutable.exec(
+                    "mpc --host=" + cfgMpdHost + " status #checkMpcConnectionAvailable")
+    }
+
+
+    /**
+     * Evaluates check if mpc was able to connect to mpd
+     */
+    function onExecCheckMpcConnectionAvailable(exitCode, exitStatus, stdout, stderr) {
+        if (exitCode !== 0) {
+            root.appLastError = fmtErrorMessage(stderr)
+            mpdRootNetworkTimeout.start()
+
+            return
+        }
+
+        mpdRootNetworkTimeout.interval = mpdRootNetworkTimeout.startInterval
+        mpdRootIdleLoopTimer.start()
+        mpcConnectionAvailable = true
+        update()
+    }
+
+
+    /**
+     * Replace mpc error messages with our own
+     *
+     * @param {string} msg The mpc error message
+     */
+    function fmtErrorMessage(msg) {
+        let fmtMsg = msg
+        if (fmtMsg.includes("No route to host")) {
+            fmtMsg = qsTr(
+                        "Can't find the MPD-server. - Check the MPD-address in the widget configuration.")
+        } else if (fmtMsg.includes("Network is unreachable")) {
+            fmtMsg = qsTr("No network connection.")
+        }
+
+        return fmtMsg
+    }
+
+
+    /**
+     * Inits update of all mpd data required by our plasmoid
+     */
     function update() {
         mpdRoot.getInfo()
         mpdRoot.getVolume()
@@ -125,7 +220,16 @@ Item {
         return Object.keys(mpdRoot.mpdQueue).length
     }
 
+
+    /**
+     * Executes mpc commands
+     *
+     * @param {string} cmd Command to execute
+     */
     function mpcExec(cmd) {
+        if (mpcAvailable !== true || mpcConnectionAvailable !== true) {
+            return
+        }
         mpdRootExecutable.exec("mpc --host=" + cfgMpdHost + " " + cmd)
     }
 
@@ -174,9 +278,14 @@ Item {
     Timer {
         id: mpdRootNetworkTimeout
 
-        interval: 500
+        property int startInterval: 500
+
+        interval: startInterval
         running: false
+        triggeredOnStart: true
         onTriggered: {
+            disconnect()
+
             // Gradually increase reconnect time until we find a minimum time
             // necessary for a device stationary within the mpd network (desktop).
             // At worst try a reconnect every minute (devices leaving the
@@ -184,7 +293,7 @@ Item {
             if (interval < 60000)
                 interval = interval + 500
 
-            mpdRoot.reconnect()
+            mpdRoot.checkMpcConnectionAvailable()
         }
     }
 
@@ -200,7 +309,7 @@ Item {
         repeat: true
         onTriggered: {
             if ((2 * interval / 1000 + lastRun) < (Date.now() / 1000))
-                mpdRoot.reconnect()
+                mpdRoot.startup()
 
             lastRun = Date.now() / 1000
         }
@@ -228,22 +337,30 @@ Item {
     }
 
     Connections {
-        function onSourceRemoved(source) {
-            // Restart the idle loop
-            if (source.includes("#idleLoop"))
-                mpdRootIdleLoopTimer.start()
-        }
-
         function onExited(exitCode, exitStatus, stdout, stderr, source) {
             root.appLastError = ""
 
-            if (stderr !== "") {
-                // "No data is a successful request, but mpd didn't have any data.
-                if (!stderr.includes("No data")) {
-                    mpdRootNetworkTimeout.start()
-                    root.appLastError = stderr
+            if (source.includes("#checkMpcAvailable")) {
+                onExecCheckMpcAvailable(exitCode, exitStatus, stdout, stderr)
+                return
+            }
+
+            if (source.includes("#checkMpcConnectionAvailable")) {
+                onExecCheckMpcConnectionAvailable(exitCode, exitStatus,
+                                                  stdout, stderr)
+                return
+            }
+
+            if (exitCode !== 0) {
+                if (stderr.includes("No data")) {
+                    // "No data" answer from mpd is a succesfull request for us.
                     return
                 }
+
+                root.appLastError = fmtErrorMessage(stderr)
+                mpdRootNetworkTimeout.start()
+
+                return
             }
 
             if (source.includes("#readpicture")) {
@@ -254,6 +371,9 @@ Item {
             root.appLastError = stderr || ""
 
             if (source.includes("#idleLoop")) {
+                // Restart the idle loop
+                mpdRootIdleLoopTimer.start()
+
                 if (stdout.includes('player'))
                     mpdRoot.getInfo()
 
