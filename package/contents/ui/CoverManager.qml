@@ -165,7 +165,7 @@ QQ2.Item {
                                       "path": line
                                   }
                               })
-                mpdState.startup()
+                mpdState.connect()
             } else if (source.includes("#rotateCoverCache")) {
                 coverManager.getLocalCovers()
             }
