@@ -1,4 +1,5 @@
 # next
+- Fixes duplicate entries in queue not showing 
 - Fixes reconnect after wakeup
 
 # 3.0

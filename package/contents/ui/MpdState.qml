@@ -9,21 +9,14 @@ Item {
 
     property bool mpcAvailable: false
     property bool mpcConnectionAvailable: false
-    property string scriptRoot
-    property string mpdFile: ""
     property int mpdVolume: 0
-    property var mpdInfo: {
-
-    }
-    property var mpdQueue: {
-
-    }
-    property var mpdOptions: {
-
-    }
-    property var mpdPlaylists: {
-
-    }
+    property string mpdFile: ""
+    property string scriptRoot
+    property var mpdInfo: {}
+    property var mpdOptions: {}
+    property var mpdPlaylists: {}
+    property var mpdQueue: {}
+    readonly property string _songInfoQuery: '{[\\n\"artist\": \"%artist%\", ][\\n\"albumartist\": \"%albumartist%\", ][\\n\"album\": \"%album%\", ][\\n\"tracknumber\": \"%track%\", ]\\n\"title\": \"%title%\", [\\n\"date\": \"%date%\", ]\\n\"file\": \"%file%\",\\n\"position\": \"%position%\"},'
 
 
     /**
@@ -148,7 +141,7 @@ Item {
     }
 
     function getInfo() {
-        mpcExec("-f '{[\\n\"artist\": \"%artist%\", ][\\n\"albumartist\": \"%albumartist%\", ][\\n\"album\": \"%album%\", ][\\n\"tracknumber\": \"%track%\", ]\\n\"title\": \"%title%\", [\\n\"date\": \"%date%\", ]\\n\"file\": \"%file%\"\\n}' | head -n -2 #getInfo")
+        mpcExec("-f '" + _songInfoQuery + "' | head -n -2 #getInfo")
     }
 
     function removeFromQueue(position) {
@@ -168,11 +161,16 @@ Item {
     }
 
     function getQueue() {
-        mpcExec("playlist -f '\"%file%\": {[\\n\"artist\": \"%artist%\", ][\\n\"albumartist\": \"%albumartist%\", ][\\n\"album\": \"%album%\", ][\\n\"tracknumber\": \"%track%\", ]\\n\"title\": \"%title%\", [\\n\"date\": \"%date%\", ]\\n\"file\": \"%file%\",\\n\"position\": \"%position%\"},' #getQueue")
+        mpcExec("playlist -f '" + _songInfoQuery + "' #getQueue")
     }
 
-    function playInQueue(title) {
-        mpdCommandQueue.add("play \"" + title + "\"")
+    /**
+     * Play specific item in queue
+     *
+     * @param {int} position Position in queue
+     */
+    function playInQueue(position) {
+        mpdCommandQueue.add('play ' + position)
     }
 
     function getPlaylists() {
@@ -396,15 +394,15 @@ Item {
             } else if (source.includes("#getVolume")) {
                 mpdRoot.mpdVolume = parseInt(stdout.match(/volume:\W*(\d*)/)[1])
             } else if (source.includes("#getInfo")) {
-                // @TODO empty playlit
+                // @TODO empty playlist
                 if (!stdout)
                     return
 
-                let data = JSON.parse(stdout)
+                let data = JSON.parse(stdout.slice(0, -2))
                 mpdRoot.mpdFile = data.file
                 mpdRoot.mpdInfo = data
             } else if (source.includes("#getQueue")) {
-                let queue = JSON.parse("{" + stdout.slice(0, -2) + "}")
+                let queue = JSON.parse("[" + stdout.slice(0, -2) + "]")
                 mpdRoot.mpdQueue = queue
             } else if (source.includes("#getPlaylists")) {
                 let playlists = stdout.split("\n")

@@ -14,11 +14,17 @@ Kirigami.ScrollablePage {
 
         Kirigami.SwipeListItem {
             id: listItem
-
             width: ListView.view ? ListView.view.width : implicitWidth
             alternatingBackground: true
-            alternateBackgroundColor: mpdState.mpdFile == model.file ? Kirigami.Theme.highlightColor : Kirigami.Theme.alternateBackgroundColor
-            backgroundColor: mpdState.mpdFile == model.file ? Kirigami.Theme.highlightColor : Kirigami.Theme.backgroundColor
+            alternateBackgroundColor: isQueueItem(
+                                          model) ? Kirigami.Theme.highlightColor : Kirigami.Theme.alternateBackgroundColor
+            backgroundColor: isQueueItem(
+                                 model) ? Kirigami.Theme.highlightColor : Kirigami.Theme.backgroundColor
+
+            function isQueueItem(model) {
+                return (mpdState.mpdInfo.file == model.file)
+                        && (mpdState.mpdInfo.position == model.position)
+            }
 
             actions: [
                 Kirigami.Action {
@@ -56,15 +62,14 @@ Kirigami.ScrollablePage {
 
                         function onGotCover(coverPath) {
                             // @BOGUS Why did we do that? What's happening here?
-                            if (typeof(coverManager) === "undefined") {
+                            if (typeof (coverManager) === "undefined") {
                                 return
                             }
                             let cover = coverManager.getCover(model)
                             if (typeof (cover) === 'undefined') {
                                 return false
                             }
-                            coverManager.gotCover.disconnect(
-                                        onGotCover)
+                            coverManager.gotCover.disconnect(onGotCover)
                             setCover(cover)
                         }
 
@@ -83,7 +88,7 @@ Kirigami.ScrollablePage {
                         Layout.fillWidth: true
                         height: Math.max(implicitHeight,
                                          Kirigami.Units.iconSizes.smallMedium)
-                        font.bold: mpdState.mpdFile == model.file ? true : false
+                        font.bold: isQueueItem(model)
                         text: FormatHelpers.oneLine(model)
                         wrapMode: Text.Wrap
                     }
@@ -138,6 +143,5 @@ Kirigami.ScrollablePage {
         model: ListModel {}
     }
 
-    footer: WidgetQueueFooter {
-    }
+    footer: WidgetQueueFooter {}
 }
