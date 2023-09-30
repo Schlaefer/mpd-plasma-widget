@@ -1,3 +1,6 @@
+# next
+- Fixes reconnect after wakeup
+
 # 3.0
 - Checks if mpc is found before trying to execute commands with it.
 - Shows instruction message if mpc isn't found.

@@ -309,7 +309,7 @@ Item {
         repeat: true
         onTriggered: {
             if ((2 * interval / 1000 + lastRun) < (Date.now() / 1000))
-                mpdRoot.startup()
+                mpdRoot.connect()
 
             lastRun = Date.now() / 1000
         }
