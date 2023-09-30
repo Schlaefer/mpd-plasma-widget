@@ -7,11 +7,10 @@ QQ2.Item {
 
     signal gotCover(var status)
 
-    property var covers
-    property var fetchQueue
     property bool fetching: false
     property string filePrefix: "mpdcover-"
-
+    property var covers: ({})
+    property var fetchQueue: new CoverHelpers.FetchQueue()
 
     /**
      * @return {mixed}
@@ -76,17 +75,10 @@ QQ2.Item {
         gotCover(coverPath)
     }
 
-    QQ2.Component.onCompleted: {
-        covers = {}
-        fetchQueue = new CoverHelpers.FetchQueue()
-        fetching = false
-        coverRotateTimer.start()
-    }
-
     // Rotate cover cache
     QQ2.Timer {
         id: coverRotateTimer
-        running: false
+        running: true
         interval: 10800000
         repeat: true
         triggeredOnStart: true

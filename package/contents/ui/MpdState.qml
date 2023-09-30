@@ -12,10 +12,10 @@ Item {
     property int mpdVolume: 0
     property string mpdFile: ""
     property string scriptRoot
-    property var mpdInfo: {}
-    property var mpdOptions: {}
-    property var mpdPlaylists: {}
-    property var mpdQueue: {}
+    property var mpdInfo: ({})
+    property var mpdOptions: ({})
+    property var mpdPlaylists: ({})
+    property var mpdQueue: ({})
     readonly property string _songInfoQuery: '{[\\n\"artist\": \"%artist%\", ][\\n\"albumartist\": \"%albumartist%\", ][\\n\"album\": \"%album%\", ][\\n\"tracknumber\": \"%track%\", ]\\n\"title\": \"%title%\", [\\n\"date\": \"%date%\", ]\\n\"file\": \"%file%\",\\n\"position\": \"%position%\"},'
 
 
