@@ -45,7 +45,7 @@ class FetchQueue {
                 nextItem = this._queue[key]
             }
             else {
-                if (this._queue[key].priority > nextItem.priority) {
+                if (this._queue[key].priority < nextItem.priority) {
                     nextItem = this._queue[key]
                 }
             }
