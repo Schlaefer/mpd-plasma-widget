@@ -164,6 +164,7 @@ Item {
         mpcExec("playlist -f '" + _songInfoQuery + "' #getQueue")
     }
 
+
     /**
      * Play specific item in queue
      *
@@ -238,7 +239,7 @@ Item {
 
         property var cmdQueue: []
 
-        interval: 500
+        interval: 250
         running: true
         repeat: true
 
@@ -253,6 +254,28 @@ Item {
 
             let cmd = cmdQueue.shift()
             mpdRoot.mpcExec(cmd)
+        }
+    }
+
+    // If something is happening on the queue let's have it settle on the mpd side
+    Timer {
+        id: statusUpdateTimer
+        interval: 200
+        function startIfNotRunning() {
+            if (running) {
+                return
+            }
+            start()
+        }
+        onTriggered: {
+            mpdRoot.getQueue()
+            mpdRoot.getPlaylists()
+            // Mpc spams a new "playlist" event for every song added to the
+            // queue, so maybe dozens if e.g. an album/playlist is added.
+            // That's to fast for us to catch the last "player" event. We have
+            // to check what is playing after the queue changes.
+            // @MAYBE Performance: could be throttled (with a timer?) so we don't constantly trigger a the queue/playlists refresh
+            mpdRoot.getInfo()
         }
     }
 
@@ -382,21 +405,15 @@ Item {
                     mpdRoot.getOptions()
 
                 if (stdout.includes('playlist')) {
-                    mpdRoot.getQueue()
-                    mpdRoot.getPlaylists()
-                    // Mpc spams a new "playlist" event for every song added to the
-                    // queue, so maybe dozens if e.g. an album/playlist is added.
-                    // That's to fast for us to catch the last "player" event. We have
-                    // to check what is playing after the queue changes.
-                    // @MAYBE Performance: could be throttled (with a timer?) so we don't constantly trigger a the queue/playlists refresh
-                    mpdRoot.getInfo()
+                    statusUpdateTimer.startIfNotRunning()
                 }
             } else if (source.includes("#getVolume")) {
                 mpdRoot.mpdVolume = parseInt(stdout.match(/volume:\W*(\d*)/)[1])
             } else if (source.includes("#getInfo")) {
                 // @TODO empty playlist
-                if (!stdout)
+                if (!stdout) {
                     return
+                }
 
                 let data = JSON.parse(stdout.slice(0, -2))
                 mpdRoot.mpdFile = data.file

@@ -20,7 +20,7 @@ lockfile="${coverPath}.lock"
 if [ -f "${lockfile}" ]; then
     i=1
     # Observed worst case download time so far 30 seconds
-    waitTarget=120
+    waitTarget=200
     while [ -f "${lockfile}" -a $i -lt $waitTarget ]; do
         sleep 0.2
         ((i = i + 1))

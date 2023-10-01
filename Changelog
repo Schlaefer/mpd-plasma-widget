@@ -1,5 +1,7 @@
 # next
-- Improves application reliability with coverless files
+- Improves updating queue and playing status after playlist change
+- Improves handling of files without cover
+- Minor bugfixes
 
 # 3.1
 - Fixes duplicate entries in queue not showing 
