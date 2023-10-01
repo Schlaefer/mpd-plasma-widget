@@ -5,7 +5,7 @@ import org.kde.plasma.core 2.0 as PlasmaCore
 QQ2.Item {
     id: coverManager
 
-    signal gotCover(var status)
+    signal gotCover(string id)
 
     property bool fetching: false
     property var currentlyFetching
@@ -77,7 +77,7 @@ QQ2.Item {
         coverManager.fetchQueue.delete(id)
         fetching = false
 
-        gotCover(coverPath)
+        gotCover(id)
     }
 
     // Rotate cover cache

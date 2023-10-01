@@ -60,9 +60,12 @@ Kirigami.ScrollablePage {
                             image.source = coverPath
                         }
 
-                        function onGotCover(coverPath) {
+                        function onGotCover(id) {
                             // @BOGUS Why did we do that? What's happening here?
                             if (typeof (coverManager) === "undefined") {
+                                return
+                            }
+                            if (coverManager.getId(model) !== id) {
                                 return
                             }
                             let cover = coverManager.getCover(model)
