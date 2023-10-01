@@ -34,17 +34,17 @@ fi
 
 if [ ! -f "${coverPath}" ]; then
     touch "${lockfile}"
-    mpc --host=${1} readpicture "${2}" > "${coverPath}"
+    mpc --host=${1} readpicture "${2}" > "${coverPath}" 2>&1
+    noData=$(head -c 7 "${coverPath}")
+
+    if [ "$noData" = "No data" ]; then
+        echo "No data"
+        rm "${coverPath}"
+    else
+        echo -n "${coverPath}"
+    fi
+
     rm "${lockfile}"
-fi
-
-# Return path to current cover file
-echo -n "${coverPath}"
-
-# no cover found @TODO
-if grep -q volume "${coverPath}"; then
-    rm "${coverPath}"
-    exit 2
 fi
 
 exit 0

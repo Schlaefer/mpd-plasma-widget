@@ -8,9 +8,11 @@ QQ2.Item {
     signal gotCover(var status)
 
     property bool fetching: false
+    property var currentlyFetching
     property string filePrefix: "mpdcover-"
     property var covers: ({})
     property var fetchQueue: new CoverHelpers.FetchQueue()
+
 
     /**
      * @return {mixed}
@@ -60,14 +62,17 @@ QQ2.Item {
         return id
     }
 
-    function markFetched(coverPath, success) {
-        let id = idFromCoverPath(coverPath)
+    function markFetched(success) {
+        let id = getId(currentlyFetching)
+        let coverPath = cfgCacheRoot + '/' + getCoverFileName(currentlyFetching)
+
         let item = null
         if (success) {
             item = {
                 "path": coverPath
             }
         }
+
         coverManager.covers[id] = item
         coverManager.fetchQueue.delete(id)
         fetching = false
@@ -97,19 +102,9 @@ QQ2.Item {
         interval: 100
         triggeredOnStart: true
         onTriggered: {
-
-            // Alas we can't return, we just have to pound the fetch again, and again,
-            // and again … because Plasmacore.DataSource.exec loves to terminate
-            // scripts early. It just does it. We can't be sure that a fetch did
-            // actually make it through. Luckily PlamaCore.DataSource.exec recognizes
-            // if the same cmd was started before, is still running and therefore
-            // doesn't start it again. So there's no penalty trying to start it
-            // another time.
-            // @MAYBE Check if we can catch if we don't get an expected stdout (e.g.
-            // path) on the fetch result
-            // if (fetching) {
-            // return;
-            // }
+            if (fetching) {
+                return
+            }
             let itemToFetch = fetchQueue.next()
             if (!itemToFetch) {
                 fetchingQueueTimer.stop()
@@ -117,6 +112,7 @@ QQ2.Item {
             }
 
             fetching = true
+            currentlyFetching = itemToFetch
             mpdState.getCover(itemToFetch.file, getCoverFileName(itemToFetch),
                               cfgCacheRoot, filePrefix)
         }

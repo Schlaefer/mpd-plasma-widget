@@ -1,3 +1,6 @@
+# next
+- Improves application reliability with coverless files
+
 # 3.1
 - Fixes duplicate entries in queue not showing 
 - Fixes reconnect after wakeup

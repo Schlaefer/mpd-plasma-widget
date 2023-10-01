@@ -362,7 +362,7 @@ Item {
             }
 
             if (source.includes("#readpicture")) {
-                coverManager.markFetched(stdout, !stderr.includes("No data"))
+                coverManager.markFetched(!stdout.includes("No data"))
                 return
             }
 
