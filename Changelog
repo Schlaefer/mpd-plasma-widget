@@ -1,3 +1,6 @@
+# next
+- Adds shortcuts to Random (z) and Consume (r)
+
 # 3.2
 - Improves updating queue and playing status after playlist change
 - Improves handling of files without cover
