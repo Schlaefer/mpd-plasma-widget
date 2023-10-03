@@ -120,7 +120,7 @@ Kirigami.ScrollablePage {
                         icon.name: "edit-delete"
                         text: qsTr("Remove from Queue")
                         onTriggered: {
-                            mpdState.removeFromQueue(model.position)
+                            mpdState.removeFromQueue([model.position])
                         }
                     }
                 ]

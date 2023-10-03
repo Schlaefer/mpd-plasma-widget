@@ -11,9 +11,11 @@ Kirigami.MenuDialog {
             text: qsTr('Remove Songs Above')
             onTriggered: {
                 let i = index
+                let itemsToRemove = []
                 for (i; i > 0; i--) {
-                    mpdState.removeFromQueue(i)
+                    itemsToRemove.push(i)
                 }
+                mpdState.removeFromQueue(itemsToRemove)
                 queueList.lastManipulatedItem = index
             }
             enabled: index > 0
@@ -23,9 +25,11 @@ Kirigami.MenuDialog {
             text: qsTr('Remove Songs Below')
             onTriggered: {
                 let i = queueList.count - 1
+                let itemsToRemove = []
                 for (i; i > index; i--) {
-                    mpdState.removeFromQueue(i + 1)
+                    itemsToRemove.push(i + 1)
                 }
+                mpdState.removeFromQueue(itemsToRemove)
                 queueList.lastManipulatedItem = index
             }
             enabled: index < queueList.count - 1

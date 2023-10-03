@@ -174,9 +174,16 @@ Item {
         mpcExec("-f '" + _songInfoQuery + "' | head -n -2 #getInfo")
     }
 
-    // @TODO mpc allows multiple arguments, use for example in Remove Above/Below 
-    function removeFromQueue(position) {
-        mpcExec("del " + position)
+    /**
+     * Removes items from the queue
+     *
+     * @param {array} positions Positions of items to remove from the queue
+     */
+    function removeFromQueue(positions) {
+        if (!Array.isArray(positions)) {
+            throw new Error("Invalid argument: positions must be an array");
+        }
+        mpcExec("del " + positions.join(' '))
     }
 
     function playNext() {
