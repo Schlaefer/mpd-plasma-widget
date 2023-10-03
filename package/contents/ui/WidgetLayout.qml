@@ -2,7 +2,7 @@ import "../scripts/formatHelpers.js" as FormatHelpers
 import "./Components"
 import QtQuick 2.15
 import QtQuick.Controls 2.3
-import QtQuick.Layouts 1.0
+import QtQuick.Layouts 1.15
 import QtGraphicalEffects 1.12
 import org.kde.plasma.components 2.0 as PlasmaComponents
 import org.kde.kirigami 2.4 as Kirigami

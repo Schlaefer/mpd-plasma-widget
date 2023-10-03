@@ -1,11 +1,13 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.3
-import QtQuick.Layouts 1.0
+import QtQuick.Layouts 1.15
 import org.kde.plasma.components 2.0 as PlasmaComponents
 import org.kde.plasma.core 2.0 as PlasmaCore
 
 Item {
     id: mpdRoot
+
+    signal onSaveQueueAsPlaylist(bool success)
 
     property bool mpcAvailable: false
     property bool mpcConnectionAvailable: false
@@ -132,6 +134,34 @@ Item {
         mpdRoot.getOptions()
     }
 
+    /**
+     * Saves queue as playlist
+     *
+     * @param {sting} title playlist title in MPD
+     */
+    function saveQueueAsPlaylist(title) {
+        mpcExec("save " + bEsc(title) + " #saveQueueAsPlaylist")
+    }
+
+    /**
+     * Deletes a playlist
+     *
+     * @param {sting} title playlist title in MPD
+     */
+    function removePlaylist(title) {
+        mpcExec("rm " + bEsc(title))
+    }
+
+    /**
+     * Moves song in queue
+     *
+     * @param {int} from Position of the song to move (current)
+     * @param {int} to Positiong to move the song to (target)
+     */
+    function moveInQueue(from, to) {
+        mpcExec("move " + from + " " + to)
+    }
+
     function getVolume() {
         mpcExec("volume" + " #getVolume")
     }
@@ -144,8 +174,9 @@ Item {
         mpcExec("-f '" + _songInfoQuery + "' | head -n -2 #getInfo")
     }
 
+    // @TODO mpc allows multiple arguments, use for example in Remove Above/Below 
     function removeFromQueue(position) {
-        mpdCommandQueue.add("del " + position)
+        mpcExec("del " + position)
     }
 
     function playNext() {
@@ -219,6 +250,28 @@ Item {
         return Object.keys(mpdRoot.mpdQueue).length
     }
 
+    /**
+     * Escape special characters from strings before using as mpc arguments
+     *
+     * @param {string} str The string to quote
+     * @param {bool} quote Wrap the string in double quotes
+     * @return {string} The escaped string
+     */
+    function bEsc(str, quote = true) {
+        let specialChars = ['$', '`', '"', '\\']
+        let escapedStr = str.split('').map(character => {
+                                               if (specialChars.includes(
+                                                       character)) {
+                                                   return '\\' + character
+                                               } else {
+                                                   return character
+                                               }
+                                           }).join('')
+        if (quote) {
+            escapedStr = "\"" + escapedStr + "\""
+        }
+        return escapedStr
+    }
 
     /**
      * Executes mpc commands
@@ -289,7 +342,8 @@ Item {
         repeat: false
 
         onTriggered: {
-            mpdRoot.mpcExec('idle player mixer playlist options #idleLoop')
+            mpdRoot.mpcExec(
+                        'idle player mixer playlist stored_playlist options #idleLoop')
         }
     }
 
@@ -372,6 +426,13 @@ Item {
                 return
             }
 
+            if (source.includes("#saveQueueAsPlaylist")) {
+                onSaveQueueAsPlaylist(!exitCode)
+
+                return
+            }
+
+            //////// Everything below doesn't do error handling itsefl
             if (exitCode !== 0) {
                 if (stderr.includes("No data")) {
                     // "No data" answer from mpd is a succesfull request for us.
@@ -395,8 +456,9 @@ Item {
                 // Restart the idle loop
                 mpdRootIdleLoopTimer.start()
 
-                if (stdout.includes('player'))
+                if (stdout.includes('player')) {
                     mpdRoot.getInfo()
+                }
 
                 if (stdout.includes('mixer'))
                     mpdRoot.getVolume()
@@ -404,7 +466,8 @@ Item {
                 if (stdout.includes('options'))
                     mpdRoot.getOptions()
 
-                if (stdout.includes('playlist')) {
+                if (stdout.includes('playlist') || stdout.includes(
+                            'stored_playlist')) {
                     statusUpdateTimer.startIfNotRunning()
                 }
             } else if (source.includes("#getVolume")) {

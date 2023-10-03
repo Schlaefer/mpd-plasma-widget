@@ -1,6 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.3
-import QtQuick.Layouts 1.0
+import QtQuick.Layouts 1.15
 import QtGraphicalEffects 1.12
 import org.kde.plasma.components 2.0 as PlasmaComponents
 import org.kde.plasma.core 2.0 as PlasmaCore
@@ -38,7 +38,6 @@ Item {
         mipmap: true
         anchors.fill: parent
         Layout.maximumWidth: height > height ? width : height
-        // @MAYBE fillMode: Image.PreserveAspectCrop
         fillMode: Image.PreserveAspectFit
 
         function updateCover() {

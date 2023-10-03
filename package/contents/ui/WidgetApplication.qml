@@ -1,7 +1,8 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.3
-import QtQuick.Layouts 1.0
+import QtQuick.Layouts 1.15
 import org.kde.kirigami 2.20 as Kirigami
+import "./Components/Queue"
 
 Kirigami.ApplicationWindow {
     id: appWindow
@@ -10,7 +11,7 @@ Kirigami.ApplicationWindow {
     title: qsTr("MPD")
     pageStack.initialPage: queuePage
 
-    WidgetQueuePage {
+    QueuePage {
         id: queuePage
     }
 
@@ -26,8 +27,9 @@ Kirigami.ApplicationWindow {
                 checked: queuePage.visible
                 onTriggered: {
                     if (!queuePage.visible) {
-                        while (popupDialog.pageStack.depth > 0)popupDialog.pageStack.pop()
-                        popupDialog.pageStack.push(queuePage);
+                        while (popupDialog.pageStack.depth > 0)
+                        popupDialog.pageStack.pop()
+                        popupDialog.pageStack.push(queuePage)
                     }
                 }
             },
@@ -37,12 +39,12 @@ Kirigami.ApplicationWindow {
                 checked: playlistPage.visible
                 onTriggered: {
                     if (!playlistPage.visible) {
-                        while (popupDialog.pageStack.depth > 0)popupDialog.pageStack.pop()
-                        popupDialog.pageStack.push(playlistPage);
+                        while (popupDialog.pageStack.depth > 0)
+                        popupDialog.pageStack.pop()
+                        popupDialog.pageStack.push(playlistPage)
                     }
                 }
             }
         ]
     }
-
 }
