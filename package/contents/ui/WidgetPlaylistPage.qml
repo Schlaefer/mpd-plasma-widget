@@ -15,7 +15,7 @@ Kirigami.ScrollablePage {
         Kirigami.SwipeListItem {
             id: listItemPlaylist
 
-            alternatingBackground: true
+            // alternatingBackground: true
             onClicked: {
 
             }

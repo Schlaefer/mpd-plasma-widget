@@ -7,7 +7,7 @@ import "./Components/Queue"
 Kirigami.ApplicationWindow {
     id: appWindow
     flags: Qt.Widget
-    visible: false
+    // visible: false
     title: qsTr("MPD")
     pageStack.initialPage: queuePage
 
@@ -22,7 +22,7 @@ Kirigami.ApplicationWindow {
     footer: Kirigami.NavigationTabBar {
         actions: [
             Kirigami.Action {
-                iconName: "media-play"
+                iconName: "media-playback-playing"
                 text: qsTr("Queue")
                 checked: queuePage.visible
                 onTriggered: {

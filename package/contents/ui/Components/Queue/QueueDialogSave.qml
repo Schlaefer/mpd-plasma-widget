@@ -8,7 +8,7 @@ Kirigami.PromptDialog {
     id: dialog
 
     title: qsTr("Save Queue")
-    showCloseButton: false
+    standardButtons: Kirigami.Dialog.NoButton
 
     ColumnLayout {
         Kirigami.FormLayout {
@@ -155,7 +155,6 @@ Kirigami.PromptDialog {
                             text: listCombo.currentText
                             font.weight: Font.Bold
                         }
-                        // @TODO this spams a lot of loop errors from kirigami framework
                         Kirigami.InlineMessage {
                             Layout.fillWidth: true
                             visible: true

@@ -2,57 +2,113 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15 as QQC2
 import QtQuick.Layouts 1.15
 
-QQC2.GroupBox {
+QQC2.ToolBar {
     RowLayout {
-        anchors.right: parent.right
+        anchors.fill: parent
+        RowLayout {
+            Layout.alignment: Qt.AlignLeft
 
-        QQC2.CheckBox {
-            id: random
+            QQC2.ToolButton {
+                text: qsTr("Queue…")
+                icon.name: "media-playback-playing"
+                onClicked: menuB.open()
 
-            icon.name: "media-playlist-shuffle"
-            text: qsTr("Random")
-            onClicked: mpdState.toggleRandom()
+                QQC2.Menu {
+                    id: menuB
+                    QQC2.MenuItem {
+                        icon.name: "document-save-as"
+                        text: qsTr("Save Queue")
+                        // @todo
+                        // shortcut: "shift+s"
+                        onTriggered: {
+                            queueDialogSave.open()
+                        }
 
-            QQC2.ToolTip {
-                text: qsTr("Z")
-                visible: hovered
-            }
-
-            Shortcut {
-                sequence: "z"
-                onActivated: random.checked = !random.checked
-            }
-
-            Connections {
-                function onMpdOptionsChanged() {
-                    random.checked = mpdState.mpdOptions.random === "on"
+                        QueueDialogSave {
+                            id: queueDialogSave
+                        }
+                    }
+                    QQC2.MenuSeparator {}
+                    QQC2.MenuItem {
+                        text: qsTr("Clear Queue")
+                        icon.name: "bqm-remove"
+                        onTriggered: {
+                            mpdState.clearPlaylist()
+                        }
+                    }
                 }
-                target: mpdState
+            }
+
+            QQC2.ToolButton {
+                text: qsTr("Selected Items…")
+                icon.name: "checkbox"
+                onClicked: menuA.open()
+
+                QQC2.Menu {
+                    id: menuA
+                    QQC2.MenuItem {
+                        text: qsTr("Remove From Queue")
+                        icon.name: "bqm-remove"
+                        // @TODO
+                        // shortcut: "del"
+                        onTriggered: {
+                            let items = queueList.listManager.getCheckedMpd()
+                            mpdState.removeFromQueue(items)
+                        }
+                    }
+                }
             }
         }
 
-        QQC2.CheckBox {
-            id: consume
+        RowLayout {
+            Layout.alignment: Qt.AlignRight
 
-            icon.name: "tool-eraser-symbolic"
-            text: qsTr("Consume")
-            onClicked: mpdState.toggleConsume()
+            QQC2.CheckBox {
+                id: random
 
-            QQC2.ToolTip {
-                text: qsTr("R")
-                visible: hovered
-            }
+                icon.name: "media-playlist-shuffle"
+                text: qsTr("Random")
+                onClicked: mpdState.toggleRandom()
 
-            Shortcut {
-                sequence: "r"
-                onActivated: consume.checked = !consume.checked
-            }
-
-            Connections {
-                function onMpdOptionsChanged() {
-                    consume.checked = mpdState.mpdOptions.consume === "on"
+                QQC2.ToolTip {
+                    text: qsTr("Z")
                 }
-                target: mpdState
+
+                Shortcut {
+                    sequence: "z"
+                    onActivated: random.checked = !random.checked
+                }
+
+                Connections {
+                    function onMpdOptionsChanged() {
+                        random.checked = mpdState.mpdOptions.random === "on"
+                    }
+                    target: mpdState
+                }
+            }
+
+            QQC2.CheckBox {
+                id: consume
+
+                icon.name: "tool-eraser-symbolic"
+                text: qsTr("Consume")
+                onClicked: mpdState.toggleConsume()
+
+                QQC2.ToolTip {
+                    text: qsTr("R")
+                }
+
+                Shortcut {
+                    sequence: "r"
+                    onActivated: consume.checked = !consume.checked
+                }
+
+                Connections {
+                    function onMpdOptionsChanged() {
+                        consume.checked = mpdState.mpdOptions.consume === "on"
+                    }
+                    target: mpdState
+                }
             }
         }
     }
