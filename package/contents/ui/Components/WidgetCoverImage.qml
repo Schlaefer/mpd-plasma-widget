@@ -14,12 +14,31 @@ Item {
     Layout.minimumWidth: cfgHorizontalLayout ? parent.height : parent.width
     MouseArea {
         anchors.fill: parent
-        onClicked: mpdState.toggle()
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
+        onClicked: function (mouse) {
+            if (mouse.button == Qt.LeftButton) {
+                mpdState.toggle()
+            } 
+            if (mouse.button == Qt.RightButton) {
+                contextMenu.visible ? contextMenu.close() : contextMenu.popup()
+            }
+        }
+
         onWheel: wheel => {
                      volumeSlider.value = volumeSlider.value + wheel.angleDelta.y / 60
                  }
         onDoubleClicked: {
             mpdState.playNext()
+        }
+
+        Menu {
+            id: contextMenu
+            MenuItem {
+                text: qsTr("Clear Cover Cache")
+                onTriggered: {
+                    coverManager.clearCache()
+                }
+            }
         }
     }
 
@@ -48,9 +67,12 @@ Item {
             }
             coverManager.gotCover.disconnect(updateCover)
             if (cover === null) {
-                coverImage.source = ""
                 return
             }
+            // Force QML to update even if cover file stays the same. This helps if
+            // the cover "got stuck" for whatever reason: a play next even in the same
+            // album will always trigger.
+            coverImage.source = ""
             coverImage.source = cover
         }
 

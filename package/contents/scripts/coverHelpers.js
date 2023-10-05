@@ -1,11 +1,10 @@
-.pragma library
-
 /**
  * Implements a simple priority queue
  */
 class FetchQueue {
     constructor() {
         this._queue = {}
+        // this._debug = true
     }
 
     /**
@@ -16,6 +15,14 @@ class FetchQueue {
      * @param {int} priority Priority in the queue (the lower the number the higher the priority)
      */
     add(id, data, priority) {
+        // @BOGUS only happens on actual plasma desktop, never in the simulator
+        if (typeof(data) === 'undefined') {
+            return
+        }
+        if (this._queue[id] && this._queue[id].priority < priority) {
+            // Already exists with higher priority, don't lower it by accident
+            return
+        }
         this._queue[id] = {
             // Looks silly. But alas sometimes if you just do a "data: data" it will
             // store the whole queue-item as empty and therefore undefined. Don't know
@@ -27,6 +34,7 @@ class FetchQueue {
             },
             priority: priority
         }
+        this._debugMsg(`Added ${id} with priority ${priority}`)
     }
 
     /**
@@ -40,6 +48,7 @@ class FetchQueue {
             return false;
 
         let nextItem
+        // let nextItem = this._queue[keys[0]]
         keys.forEach(key => {
             if (!nextItem) {
                 nextItem = this._queue[key]
@@ -51,6 +60,7 @@ class FetchQueue {
             }
         }, this)
 
+        this._debugMsg(`next() returned ${nextItem.data.file} with priority ${nextItem.priority}`)
         return nextItem.data
     }
 
@@ -63,13 +73,10 @@ class FetchQueue {
         delete this._queue[id]
     }
 
-    /**
-     * Checks if queue has item with ID 
-     * 
-     * @param {string} id 
-     * @returns 
-     */
-    has(id) {
-        return id in this._queue
+    _debugMsg(msg) {
+        if (!this._debug) {
+            return
+        }
+        console.log("FetchQueue - " + msg)
     }
 }

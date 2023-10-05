@@ -12,6 +12,55 @@ Kirigami.ScrollablePage {
     title: qsTr("Queue")
     Layout.fillWidth: true
 
+    actions {
+        contextualActions: [
+            Kirigami.Action {
+                text: qsTr("Queue…")
+                icon.name: "media-playback-playing"
+
+                Kirigami.Action {
+                    icon.name: "document-save-as"
+                    text: qsTr("Save Queue")
+                    tooltip: qsTr("Shift+S")
+                    shortcut: "shift+s"
+                    onTriggered: {
+                        queueDialogSave.open()
+                    }
+                }
+                Kirigami.Action {
+                    separator: true
+                }
+                Kirigami.Action {
+                    text: qsTr("Clear Queue")
+                    icon.name: "bqm-remove"
+                    tooltip: qsTr("C")
+                    shortcut: "c"
+                    onTriggered: {
+                        mpdState.clearPlaylist()
+                    }
+                }
+
+                QueueDialogSave {
+                    id: queueDialogSave
+                }
+            },
+            Kirigami.Action {
+                text: qsTr("Selected Items…")
+                icon.name: "checkbox"
+
+                Kirigami.Action {
+                    text: qsTr("Remove From Queue")
+                    icon.name: "bqm-remove"
+                    shortcut: "del"
+                    onTriggered: {
+                        let items = queueList.listManager.getCheckedMpd()
+                        mpdState.removeFromQueue(items)
+                    }
+                }
+            }
+        ]
+    }
+
     ListView {
         id: queueList
 
@@ -34,8 +83,7 @@ Kirigami.ScrollablePage {
             }
             if (lastManipulatedItem !== -1) {
                 // @SOMEDAY The list redraw usually destroys or scrolling postion. Better than nothing
-                queueList.positionViewAtIndex(lastManipulatedItem,
-                                              ListView.Center)
+                queueList.positionViewAtIndex(lastManipulatedItem, ListView.Center)
                 // @SOMEDAY better highlight of item
                 queueList.currentIndex = lastManipulatedItem
                 lastManipulatedItem = -1
@@ -92,14 +140,11 @@ Kirigami.ScrollablePage {
                 // alternatingBackground: true
                 alternateBackgroundColor: isQueueItem(
                                               model) ? Kirigami.Theme.highlightColor : Kirigami.Theme.alternateBackgroundColor
-                backgroundColor: isQueueItem(
-                                     model) ? Kirigami.Theme.highlightColor : Kirigami.Theme.backgroundColor
+                backgroundColor: isQueueItem(model) ? Kirigami.Theme.highlightColor : Kirigami.Theme.backgroundColor
 
                 function isQueueItem(model) {
-                    return (mpdState.mpdInfo.file == model.file)
-                            && (mpdState.mpdInfo.position == model.position)
+                    return (mpdState.mpdInfo.file == model.file) && (mpdState.mpdInfo.position == model.position)
                 }
-
 
                 actions: [
                     Kirigami.Action {
@@ -114,6 +159,8 @@ Kirigami.ScrollablePage {
                         text: qsTr("Remove from Queue")
                         onTriggered: {
                             mpdState.removeFromQueue([model.position])
+                            // @TODO
+                            // queueList.lastManipulatedItem = index
                         }
                     }
                 ]
@@ -133,8 +180,7 @@ Kirigami.ScrollablePage {
                                                  startIndex = oldIndex
                                              }
                                              endIndex = newIndex
-                                             queueList.model.move(oldIndex,
-                                                                  newIndex, 1)
+                                             queueList.model.move(oldIndex, newIndex, 1)
                                          }
                         onDropped: {
                             queueList.lastManipulatedItem = endIndex
@@ -147,11 +193,13 @@ Kirigami.ScrollablePage {
                         id: checkBox
                         text: model.name
                         checked: model.checked
-                        onToggled: {
+                        onCheckedChanged: {
                             if (checked) {
                                 queueList.listManager.check(index)
+                                model.checked = true
                             } else {
                                 queueList.listManager.uncheck(index)
+                                model.checked = false
                             }
                         }
                     }
@@ -179,6 +227,10 @@ Kirigami.ScrollablePage {
                             if (coverManager.getId(model) !== id) {
                                 return
                             }
+                            getCover()
+                        }
+
+                        function getCover() {
                             let cover = coverManager.getCover(model)
                             if (typeof (cover) === 'undefined') {
                                 return false
@@ -204,40 +256,28 @@ Kirigami.ScrollablePage {
 
                         acceptedButtons: Qt.LeftButton | Qt.RightButton
 
-                        onClicked: mouse => {
-                                       if (mouse.button == Qt.LeftButton) {
-                                        //    mpdState.playInQueue(model.position)
-                                       }
-                                       if (mouse.button == Qt.RightButton) {
-                                           menu.visible ? menu.close(
-                                                              ) : menu.popup()
-                                       }
-                                   }
+                        onClicked: function (mouse) {
+                            if (mouse.button == Qt.LeftButton) {
+                                model.checked = !model.checked
+                            }
+                            if (mouse.button == Qt.RightButton) {
+                                contextMenu.visible ? contextMenu.close() : contextMenu.popup()
+                            }
+                        }
 
                         Menu {
-                            id: menu
-                            MenuItem {
-                                text: qsTr("Remove from Queue")
-                                icon.name: "edit-delete"
-                                onTriggered: {
-                                    mpdState.removeFromQueue([model.position])
-                                }
-                            }
-                            MenuSeparator {}
+                            id: contextMenu
                             MenuItem {
                                 text: qsTr("Select All")
-                                // @TODO
-                                // shortcut: "shift+v"
+                                // @SOMEDAY shortcut
                                 onTriggered: {
-                                    queueList.listManager.checkAll(
-                                                queueList.model)
+                                    queueList.listManager.checkAll(queueList.model)
                                     queueList.checkItems()
                                 }
                             }
                             MenuItem {
                                 text: qsTr("Deselect All")
-                                // @TODO
-                                // shortcut: "shift+v"
+                                // @SOMEDAY shortcut
                                 onTriggered: {
                                     queueList.listManager.reset()
                                     queueList.checkItems()
@@ -247,69 +287,59 @@ Kirigami.ScrollablePage {
                             MenuItem {
                                 text: qsTr('Select Neighbors by Album')
                                 visible: !checkBox.checked
-                                // @TODO Shortcut
-                                // shortcut: "B"
+                                // @SOMEDAY shortcut
                                 onTriggered: {
-                                    let albumItems = queueList.listManager.checkNeighboursAlbum(
-                                            queueList.model, model, index)
+                                    let albumItems = queueList.listManager.checkNeighboursAlbum(queueList.model,
+                                                                                                model, index)
                                     queueList.checkItems()
-                                    itemPlaylistDialog.close()
                                 }
                             }
                             MenuItem {
                                 text: qsTr('Deselect Neighbors by Album')
                                 visible: checkBox.checked
-                                // @TODO Shortcut
-                                // shortcut: "Shift+B"
+                                // @SOMEDAY shortcut
                                 onTriggered: {
-                                    let albumItems = queueList.listManager.uncheckNeighboursAlbum(
-                                            queueList.model, model, index)
+                                    let albumItems = queueList.listManager.uncheckNeighboursAlbum(queueList.model,
+                                                                                                  model, index)
                                     queueList.checkItems()
-                                    itemPlaylistDialog.close()
                                 }
                             }
                             MenuItem {
                                 text: qsTr('Select Neighbors by Album-Artist')
                                 visible: !checkBox.checked
-                                // @TODO Shortcut
-                                // shortcut: "B"
+                                // @SOMEDAY shortcut
                                 onTriggered: {
-                                    let albumItems = queueList.listManager.checkNeighboursArtist(
-                                            queueList.model, model, index)
+                                    let albumItems = queueList.listManager.checkNeighboursArtist(queueList.model,
+                                                                                                 model, index)
                                     queueList.checkItems()
-                                    itemPlaylistDialog.close()
                                 }
                             }
                             MenuItem {
                                 text: qsTr('Deselect Neighbors by Album-Artist')
                                 visible: checkBox.checked
-                                // @TODO Shortcut
-                                // shortcut: "Shift+B"
+                                // @SOMEDAY shortcut
                                 onTriggered: {
-                                    let albumItems = queueList.listManager.uncheckNeighboursArtist(
-                                            queueList.model, model, index)
+                                    let albumItems = queueList.listManager.uncheckNeighboursArtist(queueList.model,
+                                                                                                   model, index)
                                     queueList.checkItems()
-                                    itemPlaylistDialog.close()
                                 }
                             }
                             MenuSeparator {}
                             MenuItem {
                                 text: qsTr('Select Songs Above')
+                                // @SOMEDAY shortcut
                                 onTriggered: {
-                                    queueList.listManager.checkSongsAbove(
-                                                queueList.model, index)
+                                    queueList.listManager.checkSongsAbove(queueList.model, index)
                                     queueList.checkItems()
-                                    itemPlaylistDialog.close()
                                 }
                                 enabled: index > 0
                             }
                             MenuItem {
                                 text: qsTr('Select Songs Below')
+                                // @SOMEDAY shortcut
                                 onTriggered: {
-                                    queueList.listManager.checkSongsBelow(
-                                                queueList.model, index)
+                                    queueList.listManager.checkSongsBelow(queueList.model, index)
                                     queueList.checkItems()
-                                    itemPlaylistDialog.close()
                                 }
                                 enabled: index < queueList.count - 1
                             }
@@ -317,36 +347,45 @@ Kirigami.ScrollablePage {
 
                         ColumnLayout {
                             spacing: 0
-
+                            // @TODO text doesn't wrap
                             Row {
+                                Layout.leftMargin: Kirigami.Units.largeSpacing
+
                                 Label {
-                                    height: Math.max(
-                                                implicitHeight,
-                                                Kirigami.Units.iconSizes.smallMedium)
-                                    font.bold: true
-                                    // @TODO i10n
-                                    text: FormatHelpers.title(model)
+                                    // @SOMEDAY i10n
+                                    text: model.tracknumber + '. '
                                     wrapMode: Text.Wrap
                                 }
                                 Label {
-                                    height: Math.max(
-                                                implicitHeight,
-                                                Kirigami.Units.iconSizes.smallMedium)
+                                    font.bold: true
+                                    // @SOMEDAY i10n
+                                    text: model.title
+                                    wrapMode: Text.Wrap
+                                }
+                                Label {
                                     font.bold: listItem.isQueueItem(model)
-                                    // @TODO i18n
+                                    // @SOMEDAY i18n
                                     text: " - " + FormatHelpers.artist(model)
                                     wrapMode: Text.Wrap
                                 }
                             }
-                            Label {
-                                Layout.fillWidth: true
-                                height: Math.max(
-                                            implicitHeight,
-                                            Kirigami.Units.iconSizes.smallMedium)
-                                font.bold: listItem.isQueueItem(model)
-                                // @TODO i10n
-                                text: model.album || ''
-                                wrapMode: Text.Wrap
+                            Row {
+                                Layout.leftMargin: Kirigami.Units.largeSpacing
+
+                                Label {
+                                    font.bold: listItem.isQueueItem(model)
+                                    // @SOMEDAY i10n
+                                    text: model.album || ''
+                                    wrapMode: Text.Wrap
+                                }
+                                Label {
+                                    Layout.fillWidth: true
+                                    text: " (" + model.time + ")"
+                                    font.bold: listItem.isQueueItem(model)
+                                    // font.italic: true
+                                    // @SOMEDAY i10n
+                                    wrapMode: Text.Wrap
+                                }
                             }
                         }
                     }

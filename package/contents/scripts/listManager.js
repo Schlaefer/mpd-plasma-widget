@@ -1,5 +1,3 @@
-.pragma library
-
 class ListManager {
     constructor() {
         this._checked = []
@@ -80,7 +78,7 @@ class ListManager {
 
     checkSongsAbove(models, index) {
         let found = []
-        for (let i = 0; i < index; i++) {
+        for (let i = 0; i <= index; i++) {
             found.push(i)
         }
         this._debugMsg("checkSongsAbove: " + JSON.stringify(found))
@@ -89,7 +87,7 @@ class ListManager {
 
     checkSongsBelow(models, index) {
         let found = []
-        for (let i = index + 1; i < models.count; i++) {
+        for (let i = index; i < models.count; i++) {
             found.push(i)
         }
         this._debugMsg("checkSongsBelow: " + JSON.stringify(found))

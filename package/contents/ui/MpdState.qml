@@ -3,6 +3,7 @@ import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.15
 import org.kde.plasma.components 2.0 as PlasmaComponents
 import org.kde.plasma.core 2.0 as PlasmaCore
+import "./Components"
 
 Item {
     id: mpdRoot
@@ -18,7 +19,29 @@ Item {
     property var mpdOptions: ({})
     property var mpdPlaylists: ({})
     property var mpdQueue: ({})
-    readonly property string _songInfoQuery: '{[\\n\"artist\": \"%artist%\", ][\\n\"albumartist\": \"%albumartist%\", ][\\n\"album\": \"%album%\", ][\\n\"tracknumber\": \"%track%\", ]\\n\"title\": \"%title%\", [\\n\"date\": \"%date%\", ]\\n\"file\": \"%file%\",\\n\"position\": \"%position%\"},'
+    readonly property string _songInfoQuery: '{[\x1Fartist\x1F:\x1F%artist%\x1F,][\x1Falbumartist\x1F:\x1F%albumartist%\x1F,][\x1Falbum\x1F:\x1F%album%\x1F,][\x1Ftracknumber\x1F:\x1F%track%\x1F,]\x1Ftitle\x1F:\x1F%title%\x1F,[\x1Fdate\x1F:\x1F%date%\x1F,]\x1Ftime\x1F:\x1F%time%\x1F,\x1Ffile\x1F:\x1F%file%\x1F,\x1Fposition\x1F:\x1F%position%\x1F},'
+
+    readonly property var mpdCmds: {
+        "cSongInfo": "-f '%1' | head -n -2",
+        "connectionCheck": "mpc --host=%1 status",
+        "mpcCheck": "which mpc",
+        "optConsumeSet": "consume %1",
+        "optGet": "status '{\"consume\": \"%consume%\", \"random\": \"%random%\"}'",
+        "optRandomSet": "random %1",
+        "plLoad": "load %1",
+        "plRm": "rm -- %1",
+        "plSave": "save -- %1",
+        "plsGet": "lsplaylist",
+        "qClear": "clear",
+        "qDel": "del %1",
+        "qGet": "playlist -f '%1'",
+        "qMove": "move %1 %2",
+        "qNext": "next",
+        "qPlay": "play %1",
+        "qToggle": "toggle",
+        "volumeGet": "volume",
+        "volumeSet": "volume %1"
+    }
 
 
     /**
@@ -39,87 +62,56 @@ Item {
      * Stops the current connection to the mpd instance
      */
     function disconnect() {
-        mpdRootExecutable.sources.forEach(source => {
-                                              mpdRootExecutable.disconnectSource(
-                                                  source)
-                                          })
+        executable.disconnect()
         mpdRoot.mpcConnectionAvailable = false
         mpdRootIdleLoopTimer.stop()
     }
 
 
     /**
-     * Inits check if mpc binary available on the host system
+     * Check if mpc binary available on the host system
      */
     function checkMpcAvailable() {
-        mpdRootExecutable.exec('which mpc #checkMpcAvailable')
-    }
+        let callback = function (exitCode, exitStatus, stdout, stderr) {
+            if (exitCode !== 0) {
+                root.appLastError = qsTr(
+                            "'mpc' binary wasn't found. - Please install mpc on your system. It is probably available in your system's package manager.")
 
+                return
+            }
 
-    /**
-     * Evaluates result if mpc binary is available on the host system
-     *
-     * Bootstraps MpdState executation if mpc binary is found. If so try to connect.
-     */
-    function onExecCheckMpcAvailable(exitCode, exitStatus, stdout, stderr) {
-        if (exitCode !== 0) {
-            root.appLastError = qsTr(
-                        "'mpc' binary wasn't found. - Please install mpc on your system. It is probably available in your system's package manager.")
-
-            return
+            mpdRoot.mpcAvailable = true
+            mpdRoot.connect()
         }
 
-        mpdRoot.mpcAvailable = true
-        mpdRoot.connect()
+        executable.exec(mpdCmds.mpcCheck, callback)
     }
 
 
     /**
-     * Inits request if mpc is able to connect to mpd
+     * Checks if mpc is able to connect to mpd
      */
     function checkMpcConnectionAvailable() {
         if (mpcAvailable !== true) {
             return
         }
 
-        mpdRootExecutable.exec(
-                    "mpc --host=" + cfgMpdHost + " status #checkMpcConnectionAvailable")
-    }
+        let callback = function (exitCode, exitStatus, stdout, stderr) {
+            if (exitCode !== 0) {
+                root.appLastError = fmtErrorMessage(stderr)
+                mpdRootNetworkTimeout.start()
 
+                return
+            }
 
-    /**
-     * Evaluates check if mpc was able to connect to mpd
-     */
-    function onExecCheckMpcConnectionAvailable(exitCode, exitStatus, stdout, stderr) {
-        if (exitCode !== 0) {
-            root.appLastError = fmtErrorMessage(stderr)
-            mpdRootNetworkTimeout.start()
-
-            return
+            mpdRootNetworkTimeout.interval = mpdRootNetworkTimeout.startInterval
+            mpdRootIdleLoopTimer.start()
+            mpcConnectionAvailable = true
+            update()
         }
 
-        mpdRootNetworkTimeout.interval = mpdRootNetworkTimeout.startInterval
-        mpdRootIdleLoopTimer.start()
-        mpcConnectionAvailable = true
-        update()
-    }
-
-
-    /**
-     * Replace mpc error messages with our own
-     *
-     * @param {string} msg The mpc error message
-     */
-    function fmtErrorMessage(msg) {
-        let fmtMsg = msg
-        if (fmtMsg.includes("No route to host")) {
-            fmtMsg = qsTr(
-                        "Can't find the MPD-server. - Check the MPD-address in the widget configuration.")
-        } else if (fmtMsg.includes("Network is unreachable")) {
-            fmtMsg = qsTr("No network connection.")
-        }
-
-        return fmtMsg
+        // Bypass the build-in mpc faclities, they are gatekept by the result of this.
+        executable.exec(mpdCmds.connectionCheck.arg(cfgMpdHost), callback)
     }
 
 
@@ -134,14 +126,21 @@ Item {
         mpdRoot.getOptions()
     }
 
+
     /**
      * Saves queue as playlist
      *
      * @param {sting} title playlist title in MPD
      */
     function saveQueueAsPlaylist(title) {
-        mpcExec("save " + bEsc(title) + " #saveQueueAsPlaylist")
+        executable.execMpc(mpdCmds.plSave.arg(bEsc(title)), function (exitCode, exitStatus, stdout, stderr) {
+            if (exitCode !== 0) {
+                return
+            }
+            onSaveQueueAsPlaylist(!exitCode)
+        })
     }
+
 
     /**
      * Deletes a playlist
@@ -149,8 +148,9 @@ Item {
      * @param {sting} title playlist title in MPD
      */
     function removePlaylist(title) {
-        mpcExec("rm " + bEsc(title))
+        executable.execMpc(mpdCmds.plRm.arg(bEsc(title)))
     }
+
 
     /**
      * Moves song in queue
@@ -159,20 +159,50 @@ Item {
      * @param {int} to Positiong to move the song to (target)
      */
     function moveInQueue(from, to) {
-        mpcExec("move " + from + " " + to)
+        executable.execMpc(mpdCmds.qMove.arg(from).arg(to))
     }
 
     function getVolume() {
-        mpcExec("volume" + " #getVolume")
+        executable.execMpc(mpdCmds.volumeGet, function (exitCode, exitStatus, stdout, stderr) {
+            if (exitCode !== 0) {
+                return
+            }
+            mpdRoot.mpdVolume = parseInt(stdout.match(/volume:\W*(\d*)/)[1])
+        })
     }
 
     function setVolume(value) {
-        mpcExec("volume " + value + " #update")
+        executable.execMpc(mpdCmds.volumeSet.arg(value))
     }
 
     function getInfo() {
-        mpcExec("-f '" + _songInfoQuery + "' | head -n -2 #getInfo")
+        let cmd = mpdCmds.cSongInfo.arg(_songInfoQuery)
+        executable.execMpc(cmd, function (exitCode, exitStatus, stdout, stderr) {
+            if (exitCode !== 0) {
+                return
+            }
+            // @BOGUS empty playlist
+            if (!stdout) {
+                return
+            }
+
+            let data = songInfoQueryResponseToJson(stdout)[0]
+            mpdRoot.mpdFile = data.file
+            mpdRoot.mpdInfo = data
+        })
     }
+
+    function getQueue() {
+        let cmd = mpdCmds.qGet.arg(_songInfoQuery)
+        executable.execMpc(cmd, function (exitCode, exitStatus, stdout, stderr) {
+            if (exitCode !== 0) {
+                return
+            }
+            let queue = songInfoQueryResponseToJson(stdout)
+            mpdRoot.mpdQueue = queue
+        })
+    }
+
 
     /**
      * Removes items from the queue
@@ -181,25 +211,23 @@ Item {
      */
     function removeFromQueue(positions) {
         if (!Array.isArray(positions)) {
-            throw new Error("Invalid argument: positions must be an array");
+            throw new Error("Invalid argument: positions must be an array")
         }
-        mpcExec("del " + positions.join(' '))
+        executable.execMpc(mpdCmds.qDel.arg(positions.join(' ')))
     }
 
     function playNext() {
-        mpcExec("next")
+        executable.execMpc(mpdCmds.qNext)
     }
 
     function toggle() {
-        mpcExec("toggle")
+        executable.execMpc(mpdCmds.qToggle)
     }
 
     function clearPlaylist() {
-        mpdCommandQueue.add("clear")
-    }
-
-    function getQueue() {
-        mpcExec("playlist -f '" + _songInfoQuery + "' #getQueue")
+        // @BOGUS mpd/mpc doens't execute if used to fast
+        mpdCommandQueue.add(mpdCmds.qClear)
+        // executable.execMpc(mpdCmds.qClear)
     }
 
 
@@ -209,11 +237,26 @@ Item {
      * @param {int} position Position in queue
      */
     function playInQueue(position) {
-        mpdCommandQueue.add('play ' + position)
+        mpdCommandQueue.add(mpdCmds.qPlay.arg(position))
+        // executable.execMpc(mpdCmds.qPlay.arg(position))
     }
 
     function getPlaylists() {
-        mpcExec("lsplaylist #getPlaylists")
+        executable.execMpc(mpdCmds.plsGet, function (exitCode, exitStatus, stdout, stderr) {
+            if (exitCode !== 0) {
+                return
+            }
+            let playlists = stdout.split("\n")
+            playlists = playlists.filter(value => {
+                                             return value && !value.includes('m3u')
+                                         })
+            playlists = playlists.sort((a, b) => {
+                                           let textA = a.toUpperCase()
+                                           let textB = b.toUpperCase()
+                                           return (textA < textB) ? -1 : (textA > textB) ? 1 : 0
+                                       })
+            mpdRoot.mpdPlaylists = playlists
+        })
     }
 
     function playPlaylist(playlist) {
@@ -223,21 +266,27 @@ Item {
     }
 
     function getOptions() {
-        mpcExec("status '{\"consume\": \"%consume%\", \"random\": \"%random%\"}' #getOptions")
+        executable.execMpc(mpdCmds.optGet, function (exitCode, exitStatus, stdout, stderr) {
+            if (exitCode !== 0) {
+                return
+            }
+            mpdRoot.mpdOptions = JSON.parse(stdout)
+        })
     }
 
     function toggleRandom() {
         let newState = mpdRoot.mpdOptions.random === "on" ? "off" : "on"
-        mpdCommandQueue.add("random " + newState)
+        executable.execMpc(mpdCmds.optRandomSet.arg(newState))
     }
 
     function toggleConsume() {
         let newState = mpdRoot.mpdOptions.consume === "on" ? "off" : "on"
-        mpdCommandQueue.add("consume " + newState)
+        executable.execMpc(mpdCmds.optConsumeSet.arg(newState))
     }
 
     function addPlaylistToQueue(playlist) {
-        mpdCommandQueue.add("load \"" + playlist + "\"")
+        mpdCommandQueue.add(mpdCmds.plLoad.arg(bEsc(playlist)))
+        // executable.execMpc(mpdCmds.plLoad.arg(bEsc(playlist)))
     }
 
     function getCover(title, ctitle, root, prefix) {
@@ -249,13 +298,21 @@ Item {
         cmd += ' "' + root + '"'
         cmd += ' ' + prefix
         cmd += ' "' + ctitle.replace('/', '\\\\/') + '"'
-        cmd += ' #readpicture'
-        mpdRootExecutable.exec(cmd)
+
+        let clb = function (exitCode, exitStatus, stdout, stderr) {
+            if (exitCode !== 0) {
+                return
+            }
+
+            coverManager.markFetched(!stdout.includes("No data"))
+        }
+        executable.exec(cmd, clb)
     }
 
     function countQueue() {
         return Object.keys(mpdRoot.mpdQueue).length
     }
+
 
     /**
      * Escape special characters from strings before using as mpc arguments
@@ -267,8 +324,7 @@ Item {
     function bEsc(str, quote = true) {
         let specialChars = ['$', '`', '"', '\\']
         let escapedStr = str.split('').map(character => {
-                                               if (specialChars.includes(
-                                                       character)) {
+                                               if (specialChars.includes(character)) {
                                                    return '\\' + character
                                                } else {
                                                    return character
@@ -281,15 +337,32 @@ Item {
     }
 
     /**
-     * Executes mpc commands
+     * Parses a response made in the songInfoQuery-format to JSON
      *
-     * @param {string} cmd Command to execute
+     * Main task is to solve " quoting issues
+     *
+     * @param {string} response The raw text of the mpd response
+     * @return {array} Array of JSON objects each representing one song
      */
-    function mpcExec(cmd) {
-        if (mpcAvailable !== true || mpcConnectionAvailable !== true) {
-            return
+    function songInfoQueryResponseToJson(response) {
+        return JSON.parse('[' + response.replace(/"/g, '\\"').replace(/\x1F/g, '"').slice(0, -2) + ']')
+    }
+
+
+    /**
+     * Replace mpc error messages with our own
+     *
+     * @param {string} msg The mpc error message
+     */
+    function fmtErrorMessage(msg) {
+        let fmtMsg = msg
+        if (fmtMsg.includes("No route to host")) {
+            fmtMsg = qsTr("Can't find the MPD-server. - Check the MPD-address in the widget configuration.")
+        } else if (fmtMsg.includes("Network is unreachable")) {
+            fmtMsg = qsTr("No network connection.")
         }
-        mpdRootExecutable.exec("mpc --host=" + cfgMpdHost + " " + cmd)
+
+        return fmtMsg
     }
 
     // Throttle commands so we don't miss results on the event loop because we
@@ -313,7 +386,7 @@ Item {
             }
 
             let cmd = cmdQueue.shift()
-            mpdRoot.mpcExec(cmd)
+            executable.execMpc(cmd)
         }
     }
 
@@ -349,8 +422,29 @@ Item {
         repeat: false
 
         onTriggered: {
-            mpdRoot.mpcExec(
-                        'idle player mixer playlist stored_playlist options #idleLoop')
+            let clb = function (exitCode, exitStatus, stdout, stderr) {
+                if (exitCode !== 0) {
+                    return
+                }
+
+                // Restart the idle loop
+                mpdRootIdleLoopTimer.start()
+
+                if (stdout.includes('player')) {
+                    mpdRoot.getInfo()
+                }
+
+                if (stdout.includes('mixer'))
+                    mpdRoot.getVolume()
+
+                if (stdout.includes('options'))
+                    mpdRoot.getOptions()
+
+                if (stdout.includes('playlist') || stdout.includes('stored_playlist')) {
+                    statusUpdateTimer.startIfNotRunning()
+                }
+            }
+            executable.execMpc('idle player mixer playlist stored_playlist options #idleLoop', clb)
         }
     }
 
@@ -397,117 +491,26 @@ Item {
         }
     }
 
-    PlasmaCore.DataSource {
-        id: mpdRootExecutable
-
-        signal exited(int exitCode, int exitStatus, string stdout, string stderr, string sourceName)
-
-        function exec(cmd) {
-            connectSource(cmd)
-        }
-
-        engine: "executable"
-        connectedSources: []
-        onNewData: {
-            var exitCode = data["exit code"]
-            var exitStatus = data["exit status"]
-            var stdout = data["stdout"]
-            var stderr = data["stderr"]
-            exited(exitCode, exitStatus, stdout, stderr, sourceName)
-            disconnectSource(sourceName) // cmd finished
-        }
+    ExecMpc {
+        id: executable
     }
 
     Connections {
         function onExited(exitCode, exitStatus, stdout, stderr, source) {
             root.appLastError = ""
-
-            if (source.includes("#checkMpcAvailable")) {
-                onExecCheckMpcAvailable(exitCode, exitStatus, stdout, stderr)
-                return
-            }
-
-            if (source.includes("#checkMpcConnectionAvailable")) {
-                onExecCheckMpcConnectionAvailable(exitCode, exitStatus,
-                                                  stdout, stderr)
-                return
-            }
-
-            if (source.includes("#saveQueueAsPlaylist")) {
-                onSaveQueueAsPlaylist(!exitCode)
-
-                return
-            }
-
-            //////// Everything below doesn't do error handling itsefl
             if (exitCode !== 0) {
                 if (stderr.includes("No data")) {
                     // "No data" answer from mpd is a succesfull request for us.
                     return
                 }
-
                 root.appLastError = fmtErrorMessage(stderr)
                 mpdRootNetworkTimeout.start()
 
                 return
             }
-
-            if (source.includes("#readpicture")) {
-                coverManager.markFetched(!stdout.includes("No data"))
-                return
-            }
-
             root.appLastError = stderr || ""
-
-            if (source.includes("#idleLoop")) {
-                // Restart the idle loop
-                mpdRootIdleLoopTimer.start()
-
-                if (stdout.includes('player')) {
-                    mpdRoot.getInfo()
-                }
-
-                if (stdout.includes('mixer'))
-                    mpdRoot.getVolume()
-
-                if (stdout.includes('options'))
-                    mpdRoot.getOptions()
-
-                if (stdout.includes('playlist') || stdout.includes(
-                            'stored_playlist')) {
-                    statusUpdateTimer.startIfNotRunning()
-                }
-            } else if (source.includes("#getVolume")) {
-                mpdRoot.mpdVolume = parseInt(stdout.match(/volume:\W*(\d*)/)[1])
-            } else if (source.includes("#getInfo")) {
-                // @TODO empty playlist
-                if (!stdout) {
-                    return
-                }
-
-                let data = JSON.parse(stdout.slice(0, -2))
-                mpdRoot.mpdFile = data.file
-                mpdRoot.mpdInfo = data
-            } else if (source.includes("#getQueue")) {
-                let queue = JSON.parse("[" + stdout.slice(0, -2) + "]")
-                mpdRoot.mpdQueue = queue
-            } else if (source.includes("#getPlaylists")) {
-                let playlists = stdout.split("\n")
-                playlists = playlists.filter(value => {
-                                                 return value
-                                                 && !value.includes('m3u')
-                                             })
-                playlists = playlists.sort((a, b) => {
-                                               let textA = a.toUpperCase()
-                                               let textB = b.toUpperCase()
-                                               return (textA < textB) ? -1 : (textA > textB) ? 1 : 0
-                                           })
-                mpdRoot.mpdPlaylists = playlists
-            } else if (source.includes("#getOptions")) {
-                mpdRoot.mpdOptions = JSON.parse(stdout)
-            }
         }
 
-        target: mpdRootExecutable
+        target: executable
     }
 }

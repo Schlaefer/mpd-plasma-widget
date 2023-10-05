@@ -36,11 +36,6 @@ Kirigami.PromptDialog {
                 // @SOMEDAY Doesn't work.
                 focus: true
 
-                validator: RegExpValidator {
-                    // bug in mpc: interprets minus as first character as argument
-                    regExp: /^[^-].*/
-                }
-
                 function updatePlaylistTitleExists() {
                     playlistTitleExists = mpdState.mpdPlaylists.indexOf(
                                 text) !== -1

@@ -20,9 +20,9 @@ lockfile="${coverPath}.lock"
 if [ -f "${lockfile}" ]; then
     i=1
     # Observed worst case download time so far 30 seconds
-    waitTarget=200
+    waitTarget=60
     while [ -f "${lockfile}" -a $i -lt $waitTarget ]; do
-        sleep 0.2
+        sleep 1
         ((i = i + 1))
     done
     # Alas sometimes things go wrong while downloading, e.g. a plasmashell crash. This
@@ -35,13 +35,11 @@ fi
 if [ ! -f "${coverPath}" ]; then
     touch "${lockfile}"
     mpc --host=${1} readpicture "${2}" > "${coverPath}" 2>&1
-    noData=$(head -c 7 "${coverPath}")
 
-    if [ "$noData" = "No data" ]; then
+    # @SOMEDAY find a more efficient solution
+    if grep -q volume "${coverPath}"; then
         echo "No data"
         rm "${coverPath}"
-    else
-        echo -n "${coverPath}"
     fi
 
     rm "${lockfile}"

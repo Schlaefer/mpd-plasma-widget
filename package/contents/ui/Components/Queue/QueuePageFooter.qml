@@ -7,57 +7,6 @@ QQC2.ToolBar {
         anchors.fill: parent
         RowLayout {
             Layout.alignment: Qt.AlignLeft
-
-            QQC2.ToolButton {
-                text: qsTr("Queue…")
-                icon.name: "media-playback-playing"
-                onClicked: menuB.open()
-
-                QQC2.Menu {
-                    id: menuB
-                    QQC2.MenuItem {
-                        icon.name: "document-save-as"
-                        text: qsTr("Save Queue")
-                        // @todo
-                        // shortcut: "shift+s"
-                        onTriggered: {
-                            queueDialogSave.open()
-                        }
-
-                        QueueDialogSave {
-                            id: queueDialogSave
-                        }
-                    }
-                    QQC2.MenuSeparator {}
-                    QQC2.MenuItem {
-                        text: qsTr("Clear Queue")
-                        icon.name: "bqm-remove"
-                        onTriggered: {
-                            mpdState.clearPlaylist()
-                        }
-                    }
-                }
-            }
-
-            QQC2.ToolButton {
-                text: qsTr("Selected Items…")
-                icon.name: "checkbox"
-                onClicked: menuA.open()
-
-                QQC2.Menu {
-                    id: menuA
-                    QQC2.MenuItem {
-                        text: qsTr("Remove From Queue")
-                        icon.name: "bqm-remove"
-                        // @TODO
-                        // shortcut: "del"
-                        onTriggered: {
-                            let items = queueList.listManager.getCheckedMpd()
-                            mpdState.removeFromQueue(items)
-                        }
-                    }
-                }
-            }
         }
 
         RowLayout {

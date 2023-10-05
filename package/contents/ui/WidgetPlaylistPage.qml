@@ -22,17 +22,17 @@ Kirigami.ScrollablePage {
             width: ListView.view ? ListView.view.width : implicitWidth
             actions: [
                 Kirigami.Action {
-                    icon.name: "media-playback-start"
-                    text: qsTr("Replace Queue")
-                    onTriggered: {
-                        mpdState.playPlaylist(model.title)
-                    }
-                },
-                Kirigami.Action {
                     icon.name: "list-add"
                     text: qsTr("Add to Queue")
                     onTriggered: {
                         mpdState.addPlaylistToQueue(model.title)
+                    }
+                },
+                Kirigami.Action {
+                    icon.name: "media-playback-start"
+                    text: qsTr("Replace Queue")
+                    onTriggered: {
+                        mpdState.playPlaylist(model.title)
                     }
                 },
                 Kirigami.Action {
@@ -78,7 +78,7 @@ Kirigami.ScrollablePage {
                         }
                     ]
 
-                    // @TODO refactor and merge with QueueDialogSave confirmation
+                    // @SOMEDAY refactor and merge with QueueDialogSave confirmation
                     ColumnLayout {
                         spacing: Kirigami.Units.largeSpacing
 

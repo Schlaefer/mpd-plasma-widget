@@ -1,17 +1,25 @@
-import "../scripts/coverHelpers.js" as CoverHelpers
 import QtQuick 2.15 as QQ2
 import org.kde.plasma.core 2.0 as PlasmaCore
+import "./Components"
+import "../scripts/coverHelpers.js" as CoverHelpers
 
 QQ2.Item {
     id: coverManager
 
     signal gotCover(string id)
+    signal afterReset()
 
     property bool fetching: false
     property var currentlyFetching
     property string filePrefix: "mpdcover-"
     property var covers: ({})
     property var fetchQueue: new CoverHelpers.FetchQueue()
+
+    function reset() {
+        covers = {}
+        getLocalCovers()
+        afterReset()
+    }
 
 
     /**
@@ -30,19 +38,27 @@ QQ2.Item {
             }
         }
 
-        if (fetchQueue.has(title)) {
-            return undefined
-        }
-
         fetchQueue.add(title, item, priority)
         fetchingQueueTimer.start()
         return undefined
     }
 
     function getLocalCovers() {
-        let cmd = 'find ' + cfgCacheRoot + ' -name "' + coverManager.filePrefix
-            + '*" #getLocalCovers'
-        coverManagerExecutable.exec(cmd)
+        let cmd = 'find ' + cfgCacheRoot + ' -name "' + coverManager.filePrefix + '*"'
+        executable.exec(cmd, function (exitCode, exitStatus, stdout, stderr) {
+            let lines = stdout.split("\n")
+            lines.forEach(line => {
+                              if (!line) {
+                                  return
+                              }
+
+                              let id = coverManager.idFromCoverPath(line)
+                              coverManager.covers[id] = {
+                                  "path": line
+                              }
+                          })
+            mpdState.connect()
+        })
     }
 
     function getId(itemInfo) {
@@ -80,6 +96,13 @@ QQ2.Item {
         gotCover(id)
     }
 
+    function clearCache() {
+        let cmd = "rm " + cfgCacheRoot + "/" + filePrefix + "*"
+        executable.exec(cmd, function (exitCode, exitStatus, stdout, stderr) {
+            coverManager.reset()
+        })
+    }
+
     // Rotate cover cache
     QQ2.Timer {
         id: coverRotateTimer
@@ -88,9 +111,10 @@ QQ2.Item {
         repeat: true
         triggeredOnStart: true
         onTriggered: {
-            let cmd = 'find "' + cfgCacheRoot + '" -type f -name "' + filePrefix
-                + '*" -mtime +' + cfgCacheForDays + ' -exec rm "{}" \; #rotateCoverCache'
-            coverManagerExecutable.exec(cmd)
+            let cmd = 'find "' + cfgCacheRoot + '" -type f -name "' + filePrefix + '*" -mtime +' + cfgCacheForDays + ' -exec rm "{}" \;'
+            executable.exec(cmd, function (exitCode, exitStatus, stdout, stderr) {
+                coverManager.reset()
+            })
         }
     }
 
@@ -99,12 +123,13 @@ QQ2.Item {
         id: fetchingQueueTimer
         running: false
         repeat: true
-        interval: 100
+        interval: 500
         triggeredOnStart: true
         onTriggered: {
-            if (fetching) {
-                return
-            }
+            // @TODO
+            // if (fetching) {
+                // return
+            // }
             let itemToFetch = fetchQueue.next()
             if (!itemToFetch) {
                 fetchingQueueTimer.stop()
@@ -113,52 +138,18 @@ QQ2.Item {
 
             fetching = true
             currentlyFetching = itemToFetch
-            mpdState.getCover(itemToFetch.file, getCoverFileName(itemToFetch),
-                              cfgCacheRoot, filePrefix)
+            // @TODO Execute here instead of mpdstate?
+            mpdState.getCover(itemToFetch.file, getCoverFileName(itemToFetch), cfgCacheRoot, filePrefix)
         }
     }
 
-    PlasmaCore.DataSource {
-        id: coverManagerExecutable
-
-        signal exited(int exitCode, int exitStatus, string stdout, string stderr, string sourceName)
-
-        function exec(cmd) {
-            connectSource(cmd)
-        }
-
-        engine: "executable"
-        connectedSources: []
-        onNewData: {
-            var exitCode = data["exit code"]
-            var exitStatus = data["exit status"]
-            var stdout = data["stdout"]
-            var stderr = data["stderr"]
-            exited(exitCode, exitStatus, stdout, stderr, sourceName)
-            disconnectSource(sourceName) // cmd finished
-        }
+    ExecGeneric {
+        id: executable
     }
 
     QQ2.Connections {
-        function onExited(exitCode, exitStatus, stdout, stderr, source) {
-            if (source.includes("#getLocalCovers")) {
-                let lines = stdout.split("\n")
-                lines.forEach(line => {
-                                  if (!line) {
-                                      return
-                                  }
+        function onExited(exitCode, exitStatus, stdout, stderr, source) {}
 
-                                  let id = coverManager.idFromCoverPath(line)
-                                  coverManager.covers[id] = {
-                                      "path": line
-                                  }
-                              })
-                mpdState.connect()
-            } else if (source.includes("#rotateCoverCache")) {
-                coverManager.getLocalCovers()
-            }
-        }
-
-        target: coverManagerExecutable
+        target: executable
     }
 }

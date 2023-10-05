@@ -1,9 +1,13 @@
 # next
-- Adds reordering from items in the queue
-- Adds saving the queue as playlist
 - Adds removing a playlist
-- Adds shortcuts to Random (z) and Consume (r) checkboxes
-- Adds "Remove Songs Above/Below" to queue
+- Adds saving the queue as playlist
+- Adds reordering from items in the queue
+- Adds emptying the queue
+- Adds selecting items in the queue (with some advanced options in the context menu)
+- Adds removing selected items from the queue
+- Fixes issues if song meta information included special characters
+- Adds cover cache clearing (currently context-menu on the widget cover). - Use it in case of emergency. But! If someone(tm) stuffed a huge png into a file or the audio-file is very big (long duration) then loading the cover for the first time may take several seconds. Give it time, that's normal. 
+- Lots of code refactoring. - Some parts are trickling down into the "Yeah, that looks reasonable" bucket now. But the vast majority still falls out of the "What dis?" QML-cloud. It's a learning experience.
 
 # 3.2
 - Improves updating queue and playing status after playlist change

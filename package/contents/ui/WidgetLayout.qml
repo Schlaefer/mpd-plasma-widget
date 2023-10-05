@@ -62,6 +62,7 @@ GridLayout {
         Layout.fillHeight: true
 
         ColumnLayout {
+            // @TODO nothing to click if queue is empty
             MouseArea {
                 width: parent.width
                 height: parent.height

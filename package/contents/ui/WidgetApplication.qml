@@ -7,7 +7,7 @@ import "./Components/Queue"
 Kirigami.ApplicationWindow {
     id: appWindow
     flags: Qt.Widget
-    // visible: false
+    visible: false
     title: qsTr("MPD")
     pageStack.initialPage: queuePage
 
