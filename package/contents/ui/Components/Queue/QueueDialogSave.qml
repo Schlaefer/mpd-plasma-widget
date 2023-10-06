@@ -3,6 +3,7 @@ import QtQuick.Controls 2.3 as QQC2
 import QtQuick.Layouts 1.15
 import org.kde.kirigami 2.20 as Kirigami
 import org.kde.plasma.components 2.0 as PlasmaComponents
+import "./../../Components/Elements"
 
 Kirigami.PromptDialog {
     id: dialog
@@ -37,8 +38,7 @@ Kirigami.PromptDialog {
                 focus: true
 
                 function updatePlaylistTitleExists() {
-                    playlistTitleExists = mpdState.mpdPlaylists.indexOf(
-                                text) !== -1
+                    playlistTitleExists = mpdState.mpdPlaylists.indexOf(text) !== -1
                 }
 
                 onTextChanged: {
@@ -56,8 +56,7 @@ Kirigami.PromptDialog {
             QQC2.Button {
                 text: qsTr("Create Playlist")
                 icon.name: "document-new-symbolic"
-                enabled: !newPlaylistTitle.playlistTitleExists
-                         && newPlaylistTitle.text
+                enabled: !newPlaylistTitle.playlistTitleExists && newPlaylistTitle.text
                 onClicked: {
                     mpdState.onSaveQueueAsPlaylist.connect(afterSave)
                     mpdState.saveQueueAsPlaylist(newPlaylistTitle.text)
@@ -110,53 +109,21 @@ Kirigami.PromptDialog {
                 onClicked: {
                     playlistReplaceConfirmDialog.open()
                 }
+            }
 
-                Kirigami.PromptDialog {
-                    id: playlistReplaceConfirmDialog
-                    title: qsTr("Replace Playlist")
+            DialogConfirm {
+                id: playlistReplaceConfirmDialog
+                icon: "edit-delete"
+                title: qsTr("Replace Playlist")
+                label: qsTr("The following playlist will be replaced")
+                buttonText: qsTr("Replace Playlist")
+                itemTitle: listCombo.currentText
 
-                    showCloseButton: false
-                    standardButtons: Kirigami.Dialog.NoButton
-
-                    customFooterActions: [
-                        Kirigami.Action {
-                            text: qsTr("Replace Playlist")
-                            iconName: "dialog-ok"
-                            onTriggered: {
-                                mpdState.removePlaylist(listCombo.currentText)
-                                mpdState.saveQueueAsPlaylist(
-                                    listCombo.currentText)
-                                playlistReplaceConfirmDialog.close()
-                                dialog.close()
-                            }
-                        },
-                        Kirigami.Action {
-                            text: qsTr("Cancel")
-                            iconName: "cancel"
-                            onTriggered: {
-                                playlistReplaceConfirmDialog.close()
-                            }
-                        }
-                    ]
-
-                    ColumnLayout {
-                        spacing: Kirigami.Units.largeSpacing
-
-                        PlasmaComponents.Label {
-                            text: qsTr(
-                                      "The following playlist will be replaced:")
-                        }
-                        PlasmaComponents.Label {
-                            text: listCombo.currentText
-                            font.weight: Font.Bold
-                        }
-                        Kirigami.InlineMessage {
-                            Layout.fillWidth: true
-                            visible: true
-                            type: Kirigami.MessageType.Warning
-                            text: qsTr("This is a permanent operation.")
-                        }
-                    }
+                onConfirmed: function () {
+                    mpdState.removePlaylist(listCombo.currentText)
+                    mpdState.saveQueueAsPlaylist(listCombo.currentText)
+                    playlistReplaceConfirmDialog.close()
+                    dialog.close()
                 }
             }
         }

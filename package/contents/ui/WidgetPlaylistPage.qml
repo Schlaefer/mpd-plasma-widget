@@ -3,6 +3,7 @@ import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.15
 import org.kde.kirigami 2.20 as Kirigami
 import org.kde.plasma.components 2.0 as PlasmaComponents
+import "./Components/Elements"
 
 Kirigami.ScrollablePage {
     id: root
@@ -39,7 +40,7 @@ Kirigami.ScrollablePage {
                     icon.name: "edit-delete"
                     text: qsTr("Remove Playlist…")
                     onTriggered: {
-                        deletePrompt.open()
+                        deleteConfirmationDialog.open()
                     }
                 }
             ]
@@ -47,56 +48,22 @@ Kirigami.ScrollablePage {
             contentItem: RowLayout {
                 Label {
                     Layout.fillWidth: true
-                    height: Math.max(implicitHeight,
-                                     Kirigami.Units.iconSizes.smallMedium)
+                    height: Math.max(implicitHeight, Kirigami.Units.iconSizes.smallMedium)
                     text: model.title
                     wrapMode: Text.Wrap
                 }
 
-                Kirigami.PromptDialog {
-                    id: deletePrompt
+                DialogConfirm {
+                    id: deleteConfirmationDialog
+                    icon: "edit-delete"
                     title: qsTr("Delete Playlist")
+                    label: qsTr("The following playlist will be deleted")
+                    buttonText: qsTr("Delete Playlist")
+                    itemTitle: model.title
 
-                    standardButtons: Kirigami.Dialog.NoButton
-                    showCloseButton: false
-
-                    customFooterActions: [
-                        Kirigami.Action {
-                            text: qsTr("Delete Playlist")
-                            iconName: "dialog-ok"
-                            onTriggered: {
-                                mpdState.removePlaylist(model.title)
-                                deletePrompt.close()
-                            }
-                        },
-                        Kirigami.Action {
-                            text: qsTr("Cancel")
-                            iconName: "cancel"
-                            onTriggered: {
-                                deletePrompt.close()
-                            }
-                        }
-                    ]
-
-                    // @SOMEDAY refactor and merge with QueueDialogSave confirmation
-                    ColumnLayout {
-                        spacing: Kirigami.Units.largeSpacing
-
-                        PlasmaComponents.Label {
-                            text: qsTr(
-                                      "The following playlist will be deleted:")
-                        }
-                        PlasmaComponents.Label {
-                            text: model.title
-                            font.weight: Font.Bold
-                        }
-                        // @TODO this spams a lot of loop errors from kirigami framework
-                        Kirigami.InlineMessage {
-                            Layout.fillWidth: true
-                            visible: true
-                            type: Kirigami.MessageType.Warning
-                            text: qsTr("This is a permanent operation.")
-                        }
+                    onConfirmed: function () {
+                        mpdState.removePlaylist(model.title)
+                        deleteConfirmationDialog.close()
                     }
                 }
             }
