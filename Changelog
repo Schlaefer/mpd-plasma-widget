@@ -1,3 +1,6 @@
+# next
+- Performance improvements(tm)
+
 # 4.1
 - Adds simplified queue layout at narrow window size
 - Redesigns destructive actions confirmation dialogs
