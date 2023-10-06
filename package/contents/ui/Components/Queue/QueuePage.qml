@@ -219,8 +219,8 @@ Kirigami.ScrollablePage {
                     Image {
                         id: image
 
-                        Layout.preferredHeight: Kirigami.Units.iconSizes.medium
-                        Layout.preferredWidth: Kirigami.Units.iconSizes.medium
+                        Layout.preferredHeight: Kirigami.Units.iconSizes.large
+                        Layout.preferredWidth: Kirigami.Units.iconSizes.large
                         mipmap: true
                         fillMode: Image.PreserveAspectFit
 
@@ -262,18 +262,28 @@ Kirigami.ScrollablePage {
                         }
                     }
 
-                    MouseArea {
+                    // We need a layout-"anchor" for the MouseArea *and* to allow
+                    // fillWide-aware word-wrap on the text fields
+                    ColumnLayout {
+                        id: mouseAreaAnchor
+                        spacing: 0
                         Layout.fillWidth: true
                         Layout.fillHeight: true
 
-                        acceptedButtons: Qt.LeftButton | Qt.RightButton
+                        MouseArea {
+                            height: mouseAreaAnchor.height
+                            width: mouseAreaAnchor.width
 
-                        onClicked: function (mouse) {
-                            if (mouse.button == Qt.LeftButton) {
-                                model.checked = !model.checked
-                            }
-                            if (mouse.button == Qt.RightButton) {
-                                contextMenu.visible ? contextMenu.close() : contextMenu.popup()
+                            acceptedButtons: Qt.LeftButton | Qt.RightButton
+
+                            onClicked: function (mouse) {
+                                if (mouse.button == Qt.LeftButton) {
+                                    model.checked = !model.checked
+                                }
+                                if (mouse.button == Qt.RightButton) {
+                                    menuLoader.source = "QueueContextMenu.qml"
+                                    menuLoader.item.visible ? menuLoader.item.close() : menuLoader.item.popup()
+                                }
                             }
                         }
 
@@ -359,45 +369,35 @@ Kirigami.ScrollablePage {
 
                         ColumnLayout {
                             spacing: 0
-                            // @TODO text doesn't wrap
-                            Row {
+                            Layout.fillWidth: true
+                            Text {
+                                Layout.fillWidth: true
                                 Layout.leftMargin: Kirigami.Units.largeSpacing
-
-                                Label {
-                                    // @SOMEDAY i10n
-                                    text: model.tracknumber + '. '
-                                    wrapMode: Text.Wrap
-                                }
-                                Label {
-                                    font.bold: true
-                                    // @SOMEDAY i10n
-                                    text: model.title
-                                    wrapMode: Text.Wrap
-                                }
-                                Label {
-                                    font.bold: listItem.isQueueItem(model)
-                                    // @SOMEDAY i18n
-                                    text: " - " + FormatHelpers.artist(model)
-                                    wrapMode: Text.Wrap
-                                }
+                                Layout.rightMargin: Kirigami.Units.largeSpacing
+                                color: Kirigami.Theme.textColor
+                                font.bold: true
+                                text: model.title
+                                wrapMode: Text.WordWrap
                             }
-                            Row {
+                            Text {
+                                Layout.fillWidth: true
                                 Layout.leftMargin: Kirigami.Units.largeSpacing
+                                Layout.rightMargin: Kirigami.Units.largeSpacing
+                                color: Kirigami.Theme.textColor
+                                font.bold: listItem.isQueueItem(model)
+                                text: FormatHelpers.artist(model)
+                                wrapMode: Text.WordWrap
+                            }
 
-                                Label {
-                                    font.bold: listItem.isQueueItem(model)
-                                    // @SOMEDAY i10n
-                                    text: model.album || ''
-                                    wrapMode: Text.Wrap
-                                }
-                                Label {
-                                    Layout.fillWidth: true
-                                    text: " (" + model.time + ")"
-                                    font.bold: listItem.isQueueItem(model)
-                                    // font.italic: true
-                                    // @SOMEDAY i10n
-                                    wrapMode: Text.Wrap
-                                }
+                            Text {
+                                Layout.fillWidth: true
+                                Layout.leftMargin: Kirigami.Units.largeSpacing
+                                Layout.rightMargin: Kirigami.Units.largeSpacing
+                                color: Kirigami.Theme.textColor
+                                font.bold: listItem.isQueueItem(model)
+                                // @SOMEDAY i10n
+                                text: model.tracknumber + '. ' + (model.album || '') + " (" + model.time + ")"
+                                wrapMode: Text.WordWrap
                             }
                         }
                     }
