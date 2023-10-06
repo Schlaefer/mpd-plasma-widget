@@ -2,6 +2,7 @@
 - Redesigns destructive actions confirmation dialogs
 - Splits saving the queue into two separate dialogs
 - Fixes overflowing text in queue
+- Reduces RAM usage
 
 # 4.0
 - Adds removing a playlist

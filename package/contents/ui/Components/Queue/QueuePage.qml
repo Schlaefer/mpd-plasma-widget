@@ -270,23 +270,6 @@ Kirigami.ScrollablePage {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
 
-                        MouseArea {
-                            height: mouseAreaAnchor.height
-                            width: mouseAreaAnchor.width
-
-                            acceptedButtons: Qt.LeftButton | Qt.RightButton
-
-                            onClicked: function (mouse) {
-                                if (mouse.button == Qt.LeftButton) {
-                                    model.checked = !model.checked
-                                }
-                                if (mouse.button == Qt.RightButton) {
-                                    menuLoader.source = "QueueContextMenu.qml"
-                                    menuLoader.item.visible ? menuLoader.item.close() : menuLoader.item.popup()
-                                }
-                            }
-                        }
-
                         Menu {
                             id: contextMenu
                             MenuItem {
@@ -399,6 +382,27 @@ Kirigami.ScrollablePage {
                                 text: model.tracknumber + '. ' + (model.album || '') + " (" + model.time + ")"
                                 wrapMode: Text.WordWrap
                             }
+                        }
+
+                        MouseArea {
+                            height: mouseAreaAnchor.height
+                            width: mouseAreaAnchor.width
+
+                            acceptedButtons: Qt.LeftButton | Qt.RightButton
+
+                            onClicked: function (mouse) {
+                                if (mouse.button == Qt.LeftButton) {
+                                    model.checked = !model.checked
+                                }
+                                if (mouse.button == Qt.RightButton) {
+                                    menuLoader.source = "QueueContextMenu.qml"
+                                    menuLoader.item.visible ? menuLoader.item.close() : menuLoader.item.popup()
+                                }
+                            }
+                        }
+
+                        Loader {
+                            id: menuLoader
                         }
                     }
                 }
