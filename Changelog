@@ -1,5 +1,6 @@
 # next
 - Redesigns destructive actions confirmation dialogs
+- Splits saving the queue into two separate dialogs
 
 # 4.0
 - Adds removing a playlist

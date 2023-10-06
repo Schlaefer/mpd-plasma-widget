@@ -28,6 +28,15 @@ Kirigami.ScrollablePage {
                     }
                 }
                 Kirigami.Action {
+                    icon.name: "document-replace"
+                    text: qsTr("Replace Playlist")
+                    // tooltip: qsTr("Shift+S")
+                    // shortcut: "shift+s"
+                    onTriggered: {
+                        queueDialogReplacePl.open()
+                    }
+                }
+                Kirigami.Action {
                     separator: true
                 }
                 Kirigami.Action {
@@ -38,10 +47,6 @@ Kirigami.ScrollablePage {
                     onTriggered: {
                         mpdState.clearPlaylist()
                     }
-                }
-
-                QueueDialogSave {
-                    id: queueDialogSave
                 }
             },
             Kirigami.Action {
@@ -59,6 +64,13 @@ Kirigami.ScrollablePage {
                 }
             }
         ]
+    }
+
+    QueueDialogSave {
+        id: queueDialogSave
+    }
+    QueueDialogReplacePl {
+        id: queueDialogReplacePl
     }
 
     ListView {
