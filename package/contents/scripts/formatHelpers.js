@@ -18,15 +18,14 @@ function album(mpdItem) {
     return album
 }
 
-function oneLine(mpdItem) {
+// @SOMEDAY i10n i18n
+function queueAlbumLine(model) {
     let line = []
-    line.push(album(mpdItem))
-    line.push(title(mpdItem))
-    line.push(artist(mpdItem))
+    line.push(model.tracknumber ? model.tracknumber + ". " : "")
+    line.push(model.album || "")
+    line.push(line === "" ? "" : " ")
+    line.push("(" + model.time + ")")
 
-    line = line.filter((value) => {
-        return value
-    });
-
-    return line.join(" - ")
+    return line.join("")
 }
+

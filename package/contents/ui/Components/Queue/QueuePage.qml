@@ -301,8 +301,7 @@ Kirigami.ScrollablePage {
                                 Layout.rightMargin: Kirigami.Units.largeSpacing
                                 color: Kirigami.Theme.textColor
                                 font.bold: listItem.isQueueItem(model)
-                                // @SOMEDAY i10n
-                                text: model.tracknumber + '. ' + (model.album || '') + " (" + model.time + ")"
+                                text: FormatHelpers.queueAlbumLine(model)
                                 wrapMode: Text.WordWrap
                             }
                         }

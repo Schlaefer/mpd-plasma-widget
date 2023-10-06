@@ -1,4 +1,5 @@
 # next
+- Fixes "undefined" output in the queue album information
 - Performance improvements(tm)
 
 # 4.1
