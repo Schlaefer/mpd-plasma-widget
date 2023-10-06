@@ -6,6 +6,9 @@ import "./Components/Queue"
 
 Kirigami.ApplicationWindow {
     id: appWindow
+
+    readonly property int simpleLayoutBreakpoint: 400
+
     flags: Qt.Widget
     visible: false
     title: qsTr("MPD")
@@ -20,6 +23,7 @@ Kirigami.ApplicationWindow {
     }
 
     footer: Kirigami.NavigationTabBar {
+        visible: appWindow.width > simpleLayoutBreakpoint
         actions: [
             Kirigami.Action {
                 iconName: "media-playback-playing"

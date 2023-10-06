@@ -169,6 +169,7 @@ Kirigami.ScrollablePage {
                     Kirigami.Action {
                         icon.name: "edit-delete"
                         text: qsTr("Remove from Queue")
+                        visible: appWindow.width > appWindow.simpleLayoutBreakpoint
                         onTriggered: {
                             mpdState.removeFromQueue([model.position])
                             // @TODO
@@ -182,6 +183,7 @@ Kirigami.ScrollablePage {
                     Kirigami.ListItemDragHandle {
                         property int startIndex: -1
                         property int endIndex
+                        visible: appWindow.width > appWindow.simpleLayoutBreakpoint
 
                         Layout.preferredWidth: Kirigami.Units.iconSizes.medium
 
@@ -205,6 +207,7 @@ Kirigami.ScrollablePage {
                         id: checkBox
                         text: model.name
                         checked: model.checked
+                        visible: appWindow.width > appWindow.simpleLayoutBreakpoint
                         onCheckedChanged: {
                             if (checked) {
                                 queueList.listManager.check(index)

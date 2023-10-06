@@ -1,4 +1,5 @@
 # next
+- Adds simplified queue layout at narrow window size
 - Redesigns destructive actions confirmation dialogs
 - Splits saving the queue into two separate dialogs
 - Fixes overflowing text in queue
