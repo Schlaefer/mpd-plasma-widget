@@ -158,11 +158,10 @@ Kirigami.ScrollablePage {
 
                 actions: [
                     Kirigami.Action {
-                        property bool isPlaying: (listItem.isCurrentQueuePosition && mpdState.mpdPlaying)
-                        icon.name: isPlaying ? "media-playback-pause" : "media-playback-start"
+                        icon.name: (listItem.isCurrentQueuePosition && mpdState.mpdPlaying) ? "media-playback-pause" : "media-playback-start"
                         text: qsTr("Play Now")
                         onTriggered: {
-                            if (isPlaying) {
+                            if (listItem.isCurrentQueuePosition) {
                                 mpdState.toggle()
                             } else {
                                 mpdState.playInQueue(model.position)
