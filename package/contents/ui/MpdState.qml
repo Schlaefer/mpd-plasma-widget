@@ -190,7 +190,7 @@ Item {
             }
             let info = stdout.split("\n")
             // empty queue
-            if (info.length === 1) {
+            if (info.length < 3) {
                 this.playing = false
                 return
             }
@@ -382,7 +382,8 @@ Item {
 
         property var cmdQueue: []
 
-        interval: 250
+        // The statusUpdateTimer is chained to this!
+        interval: 200
         running: true
         repeat: true
 
@@ -400,10 +401,12 @@ Item {
         }
     }
 
-    // If something is happening on the queue let's have it settle on the mpd side
+    // If something is happening on the queue let's have it settle on the mpd side.
     Timer {
         id: statusUpdateTimer
-        interval: 200
+        // If we populate the queue and send play we have to wait long enough to catch
+        // our own cmd.
+        interval: 2 * mpdCommandQueue.interval 
         function startIfNotRunning() {
             if (running) {
                 return
@@ -413,11 +416,11 @@ Item {
         onTriggered: {
             mpdRoot.getQueue()
             mpdRoot.getPlaylists()
-            // Mpc spams a new "playlist" event for every song added to the
-            // queue, so maybe dozens if e.g. an album/playlist is added.
-            // That's to fast for us to catch the last "player" event. We have
-            // to check what is playing after the queue changes.
-            // @MAYBE Performance: could be throttled (with a timer?) so we don't constantly trigger a the queue/playlists refresh
+            // Mpc spams a new "playlist" event for every song added to the queue, so
+            // maybe dozens if e.g. an album/playlist is added. Sometimes that's too
+            // fast for us to catch the last "player" event indicated the new populate
+            // queue started. We have to check what is playing after the queue
+            // changes.
             mpdRoot.getInfo()
         }
     }
