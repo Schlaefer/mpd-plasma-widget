@@ -168,7 +168,13 @@ Item {
             if (exitCode !== 0) {
                 return
             }
-            mpdRoot.mpdVolume = parseInt(stdout.match(/volume:\W*(\d*)/)[1])
+
+            let parsed = stdout.match(/volume:\W*(\d*)/)
+            if (!parsed) {
+                throw new Error("Invalid mpc response: No volume information in " + stdout)
+            }
+
+            mpdRoot.mpdVolume = parsed[1]
         })
     }
 

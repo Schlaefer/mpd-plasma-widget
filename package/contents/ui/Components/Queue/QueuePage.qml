@@ -147,20 +147,18 @@ Kirigami.ScrollablePage {
 
             Kirigami.SwipeListItem {
                 id: listItem
-                // width: ListView.view ? ListView.view.width : implicitWidth
-                width: queueList.width
-                // alternatingBackground: true
-                alternateBackgroundColor: isQueueItem(
-                                              model) ? Kirigami.Theme.highlightColor : Kirigami.Theme.alternateBackgroundColor
-                backgroundColor: isQueueItem(model) ? Kirigami.Theme.highlightColor : Kirigami.Theme.backgroundColor
-                
-                function isQueueItem(model) {
-                    return (mpdState.mpdInfo.file == model.file) && (mpdState.mpdInfo.position == model.position)
-                }
+
+                /**
+                 * Song is the currenty playing/paused item in the queue
+                 */
+                property bool isCurrentQueuePosition: mpdState.mpdInfo.position === model.position
+
+                width: queueList.width ? queueList.width : implicitWidth
+                backgroundColor: isCurrentQueuePosition ? Kirigami.Theme.highlightColor : Kirigami.Theme.backgroundColor
 
                 actions: [
                     Kirigami.Action {
-                        property bool isPlaying:(listItem.isQueueItem(model) && mpdState.mpdPlaying)
+                        property bool isPlaying: (listItem.isCurrentQueuePosition && mpdState.mpdPlaying)
                         icon.name: isPlaying ? "media-playback-pause" : "media-playback-start"
                         text: qsTr("Play Now")
                         onTriggered: {
@@ -295,7 +293,7 @@ Kirigami.ScrollablePage {
                                 Layout.leftMargin: Kirigami.Units.largeSpacing
                                 Layout.rightMargin: Kirigami.Units.largeSpacing
                                 color: Kirigami.Theme.textColor
-                                font.bold: listItem.isQueueItem(model)
+                                font.bold: listItem.isCurrentQueuePosition
                                 text: FormatHelpers.artist(model)
                                 wrapMode: Text.WordWrap
                             }
@@ -305,7 +303,7 @@ Kirigami.ScrollablePage {
                                 Layout.leftMargin: Kirigami.Units.largeSpacing
                                 Layout.rightMargin: Kirigami.Units.largeSpacing
                                 color: Kirigami.Theme.textColor
-                                font.bold: listItem.isQueueItem(model)
+                                font.bold: listItem.isCurrentQueuePosition
                                 text: FormatHelpers.queueAlbumLine(model)
                                 wrapMode: Text.WordWrap
                             }
