@@ -15,6 +15,7 @@ Item {
     property int mpdVolume: 0
     property string mpdFile: ""
     property string scriptRoot
+    property bool mpdPlaying: false
     property var mpdInfo: ({})
     property var mpdOptions: ({})
     property var mpdPlaylists: ({})
@@ -22,7 +23,7 @@ Item {
     readonly property string _songInfoQuery: '{[\x1Fartist\x1F:\x1F%artist%\x1F,][\x1Falbumartist\x1F:\x1F%albumartist%\x1F,][\x1Falbum\x1F:\x1F%album%\x1F,][\x1Ftracknumber\x1F:\x1F%track%\x1F,]\x1Ftitle\x1F:\x1F%title%\x1F,[\x1Fdate\x1F:\x1F%date%\x1F,]\x1Ftime\x1F:\x1F%time%\x1F,\x1Ffile\x1F:\x1F%file%\x1F,\x1Fposition\x1F:\x1F%position%\x1F},'
 
     readonly property var mpdCmds: {
-        "cSongInfo": "-f '%1' | head -n -2",
+        "cSongInfo": "-f '%1'",
         "connectionCheck": "mpc --host=%1 status",
         "mpcCheck": "which mpc",
         "optConsumeSet": "consume %1",
@@ -181,14 +182,17 @@ Item {
             if (exitCode !== 0) {
                 return
             }
-            // @BOGUS empty playlist
-            if (!stdout) {
+            let info = stdout.split("\n")
+            // empty queue
+            if (info.length === 1) {
+                this.playing = false
                 return
             }
 
-            let data = songInfoQueryResponseToJson(stdout)[0]
-            mpdRoot.mpdFile = data.file
-            mpdRoot.mpdInfo = data
+            mpdInfo = songInfoQueryResponseToJson(info.shift())[0]
+            mpdFile = mpdInfo.file
+
+            mpdPlaying = info.shift().includes('[playing]')
         })
     }
 
@@ -345,7 +349,7 @@ Item {
      * @return {array} Array of JSON objects each representing one song
      */
     function songInfoQueryResponseToJson(response) {
-        return JSON.parse('[' + response.replace(/"/g, '\\"').replace(/\x1F/g, '"').slice(0, -2) + ']')
+        return JSON.parse('[' + response.replace(/"/g, '\\"').replace(/\x1F/g, '"').replace(/,\n?$/, "") + ']')
     }
 
 

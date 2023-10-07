@@ -153,17 +153,22 @@ Kirigami.ScrollablePage {
                 alternateBackgroundColor: isQueueItem(
                                               model) ? Kirigami.Theme.highlightColor : Kirigami.Theme.alternateBackgroundColor
                 backgroundColor: isQueueItem(model) ? Kirigami.Theme.highlightColor : Kirigami.Theme.backgroundColor
-
+                
                 function isQueueItem(model) {
                     return (mpdState.mpdInfo.file == model.file) && (mpdState.mpdInfo.position == model.position)
                 }
 
                 actions: [
                     Kirigami.Action {
-                        icon.name: "media-playback-start"
+                        property bool isPlaying:(listItem.isQueueItem(model) && mpdState.mpdPlaying)
+                        icon.name: isPlaying ? "media-playback-pause" : "media-playback-start"
                         text: qsTr("Play Now")
                         onTriggered: {
-                            mpdState.playInQueue(model.position)
+                            if (isPlaying) {
+                                mpdState.toggle()
+                            } else {
+                                mpdState.playInQueue(model.position)
+                            }
                         }
                     },
                     Kirigami.Action {
