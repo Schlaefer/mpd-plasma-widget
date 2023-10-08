@@ -1,3 +1,7 @@
+# next
+- Fixes keyboard shortcuts not working for "random" and "consume"
+- Replaces "random" and "consume" labels with shortcuts in narrow view
+
 # 4.2
 - Play icon for current song in queue shows playing status and toggles play/pause
 - Fixes "undefined" output in the queue album information

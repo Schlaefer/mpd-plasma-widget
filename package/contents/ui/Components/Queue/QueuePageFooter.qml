@@ -12,49 +12,60 @@ QQC2.ToolBar {
         RowLayout {
             Layout.alignment: Qt.AlignRight
 
-            QQC2.CheckBox {
-                id: random
+            // @SOMEDAY duplicating a lot here, figure it out
+            QueueFooterCheckbox {
+                id: randomCheckbox
 
-                icon.name: "media-playlist-shuffle"
-                text: qsTr("Random")
-                onClicked: mpdState.toggleRandom()
+                itDesc: qsTr("Random")
+                itSc: qsTr("z")
+                iconName: "media-playlist-shuffle"
 
-                QQC2.ToolTip {
-                    text: qsTr("Z")
-                }
-
-                Shortcut {
-                    sequence: "z"
-                    onActivated: random.checked = !random.checked
+                onCheckedChanged: {
+                    // This catches ourself immediatly reversing the command we got from mpd
+                    let localState = mpdState.mpdOptions.random === "on"
+                    if (randomCheckbox.checked === localState) {
+                        return
+                    }
+                    mpdState.toggleRandom()
                 }
 
                 Connections {
                     function onMpdOptionsChanged() {
-                        random.checked = mpdState.mpdOptions.random === "on"
+                        // This catches us getting our own cmd replied, so don't act on it.
+                        let localState = mpdState.mpdOptions.random === "on"
+                        if (randomCheckbox.checked === localState) {
+                            return
+                        }
+                        randomCheckbox.checked = mpdState.mpdOptions.random === "on"
                     }
                     target: mpdState
                 }
             }
 
-            QQC2.CheckBox {
-                id: consume
+            QueueFooterCheckbox {
+                id: consumeCheckbox
 
-                icon.name: "tool-eraser-symbolic"
-                text: qsTr("Consume")
-                onClicked: mpdState.toggleConsume()
+                itDesc: qsTr("Consume")
+                itSc: qsTr("r")
+                iconName: "tool-eraser-symbolic"
 
-                QQC2.ToolTip {
-                    text: qsTr("R")
-                }
-
-                Shortcut {
-                    sequence: "r"
-                    onActivated: consume.checked = !consume.checked
+                onCheckedChanged: {
+                    // This catches ourself immediatly reversing the command we got from mpd
+                    let localState = mpdState.mpdOptions.consume === "on"
+                    if (consumeCheckbox.checked === localState) {
+                        return
+                    }
+                    mpdState.toggleConsume()
                 }
 
                 Connections {
                     function onMpdOptionsChanged() {
-                        consume.checked = mpdState.mpdOptions.consume === "on"
+                        // This catches us getting our own cmd replied, so don't act on it.
+                        let localState = mpdState.mpdOptions.consume === "on"
+                        if (consumeCheckbox.checked === localState) {
+                            return
+                        }
+                        consumeCheckbox.checked = mpdState.mpdOptions.consume === "on"
                     }
                     target: mpdState
                 }
