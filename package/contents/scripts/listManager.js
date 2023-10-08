@@ -10,7 +10,7 @@ class ListManager {
 
     check(index) {
         this._checked.push(index)
-        this._debugMsg("Check: " + index)
+        this._debugMsg("check(" + index + ")")
     }
 
     checkAll(models) {
@@ -72,6 +72,10 @@ class ListManager {
             }
         }
 
+        found.sort(function (a, b) {
+            return a - b;
+        })
+
         this._debugMsg("_getNeighbours found: " + JSON.stringify(found))
         return found
     }
@@ -96,7 +100,7 @@ class ListManager {
 
     getChecked() {
         this._debugMsg("getChecked: " + JSON.stringify(this._checked))
-        return this._checked
+        return [...new Set(this._checked)]
     }
 
     /**
@@ -105,7 +109,9 @@ class ListManager {
      * @returns {array}
      */
     getCheckedMpd() {
-        return this._checked.map(item => { return item + 1 })
+        let items = this.getChecked().map(item => { return item + 1 })
+        this._debugMsg(items)
+        return items
     }
 
     _debugMsg(msg) {
