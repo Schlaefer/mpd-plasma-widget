@@ -1,4 +1,4 @@
-# next
+# 4.3
 - Fixes Play button of current song in queue restarts song instead of resuming
 - Fixes keyboard shortcuts not working for "random" and "consume"
 - Fixes selected songs not reliably removed from queue
