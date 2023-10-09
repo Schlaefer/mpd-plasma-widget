@@ -1,5 +1,6 @@
 # 4.4
 - Fixes play button in queue not switching from play to pause when queue ends
+- Fixes "consume" icon missing (using breeze theme icon now).
 
 # 4.3
 - Fixes Play button of current song in queue restarts song instead of resuming

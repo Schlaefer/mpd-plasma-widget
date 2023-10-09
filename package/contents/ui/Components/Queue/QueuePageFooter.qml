@@ -47,7 +47,7 @@ QQC2.ToolBar {
 
                 itDesc: qsTr("Consume")
                 itSc: qsTr("r")
-                iconName: "tool-eraser-symbolic"
+                iconName: "draw-eraser"
 
                 onCheckedChanged: {
                     // This catches ourself immediatly reversing the command we got from mpd
