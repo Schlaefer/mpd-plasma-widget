@@ -191,7 +191,7 @@ Item {
             let info = stdout.split("\n")
             // empty queue
             if (info.length < 3) {
-                this.playing = false
+                mpdPlaying = false
                 return
             }
 
