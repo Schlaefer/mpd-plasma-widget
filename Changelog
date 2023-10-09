@@ -1,3 +1,6 @@
+# 4.5
+- Fixes release on store.kde.org
+
 # 4.4
 - Fixes play button in queue not switching from play to pause when queue ends
 - Fixes "consume" icon missing (using breeze theme icon now).
