@@ -7,7 +7,7 @@ import "../Elements"
 
 Kirigami.PromptDialog {
     id: root
-    title: qsTr("Save to New Playlist")
+    title: qsTr("Save Queue as New Playlist")
     standardButtons: Kirigami.Dialog.NoButton
     showCloseButton: false
 
@@ -26,6 +26,7 @@ Kirigami.PromptDialog {
             function afterSave(success) {
                 if (success) {
                     newPlaylistErrorMsg.visible = false
+                    showPassiveNotification(qsTr('Saved'), 1000)
                     root.close()
                 } else {
                     newPlaylistErrorMsg.visible = true
@@ -47,7 +48,7 @@ Kirigami.PromptDialog {
             id: newPlaylistTitle
             Layout.fillWidth: true
             property bool playlistTitleExists
-            placeholderText: qsTr("Playlist Name…")
+            placeholderText: qsTr("New Playlist Name…")
             // Doesn't work due to animation(?), we use a timer instead.
 
             function updatePlaylistTitleExists() {

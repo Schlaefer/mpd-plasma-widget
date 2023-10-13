@@ -7,7 +7,7 @@ QQ2.Item {
     id: coverManager
 
     signal gotCover(string id)
-    signal afterReset()
+    signal afterReset
 
     property bool fetching: false
     property var currentlyFetching
@@ -44,19 +44,20 @@ QQ2.Item {
     }
 
     function getLocalCovers() {
-        let cmd = 'find ' + cfgCacheRoot + ' -name "' + coverManager.filePrefix + '*"'
+        let cmd = 'find ' + cfgCacheRoot + ' -name "' + coverManager.filePrefix + '*-large.jpg"'
         executable.exec(cmd, function (exitCode, exitStatus, stdout, stderr) {
             let lines = stdout.split("\n")
-            lines.forEach(line => {
-                              if (!line) {
-                                  return
-                              }
+            lines.forEach(function (line) {
+                if (!line) {
+                    return
+                }
 
-                              let id = coverManager.idFromCoverPath(line)
-                              coverManager.covers[id] = {
-                                  "path": line
-                              }
-                          })
+                line = line.replace("-large.jpg", "")
+                let id = coverManager.idFromCoverPath(line)
+                coverManager.covers[id] = {
+                    "path": line
+                }
+            })
             mpdState.connect()
         })
     }
@@ -128,7 +129,7 @@ QQ2.Item {
         onTriggered: {
             // @TODO
             // if (fetching) {
-                // return
+            // return
             // }
             let itemToFetch = fetchQueue.next()
             if (!itemToFetch) {

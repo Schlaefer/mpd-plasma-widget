@@ -3,35 +3,51 @@ import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.15
 import org.kde.kirigami 2.20 as Kirigami
 import org.kde.plasma.components 2.0 as PlasmaComponents
-import "./Components/Elements"
+import "../../Components/Elements"
 
 Kirigami.ScrollablePage {
     id: root
+
+    property int depth: 1
+    readonly property string globalShortcut: "3"
+
     visible: false
     title: qsTr("Playlists")
+
+    globalToolBarStyle: Kirigami.ApplicationHeaderStyle.None
+    header: ToolBar {
+        RowLayout {
+            anchors.fill: parent
+            GlobalNav {
+                parentWidth: root.width
+            }
+        }
+    }
 
     Component {
         id: delegateComponentPlaylists
 
-        Kirigami.SwipeListItem {
+        SwipeListItemGeneric {
             id: listItemPlaylist
 
-            // alternatingBackground: true
             onClicked: {
-
+                appWindow.pageStack.push(Qt.resolvedUrl("PlaylistSongsPage.qml"), {
+                                               "depth": root.depth + 1,
+                                               "playlistId": model.title
+                                           })
             }
             width: ListView.view ? ListView.view.width : implicitWidth
             actions: [
                 Kirigami.Action {
                     icon.name: "list-add"
-                    text: qsTr("Add to Queue")
+                    text: qsTr("Add Playlist to Queue")
                     onTriggered: {
                         mpdState.addPlaylistToQueue(model.title)
                     }
                 },
                 Kirigami.Action {
                     icon.name: "media-playback-start"
-                    text: qsTr("Replace Queue")
+                    text: qsTr("Replace Queue with Playlist")
                     onTriggered: {
                         mpdState.playPlaylist(model.title)
                     }
@@ -52,7 +68,6 @@ Kirigami.ScrollablePage {
                     text: model.title
                     wrapMode: Text.Wrap
                 }
-
                 DialogConfirm {
                     id: deleteConfirmationDialog
                     icon: "edit-delete"
@@ -70,7 +85,7 @@ Kirigami.ScrollablePage {
         }
     }
 
-    ListView {
+    ListViewGeneric {
         id: playlistList
 
         delegate: delegateComponentPlaylists

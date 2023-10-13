@@ -5,8 +5,9 @@ import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.plasmoid 2.0
 
 Item {
-    id: root
+    id: main
 
+    property alias appWindow: appWindowLoader.item
     property bool cfgHorizontalLayout: Plasmoid.configuration.cfgHorizontalLayout
     property bool cfgSolidBackground: Plasmoid.configuration.cfgSolidBackground
     property int cfgCornerRadius: Plasmoid.configuration.cfgCornerRadius
@@ -23,6 +24,19 @@ Item {
     Layout.preferredWidth: 300
     Layout.preferredHeight: 410
     Plasmoid.backgroundHints: cfgSolidBackground ? PlasmaCore.Types.StandardBackground : PlasmaCore.Types.NoBackground
+
+    Component.onCompleted: {
+//        toggleAppWindow()
+    }
+
+    function toggleAppWindow() {
+        if (!appWindowLoader.item) {
+            appWindowLoader.source = "Components/Application/ApplicationWindow.qml"
+        } else {
+            appWindowLoader.item.visible = appWindowLoader.item.visible ? false : true
+        }
+        appWindowUnloader.restart()
+    }
 
     Connections {
         function onCfgMpdHostChanged() {
@@ -41,11 +55,25 @@ Item {
 
     // Widget shown on desktop
     WidgetLayout {
+        // @TODO currently used to access volmeslider
+        id: widgetLayout
         anchors.fill: parent
     }
 
-    // Popup Dialog
-    WidgetApplication {
-        id: popupDialog
+    Loader {
+        id: appWindowLoader
+    }
+
+    Timer {
+        id: appWindowUnloader
+        interval: 60000
+        onTriggered: {
+            if (appWindowLoader.item.visible) {
+                start()
+                return
+            }
+            appWindowLoader.source = ""
+            mpdState.library = undefined
+        }
     }
 }

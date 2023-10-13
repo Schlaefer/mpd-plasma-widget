@@ -13,6 +13,7 @@ PlasmaComponents.Label {
     Layout.fillWidth: true
 
     layer.enabled: !cfgSolidBackground
+    // @TODO looks to strong in light plasma theme/desktop background
     layer.effect: DropShadow {
         verticalOffset: 1
         horizontalOffset: 0

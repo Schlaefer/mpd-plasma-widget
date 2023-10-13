@@ -6,7 +6,7 @@ import org.kde.plasma.components 2.0 as PlasmaComponents
 
 Kirigami.PromptDialog {
     id: root
-    title: qsTr("Replace Existing Playlist")
+    title: qsTr("Save Queue and Replace Playlist…")
     standardButtons: Kirigami.Dialog.NoButton
     showCloseButton: false
 

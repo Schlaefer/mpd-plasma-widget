@@ -4,10 +4,12 @@ import QtQuick.Layouts 1.15
 import org.kde.plasma.components 2.0 as PlasmaComponents
 import org.kde.plasma.core 2.0 as PlasmaCore
 import "./Components"
+import "../scripts/songLibrary.js" as SongLibrary
 
 Item {
     id: mpdRoot
 
+    signal gotPlaylist(var plData)
     signal onSaveQueueAsPlaylist(bool success)
 
     property bool mpcAvailable: false
@@ -16,34 +18,39 @@ Item {
     property string mpdFile: ""
     property string scriptRoot
     property bool mpdPlaying: false
+    property var library
+    property bool libraryRequested: false
     property var mpdInfo: ({})
     property var mpdOptions: ({})
     property var mpdPlaylists: ({})
-    property var mpdQueue: ({})
+    property var mpdQueue: []
     readonly property string _songInfoQuery: '{[\x1Fartist\x1F:\x1F%artist%\x1F,][\x1Falbumartist\x1F:\x1F%albumartist%\x1F,][\x1Falbum\x1F:\x1F%album%\x1F,][\x1Ftracknumber\x1F:\x1F%track%\x1F,]\x1Ftitle\x1F:\x1F%title%\x1F,[\x1Fdate\x1F:\x1F%date%\x1F,]\x1Ftime\x1F:\x1F%time%\x1F,\x1Ffile\x1F:\x1F%file%\x1F,\x1Fposition\x1F:\x1F%position%\x1F},'
 
     readonly property var mpdCmds: {
         "cSongInfo": "-f '%1'",
         "connectionCheck": "mpc --host=%1 status",
+        "lGet": "listall -f '%1'",
         "mpcCheck": "which mpc",
-        "optConsumeSet": "consume %1",
-        "optGet": "status '{\"consume\": \"%consume%\", \"random\": \"%random%\"}'",
-        "optRandomSet": "random %1",
+        "mpcIdleLoop": "idle player mixer playlist stored_playlist options",
+        "optGet": "status '{\x1Fconsume\x1F:\x1F%consume%\x1F,\x1Frandom\x1F:\x1F%random%\x1F,\x1Frepeat\x1F:\x1F%repeat%\x1F}'",
+        "optSet": "%1 %2",
         "plLoad": "load %1",
+        "plGet": "playlist -f '%1' %2",
         "plRm": "rm -- %1",
         "plSave": "save -- %1",
         "plsGet": "lsplaylist",
+        "qAdd": "add %1",
         "qClear": "clear",
         "qDel": "del %1",
         "qGet": "playlist -f '%1'",
         "qMove": "move %1 %2",
         "qNext": "next",
         "qPlay": "play %1",
+        "qQueued": "queued -f '%1'",
         "qToggle": "toggle",
         "volumeGet": "volume",
         "volumeSet": "volume %1"
     }
-
 
     /**
      * Starts the bootstrap process of a fresh connection to the mpd instance
@@ -75,7 +82,7 @@ Item {
     function checkMpcAvailable() {
         let callback = function (exitCode, exitStatus, stdout, stderr) {
             if (exitCode !== 0) {
-                root.appLastError = qsTr(
+                main.appLastError = qsTr(
                             "'mpc' binary wasn't found. - Please install mpc on your system. It is probably available in your system's package manager.")
 
                 return
@@ -99,7 +106,7 @@ Item {
 
         let callback = function (exitCode, exitStatus, stdout, stderr) {
             if (exitCode !== 0) {
-                root.appLastError = fmtErrorMessage(stderr)
+                main.appLastError = fmtErrorMessage(stderr)
                 mpdRootNetworkTimeout.start()
 
                 return
@@ -109,24 +116,53 @@ Item {
             mpdRootIdleLoopTimer.start()
             mpcConnectionAvailable = true
             update()
+
+            if (libraryRequested) {
+                getLibrary()
+            }
         }
 
         // Bypass the build-in mpc faclities, they are gatekept by the result of this.
         executable.exec(mpdCmds.connectionCheck.arg(cfgMpdHost), callback)
     }
 
+    function forceReloadEverything() {
+        if (library) {
+            mpdRoot.libraryRequested = true
+        }
+        connect()
+    }
 
     /**
      * Inits update of all mpd data required by our plasmoid
      */
+    // @TODO this should be disentangled and properly attached/requested by our now exiting
+    // different views
     function update() {
-        mpdRoot.getInfo()
         mpdRoot.getVolume()
         mpdRoot.getQueue()
+        // @SOMEDAY make code more robust
+        // Leave getInfo() after getQueue(), since it evaluates the queue content
+        mpdRoot.getInfo()
         mpdRoot.getPlaylists()
         mpdRoot.getOptions()
     }
 
+
+    /**
+     * Download whole song library 
+     */
+    function getLibrary() {
+        if (!mpcConnectionAvailable) {
+            libraryRequested = true
+        }
+        executable.execMpc(mpdCmds.lGet.arg(_songInfoQuery), function (exitCode, exitStatus, stdout, stderr) {
+            if (exitCode !== 0) {
+                return
+            }
+            library = new SongLibrary.SongLibrary(songInfoQueryResponseToJson(stdout))
+        })
+    }
 
     /**
      * Saves queue as playlist
@@ -178,10 +214,21 @@ Item {
         })
     }
 
+    /**
+      * Set volume
+      *
+      * @param {string} Absolute <value> or +/-<value>
+      */
     function setVolume(value) {
         executable.execMpc(mpdCmds.volumeSet.arg(value))
     }
 
+    /**
+      * Get info of currently playing song
+      *
+      * When mpd is stopped it evalutates what is going to be played next on
+      * toggling "play".
+      */
     function getInfo() {
         let cmd = mpdCmds.cSongInfo.arg(_songInfoQuery)
         executable.execMpc(cmd, function (exitCode, exitStatus, stdout, stderr) {
@@ -189,16 +236,50 @@ Item {
                 return
             }
             let info = stdout.split("\n")
-            // empty queue
-            if (info.length < 3) {
-                mpdPlaying = false
+
+            // Normal playback
+            if (info.length > 2) {
+                mpdInfo = songInfoQueryResponseToJson(info.shift())[0]
+                mpdFile = mpdInfo.file
+
+                mpdPlaying = info.shift().includes('[playing]')
+
                 return
             }
 
-            mpdInfo = songInfoQueryResponseToJson(info.shift())[0]
-            mpdFile = mpdInfo.file
+            // Qeueue is paused or in stopped state
+            mpdPlaying = false
 
-            mpdPlaying = info.shift().includes('[playing]')
+            // Queue is empty, nothing will be played on a toggle
+            if (mpdState.mpdQueue.length === 0) {
+                return
+            }
+
+            // Only one item on the queue, it must be played on a toggle
+            if (mpdState.mpdQueue.length === 1) {
+                mpdInfo = mpdQueue[0]
+                return
+            }
+
+            executable.execMpc(mpdCmds.qQueued.arg(_songInfoQuery), function (exitCode, exitStatus, stdout, stderr) {
+                if (exitCode !== 0) {
+                    return
+                }
+
+                if (stdout === "") {
+                    // More than one item in Queue but nothing queued. a) Queue is
+                    // stopped and was never started before (1st item will be played)
+                    // or b) we are at the last item.
+                    // Since we only create case (a) we ignore (b) for our purposes. 
+                    mpdInfo = mpdQueue[0]
+                    return
+                }
+
+                // Queue was started before, we just can't get the item directly,
+                // so we cheat by asking for the next one.
+                let queued = songInfoQueryResponseToJson(stdout)[0]
+                mpdInfo = mpdQueue[queued.position - 2]
+            })
         })
     }
 
@@ -208,11 +289,33 @@ Item {
             if (exitCode !== 0) {
                 return
             }
+            if (!stdout.length) {
+                // Empty queue
+                mpdQueue = []
+                return
+            }
             let queue = songInfoQueryResponseToJson(stdout)
             mpdRoot.mpdQueue = queue
         })
     }
 
+    function addSongsToQueue(items) {
+        if (!Array.isArray(items)) {
+            throw new Error("Invalid argument: items must be an array")
+        }
+
+        let cmd = mpdCmds.qAdd.arg(items.map(function (item) {
+            return bEsc(item)
+        }).join(" "))
+
+        mpdCommandQueue.add(cmd)
+    }
+
+    function replaceQueue(items) {
+        clearQueue()
+        addSongsToQueue(items)
+        playInQueue(1)
+    }
 
     /**
      * Removes items from the queue
@@ -234,7 +337,8 @@ Item {
         executable.execMpc(mpdCmds.qToggle)
     }
 
-    function clearPlaylist() {
+
+    function clearQueue() {
         // @BOGUS mpd/mpc doens't execute if used to fast
         mpdCommandQueue.add(mpdCmds.qClear)
         // executable.execMpc(mpdCmds.qClear)
@@ -269,8 +373,16 @@ Item {
         })
     }
 
+    function getPlaylist(playlist) {
+        let cmd = mpdCmds.plGet.arg(_songInfoQuery).arg(bEsc(playlist))
+        let clb = function (exitCode, exitStatus, stdout, stderr) {
+            gotPlaylist(songInfoQueryResponseToJson(stdout))
+        }
+        executable.execMpc(cmd, clb)
+    }
+
     function playPlaylist(playlist) {
-        clearPlaylist()
+        clearQueue()
         addPlaylistToQueue(playlist)
         playInQueue(1)
     }
@@ -280,18 +392,21 @@ Item {
             if (exitCode !== 0) {
                 return
             }
-            mpdRoot.mpdOptions = JSON.parse(stdout)
+            mpdRoot.mpdOptions = songInfoQueryResponseToJson(stdout)[0]
         })
     }
 
-    function toggleRandom() {
-        let newState = mpdRoot.mpdOptions.random === "on" ? "off" : "on"
-        executable.execMpc(mpdCmds.optRandomSet.arg(newState))
-    }
+    function toggleOption(option) {
+        if (typeof option !==  'string') {
+            throw new Error("Invalid argument: mpd-options must be an string")
+        }
+        if (!['consume', 'random', 'repeat'].includes(option)) {
+            throw new Error("Invalid argument: mpd-option " + option)
+        }
 
-    function toggleConsume() {
-        let newState = mpdRoot.mpdOptions.consume === "on" ? "off" : "on"
-        executable.execMpc(mpdCmds.optConsumeSet.arg(newState))
+        let newState = mpdRoot.mpdOptions[option] === "on" ? "off" : "on"
+
+        executable.execMpc(mpdCmds.optSet.arg(option).arg(newState))
     }
 
     function addPlaylistToQueue(playlist) {
@@ -304,7 +419,7 @@ Item {
         cmd += '/usr/bin/env bash'
         cmd += ' "' + mpdRoot.scriptRoot + '/downloadCover.sh"'
         cmd += ' ' + cfgMpdHost
-        cmd += ' "' + title.replace(/"/g, '\\"') + '"'
+        cmd += ' ' + bEsc(title)
         cmd += ' "' + root + '"'
         cmd += ' ' + prefix
         cmd += ' "' + ctitle.replace('/', '\\\\/') + '"'
@@ -346,6 +461,7 @@ Item {
         return escapedStr
     }
 
+
     /**
      * Parses a response made in the songInfoQuery-format to JSON
      *
@@ -355,6 +471,7 @@ Item {
      * @return {array} Array of JSON objects each representing one song
      */
     function songInfoQueryResponseToJson(response) {
+        // [profiling] parse takes 90%+ of time
         return JSON.parse('[' + response.replace(/"/g, '\\"').replace(/\x1F/g, '"').replace(/,\n?$/, "") + ']')
     }
 
@@ -406,22 +523,16 @@ Item {
         id: statusUpdateTimer
         // If we populate the queue and send play we have to wait long enough to catch
         // our own cmd.
-        interval: 2 * mpdCommandQueue.interval 
-        function startIfNotRunning() {
-            if (running) {
-                return
-            }
-            start()
-        }
+        interval: 2 * mpdCommandQueue.interval
         onTriggered: {
             mpdRoot.getQueue()
-            mpdRoot.getPlaylists()
             // Mpc spams a new "playlist" event for every song added to the queue, so
             // maybe dozens if e.g. an album/playlist is added. Sometimes that's too
             // fast for us to catch the last "player" event indicated the new populate
             // queue started. We have to check what is playing after the queue
             // changes.
             mpdRoot.getInfo()
+            mpdRoot.getPlaylists()
         }
     }
 
@@ -429,11 +540,7 @@ Item {
     // immediately reconnect the shut down connection.
     Timer {
         id: mpdRootIdleLoopTimer
-
         interval: 10
-        running: false
-        repeat: false
-
         onTriggered: {
             let clb = function (exitCode, exitStatus, stdout, stderr) {
                 if (exitCode !== 0) {
@@ -454,10 +561,10 @@ Item {
                     mpdRoot.getOptions()
 
                 if (stdout.includes('playlist') || stdout.includes('stored_playlist')) {
-                    statusUpdateTimer.startIfNotRunning()
+                    statusUpdateTimer.restart()
                 }
             }
-            executable.execMpc('idle player mixer playlist stored_playlist options #idleLoop', clb)
+            executable.execMpc(mpdCmds.mpcIdleLoop, clb)
         }
     }
 
@@ -497,8 +604,9 @@ Item {
         running: true
         repeat: true
         onTriggered: {
-            if ((2 * interval / 1000 + lastRun) < (Date.now() / 1000))
-                mpdRoot.connect()
+            if ((2 * interval / 1000 + lastRun) < (Date.now() / 1000)) {
+                mpdRoot.forceReloadEverything()
+            }
 
             lastRun = Date.now() / 1000
         }
@@ -510,18 +618,18 @@ Item {
 
     Connections {
         function onExited(exitCode, exitStatus, stdout, stderr, source) {
-            root.appLastError = ""
+            main.appLastError = ""
             if (exitCode !== 0) {
                 if (stderr.includes("No data")) {
                     // "No data" answer from mpd is a succesfull request for us.
                     return
                 }
-                root.appLastError = fmtErrorMessage(stderr)
+                main.appLastError = fmtErrorMessage(stderr)
                 mpdRootNetworkTimeout.start()
 
                 return
             }
-            root.appLastError = stderr || ""
+            main.appLastError = stderr || ""
         }
 
         target: executable

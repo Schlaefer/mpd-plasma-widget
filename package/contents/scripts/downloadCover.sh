@@ -7,6 +7,13 @@
 # 4: Prefix for cover file name
 # 5: filename
 
+# Check if imagemagick is installed
+if ! command -v convert &> /dev/null
+then
+    echo "No data"
+    exit 0
+fi
+
 # Create cover path
 if [ ! -d "${3}" ]; then
     mkdir -p "${3}"
@@ -30,18 +37,26 @@ if [ -f "${lockfile}" ]; then
     if [ $i = $waitTarget ]; then
         rm "${lockfile}"
     fi
+else
+    # Migrating from from 4.x to 5.0: remove old, unprocessed images without suffix
+    if [ -f "${coverPath}" ]; then
+        rm "${coverPath}"
+    fi
 fi
 
 if [ ! -f "${coverPath}" ]; then
     touch "${lockfile}"
-    mpc --host=${1} readpicture "${2}" > "${coverPath}" 2>&1
+    mpc --host=${1} readpicture "${2}" >"${coverPath}" 2>&1
 
     # @SOMEDAY find a more efficient solution
     if grep -q volume "${coverPath}"; then
         echo "No data"
-        rm "${coverPath}"
+    else
+        convert "${coverPath}" -resize 1500x\> "${coverPath}-large.jpg"
+        convert "${coverPath}" -resize 64x64 "${coverPath}-small.jpg"
     fi
 
+    rm "${coverPath}"
     rm "${lockfile}"
 fi
 

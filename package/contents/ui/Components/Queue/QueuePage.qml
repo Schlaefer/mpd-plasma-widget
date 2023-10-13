@@ -1,338 +1,225 @@
-import "../../../scripts/formatHelpers.js" as FormatHelpers
-import "../../../scripts/listManager.js" as ListManager
 import QtQuick 2.15
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.0
 import org.kde.kirigami 2.20 as Kirigami
-import "../Elements"
+import "../../Components/Elements"
+import "../../Components/Queue"
 
 Kirigami.ScrollablePage {
     id: queuePage
-    visible: false
-    title: qsTr("Queue")
+
+    readonly property string globalShortcut: "1"
+
     Layout.fillWidth: true
+    title: qsTr("Queue")
+    visible: false
 
-    actions {
-        contextualActions: [
-            Kirigami.Action {
-                text: qsTr("Queue…")
-                icon.name: "media-playback-playing"
+    globalToolBarStyle: Kirigami.ApplicationHeaderStyle.None
+    header: ToolBar {
+        RowLayout {
+            anchors.fill: parent
+            GlobalNav {
+                parentWidth: queuePage.width
+            }
+            RowLayout {
+                Kirigami.ActionToolBar {
+                    id: actionToolBar
+                    alignment: Qt.AlignRight
 
-                Kirigami.Action {
-                    icon.name: "document-save-as"
-                    text: qsTr("Save Queue")
-                    tooltip: qsTr("Shift+S")
-                    shortcut: "shift+s"
-                    onTriggered: {
-                        queueDialogSave.open()
-                    }
-                }
-                Kirigami.Action {
-                    icon.name: "document-replace"
-                    text: qsTr("Replace Playlist")
-                    // tooltip: qsTr("Shift+S")
-                    // shortcut: "shift+s"
-                    onTriggered: {
-                        queueDialogReplacePl.open()
-                    }
-                }
-                Kirigami.Action {
-                    separator: true
-                }
-                Kirigami.Action {
-                    text: qsTr("Clear Queue")
-                    icon.name: "bqm-remove"
-                    tooltip: qsTr("C")
-                    shortcut: "c"
-                    onTriggered: {
-                        mpdState.clearPlaylist()
-                    }
-                }
-            },
-            Kirigami.Action {
-                text: qsTr("Selected Items…")
-                icon.name: "checkbox"
-
-                Kirigami.Action {
-                    text: qsTr("Remove From Queue")
-                    icon.name: "bqm-remove"
-                    shortcut: "del"
-                    onTriggered: {
-                        let items = queueList.listManager.getCheckedMpd()
-                        mpdState.removeFromQueue(items)
-                    }
+                    actions: [
+                        Kirigami.Action {
+                            id: followCurrentSong
+                            text: qsTr("Follow Playing Song")
+                            icon.name: "mark-location"
+                            tooltip: qsTr("Follow Mode - Scroll the queue to keep the currently playing song visible.") + " (" + qsTr("L") + ")" // @i18n
+                            shortcut: "l"
+                            displayHint: Kirigami.DisplayHint.IconOnly
+                            checkable: true
+                            checked: true
+                        },
+                        Kirigami.Action {
+                            text: qsTr("Clear Queue")
+                            icon.name: "bqm-remove"
+                            tooltip: text + " (" + qsTr("Shift+C") + ")" // @i18n
+                            shortcut: "shift+c"
+                            displayHint: Kirigami.DisplayHint.IconOnly
+                            onTriggered: {
+                                mpdState.clearQueue()
+                            }
+                        },
+                        Kirigami.Action {
+                            text: qsTr("Queue")
+                            Kirigami.Action {
+                                icon.name: "document-save-as"
+                                text: qsTr("Save Queue as New Playlist…")
+                                shortcut: "s"
+                                onTriggered: {
+                                    queueDialogSave.open()
+                                }
+                            }
+                            Kirigami.Action {
+                                icon.name: "document-replace"
+                                text: qsTr("Save Queue and Replace Playlist…")
+                                 shortcut: "shift+s"
+                                onTriggered: {
+                                    queueDialogReplacePl.open()
+                                }
+                            }
+                            Kirigami.Action {
+                                separator: true
+                            }
+                            Kirigami.Action {
+                                text: qsTr("Remove Selection From Queue")
+                                icon.name: "bqm-remove"
+                                // icon.name: "checkbox"
+                                shortcut: "del"
+                                onTriggered: {
+                                    let items = songlistView.listManager.getCheckedMpd()
+                                    mpdState.removeFromQueue(items)
+                                }
+                            }
+                        }
+                    ]
                 }
             }
-        ]
+        }
     }
 
-    QueueDialogSave {
-        id: queueDialogSave
-    }
-    QueueDialogReplacePl {
-        id: queueDialogReplacePl
-    }
 
-    ListView {
-        id: queueList
+    SonglistView {
+        id: songlistView
 
-        property int lastManipulatedItem: -1
-        property var listManager: new ListManager.ListManager()
+        QueueEmptyPlaceholder {
+            anchors.centerIn: parent
+        }
 
-        // Scroll without animation when active item changes
-        highlightMoveDuration: 0
-
-        function checkItems() {
-            let items = queueList.listManager.getChecked()
-            for (var i = 0; i < model.count; i++) {
-                model.setProperty(i, 'checked', items.indexOf(i) > -1)
+        function loadQueue(queue) {
+            songlistView.model.clear()
+            for (let i in queue) {
+                let item = queue[i]
+                item.checked = false
+                songlistView.model.append(item)
             }
+            if (followCurrentSong.checked)  {
+                songlistView.showCurrentItemInList()
+            }
+            songlistView.listManager.reset()
+            songlistView.checkItems()
         }
 
         function showCurrentItemInList() {
             if (!appWindow.visible) {
                 return
             }
-            if (lastManipulatedItem !== -1) {
-                // @SOMEDAY The list redraw usually destroys or scrolling postion. Better than nothing
-                queueList.positionViewAtIndex(lastManipulatedItem, ListView.Center)
-                // @SOMEDAY better highlight of item
-                queueList.currentIndex = lastManipulatedItem
-                lastManipulatedItem = -1
-                return
-            }
             let i
             for (i = 0; i < model.count; i++) {
-                if (model.get(i).file == mpdState.mpdFile) {
+                if (model.get(i).file === mpdState.mpdFile) {
                     break
                 }
             }
-            queueList.positionViewAtIndex(i, ListView.Center)
-            queueList.currentIndex = i
+
+            songlistView.currentIndex = i
+            songlistView.positionViewAtIndex(i, ListView.Center)
         }
 
-        // onCountChanged: {
-        // }
-        Connections {
-            function onVisibleChanged() {
-                queueList.showCurrentItemInList()
-            }
+        delegate: SonglistItem {
+            id: songlistItem
 
-            target: appWindow
-        }
+            coverLoadingPriority: 50
+            isSortable: true
+            parentView: songlistView
+            playingIndex: mpdState.mpdInfo.position ? mpdState.mpdInfo.position - 1 : -1
 
-        Connections {
-            function onMpdQueueChanged() {
-                queueList.model.clear()
-                for (let i in mpdState.mpdQueue) {
-                    let item = mpdState.mpdQueue[i]
-                    item.checked = false
-                    queueList.model.append(item)
-                }
-                queueList.showCurrentItemInList()
-                // @SOMEDAY That implementation is beyond my paygrade
-                // Note that ListView keeps the items checked otherwise, which could
-                // be usefull for an future implentation.
-                queueList.listManager.reset()
-                queueList.checkItems()
-            }
-            target: mpdState
-        }
-
-        model: ListModel {}
-
-        delegate: Item {
-            width: queueList.width
-            implicitHeight: listItem.implicitHeight
-
-            Kirigami.SwipeListItem {
-                id: listItem
-
-                /**
-                 * Song is the currenty playing/paused item in the queue
-                 */
-                property bool isCurrentQueuePosition: mpdState.mpdInfo.position === model.position
-
-                width: queueList.width ? queueList.width : implicitWidth
-                backgroundColor: isCurrentQueuePosition ? Kirigami.Theme.highlightColor : Kirigami.Theme.backgroundColor
-
-                actions: [
-                    Kirigami.Action {
-                        icon.name: (listItem.isCurrentQueuePosition && mpdState.mpdPlaying) ? "media-playback-pause" : "media-playback-start"
-                        text: qsTr("Play Now")
-                        onTriggered: {
-                            if (listItem.isCurrentQueuePosition) {
-                                mpdState.toggle()
-                            } else {
-                                mpdState.playInQueue(model.position)
-                            }
-                        }
-                    },
-                    Kirigami.Action {
-                        icon.name: "edit-delete"
-                        text: qsTr("Remove from Queue")
-                        visible: appWindow.width > appWindow.simpleLayoutBreakpoint
-                        onTriggered: {
-                            mpdState.removeFromQueue([model.position])
-                            // @TODO
-                            // queueList.lastManipulatedItem = index
+            actions: [
+                Kirigami.Action {
+                    icon.name: (playingIndex === model.index
+                                && mpdState.mpdPlaying) ? "media-playback-pause" : "media-playback-start"
+                    text: qsTr("Play Now")
+                    onTriggered: {
+                        if (playingIndex === model.index) {
+                            mpdState.toggle()
+                        } else {
+                            mpdState.playInQueue(model.position)
                         }
                     }
-                ]
+                },
+                Kirigami.Action {
+                    icon.name: "edit-delete"
+                    text: qsTr("Remove from Queue")
+                    visible: appWindow.width > appWindow.simpleLayoutBreakpoint
+                    onTriggered: {
+                        let positionToRemove = model.position
 
-                RowLayout {
-                    width: queueList.width
-                    Kirigami.ListItemDragHandle {
-                        property int startIndex: -1
-                        property int endIndex
-                        visible: appWindow.width > appWindow.simpleLayoutBreakpoint
-
-                        Layout.preferredWidth: Kirigami.Units.iconSizes.medium
-
-                        listItem: listItem
-                        listView: queueList
-                        onMoveRequested: (oldIndex, newIndex) => {
-                                             if (startIndex === -1) {
-                                                 startIndex = oldIndex
-                                             }
-                                             endIndex = newIndex
-                                             queueList.model.move(oldIndex, newIndex, 1)
-                                         }
-                        onDropped: {
-                            queueList.lastManipulatedItem = endIndex
-                            mpdState.moveInQueue(startIndex + 1, endIndex + 1)
-                            startIndex = index
-                        }
-                    }
-
-                    CheckBox {
-                        id: checkBox
-                        text: model.name
-                        checked: model.checked
-                        visible: appWindow.width > appWindow.simpleLayoutBreakpoint
-                        onCheckedChanged: {
-                            if (checked) {
-                                queueList.listManager.check(index)
-                                model.checked = true
-                            } else {
-                                queueList.listManager.uncheck(index)
-                                model.checked = false
-                            }
-                        }
-                    }
-
-                    Image {
-                        id: image
-
-                        Layout.preferredHeight: Kirigami.Units.iconSizes.large
-                        Layout.preferredWidth: Kirigami.Units.iconSizes.large
-                        mipmap: true
-                        fillMode: Image.PreserveAspectFit
-
-                        function setCover(coverPath) {
-                            if (coverPath === null) {
-                                return false
-                            }
-                            image.source = coverPath
+                        songlistView.model.remove(index)
+                        // Keep our state in sync with mpd's
+                        for (let i = 0; i < songlistView.model.count; i++) {
+                            songlistView.model.set(i, {position: i+1 + ""})
+                            console.log(songlistView.model.get(i).position)
                         }
 
-                        function onGotCover(id) {
-                            // @BOGUS Why did we do that? What's happening here?
-                            if (typeof (coverManager) === "undefined") {
-                                return
-                            }
-                            if (coverManager.getId(model) !== id) {
-                                return
-                            }
-                            getCover()
-                        }
-
-                        function getCover() {
-                            let cover = coverManager.getCover(model)
-                            if (typeof (cover) === 'undefined') {
-                                return false
-                            }
-                            coverManager.gotCover.disconnect(onGotCover)
-                            setCover(cover)
-                        }
-
-                        Component.onCompleted: {
-                            let cover = coverManager.getCover(model)
-                            if (cover) {
-                                setCover(cover)
-
-                                return
-                            }
-                            coverManager.gotCover.connect(onGotCover)
-                        }
-                    }
-
-                    // We need a layout-"anchor" for the MouseArea *and* to allow
-                    // fillWide-aware word-wrap on the text fields
-                    ColumnLayout {
-                        id: mouseAreaAnchor
-                        spacing: 0
-                        Layout.fillWidth: true
-                        Layout.fillHeight: true
-
-                        ColumnLayout {
-                            spacing: 0
-                            Layout.fillWidth: true
-                            Text {
-                                Layout.fillWidth: true
-                                Layout.leftMargin: Kirigami.Units.largeSpacing
-                                Layout.rightMargin: Kirigami.Units.largeSpacing
-                                color: Kirigami.Theme.textColor
-                                font.bold: true
-                                text: model.title
-                                wrapMode: Text.WordWrap
-                            }
-                            Text {
-                                Layout.fillWidth: true
-                                Layout.leftMargin: Kirigami.Units.largeSpacing
-                                Layout.rightMargin: Kirigami.Units.largeSpacing
-                                color: Kirigami.Theme.textColor
-                                font.bold: listItem.isCurrentQueuePosition
-                                text: FormatHelpers.artist(model)
-                                wrapMode: Text.WordWrap
-                            }
-
-                            Text {
-                                Layout.fillWidth: true
-                                Layout.leftMargin: Kirigami.Units.largeSpacing
-                                Layout.rightMargin: Kirigami.Units.largeSpacing
-                                color: Kirigami.Theme.textColor
-                                font.bold: listItem.isCurrentQueuePosition
-                                text: FormatHelpers.queueAlbumLine(model)
-                                wrapMode: Text.WordWrap
-                            }
-                        }
-
-                        MouseArea {
-                            height: mouseAreaAnchor.height
-                            width: mouseAreaAnchor.width
-
-                            acceptedButtons: Qt.LeftButton | Qt.RightButton
-
-                            onClicked: function (mouse) {
-                                if (mouse.button == Qt.LeftButton) {
-                                    model.checked = !model.checked
-                                }
-                                if (mouse.button == Qt.RightButton) {
-                                    menuLoader.source = "QueueContextMenu.qml"
-                                    menuLoader.item.visible ? menuLoader.item.close() : menuLoader.item.popup()
-                                }
-                            }
-                        }
-
-                        Loader {
-                            id: menuLoader
-                        }
+                        mpdState.removeFromQueue([positionToRemove])
                     }
                 }
+            ]
+        }
+    }
+
+    Connections {
+        target: mpdState
+
+        function onMpdQueueChanged() {
+            if (songlistView.model.count === 0 || songlistView.model.count !== mpdState.mpdQueue.length) {
+                songlistView.loadQueue(mpdState.mpdQueue)
+
+                return
+            }
+
+            // Check if the mpd queue is identical with ours and only update
+            // ours if it doesn't match. That prevents redrawing and losing
+            // our scroll position when e.g. reordering or deleting songs.
+            // @SOMEDAY Could be improved by only changing songs that don't match ours
+            for (let i = 0; i < songlistView.model.count; i++) {
+                let sameFile = mpdState.mpdQueue[i].file === songlistView.model.get(i).file
+                let samePosition = (mpdState.mpdQueue[i].position === songlistView.model.get(i).position)
+                if (!sameFile || !samePosition) {
+                    songlistView.loadQueue(mpdState.mpdQueue)
+
+                    return
+
+                }
+            }
+        }
+
+        function onMpdFileChanged() {
+            if (followCurrentSong.checked)  {
+                songlistView.showCurrentItemInList()
             }
         }
     }
 
-    footer: QueuePageFooter {}
+    Component.onCompleted: {
+        // @BOGUS Initiates triggering populating Queue and Playlists on app
+        // window opening. Make it ask properly for the already available data from
+        // mpdState in both places. Required for Loader those pages anyway.
+        mpdState.update()
+    }
+
+    Connections {
+        target: appWindow
+        function onHeightChanged() {
+            if (followCurrentSong.checked)  {
+                songlistView.showCurrentItemInList()
+            }
+        }
+    }
+
+    // @SOMEDAY loader
+    QueueDialogSave {
+        id: queueDialogSave
+    }
+
+    // @SOMEDAY loader
+    QueueDialogReplacePl {
+        id: queueDialogReplacePl
+    }
 }

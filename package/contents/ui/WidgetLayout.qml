@@ -1,19 +1,31 @@
-import "../scripts/formatHelpers.js" as FormatHelpers
-import "./Components"
 import QtQuick 2.15
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.15
 import QtGraphicalEffects 1.12
 import org.kde.plasma.components 2.0 as PlasmaComponents
-import org.kde.kirigami 2.4 as Kirigami
+import org.kde.kirigami 2.20 as Kirigami
+import "./Components"
+import "./Components/Queue"
+import "../scripts/formatHelpers.js" as FormatHelpers
 
 GridLayout {
+    // @TODO better way to change volume globally
+    // @TODO Consolidate all the sprinkled wheel change in one place
+    property alias volume: volumeSlider.value
+
     columns: cfgHorizontalLayout ? 3 : 1
     rows: cfgHorizontalLayout ? 1 : 3
 
     // Cover Image
     WidgetCoverImage {
         id: coverImageContainer
+
+        coverRadius: cfgCornerRadius
+        shadowColor: cfgShadowColor
+        shadowSpread: cfgShadowSpread
+
+        // @BOGUS This seems bogus but is necessary since Image is wrapped by Item
+        Layout.minimumWidth: cfgHorizontalLayout ? parent.height : parent.width
     }
 
     // Volume Slider
@@ -62,19 +74,12 @@ GridLayout {
         Layout.fillHeight: true
 
         ColumnLayout {
-            // @TODO nothing to click if queue is empty
-            MouseArea {
-                width: parent.width
-                height: parent.height
-                onClicked: {
-                    popupDialog.visible = !popupDialog.visible
-                }
-            }
+            QueueEmptyPlaceholder {}
 
             WidgetLabel {
                 id: songTitle
-
                 font.weight: Font.Bold
+                visible: mpdState.countQueue()
 
                 Connections {
                     function onMpdInfoChanged() {
@@ -87,11 +92,12 @@ GridLayout {
                     }
                     target: mpdState
                 }
+
             }
 
             WidgetLabel {
                 id: songArtist
-                visible: notification.text.length === 0
+                visible: (notification.text.length === 0 && mpdState.countQueue() )
 
                 Connections {
                     function onMpdInfoChanged() {
@@ -108,7 +114,7 @@ GridLayout {
 
             WidgetLabel {
                 id: songAlbum
-                visible: notification.text.length === 0
+                visible: (notification.text.length === 0 && mpdState.countQueue() )
 
                 Connections {
                     function onMpdInfoChanged() {
@@ -120,6 +126,14 @@ GridLayout {
                         }
                     }
                     target: mpdState
+                }
+            }
+
+            MouseArea {
+                width: parent.width
+                height: parent.height
+                onClicked: {
+                    main.toggleAppWindow()
                 }
             }
         }
@@ -134,17 +148,10 @@ GridLayout {
 
                 Connections {
                     function onAppLastErrorChanged() {
-                        notification.text = root.appLastError
+                        notification.text = main.appLastError
                     }
 
-                    target: root
-                }
-                Connections {
-                    function onMpdQueueChanged() {
-                        notification.text = mpdState.countQueue(
-                                    ) === 0 ? qsTr("Queue empty") : ""
-                    }
-                    target: mpdState
+                    target: main
                 }
             }
 
