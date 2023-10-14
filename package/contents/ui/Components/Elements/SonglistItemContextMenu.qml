@@ -11,8 +11,8 @@ QQC2.Menu {
         }
     }
     QQC2.MenuItem {
-        text: qsTr("Add Song to Queue")
-        icon.name: "list-add"
+        text: qsTr("Append Song to Queue")
+        icon.name: "media-playlist-append"
         onTriggered: {
             mpdState.addSongsToQueue([model.file])
         }

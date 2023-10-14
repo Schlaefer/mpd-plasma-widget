@@ -161,8 +161,8 @@ Kirigami.ScrollablePage {
                                             }
                                         }
                                         QQC2.MenuItem {
-                                            text: qsTr("Add Album to Queue")
-                                            icon.name: "list-add"
+                                            text: qsTr("Append Album to Queue")
+                                            icon.name: "media-playlist-append"
                                             onTriggered: {
                                                 let songs = mpdState.library.getSongsByAartistAndAlbum(model.album,
                                                                                                        model.albumartist)

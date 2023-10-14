@@ -90,8 +90,8 @@ ListViewGeneric {
                 onTriggered: replaceQueue()
             }
             Kirigami.Action {
-                text: qsTr("Add to Queue")
-                icon.name: "list-add"
+                text: qsTr("Append to Queue")
+                icon.name: "media-playlist-append"
                 onTriggered: addToQueue()
             }
             Kirigami.Action {
