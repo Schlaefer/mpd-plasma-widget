@@ -37,7 +37,7 @@ Kirigami.ScrollablePage {
                         },
                         Kirigami.Action {
                             text: qsTr("Clear Queue")
-                            icon.name: "bqm-remove"
+                            icon.name: "edit-delete"
                             tooltip: text + " (" + qsTr("Shift+C") + ")" // @i18n
                             shortcut: "shift+c"
                             displayHint: Kirigami.DisplayHint.IconOnly
@@ -68,7 +68,7 @@ Kirigami.ScrollablePage {
                             }
                             Kirigami.Action {
                                 text: qsTr("Remove Selection")
-                                icon.name: "bqm-remove"
+                                icon.name: "edit-delete-remove"
                                 // icon.name: "checkbox"
                                 shortcut: "del"
                                 onTriggered: {
