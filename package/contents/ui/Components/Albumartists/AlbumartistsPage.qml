@@ -151,20 +151,30 @@ Kirigami.ScrollablePage {
                                         id: contextMenu
                                         QQC2.MenuItem {
                                             icon.name: "media-play-playback"
-                                            text: qsTr("Replace Queue with Album")
+                                            text: qsTr("Replace Queue")
                                             onTriggered: {
                                                 let songs = mpdState.library.getSongsByAartistAndAlbum(model.album,
                                                                                                        model.albumartist)
                                                 mpdState.replaceQueue(songs.map(song => song.file))
                                             }
                                         }
+                                        QQC2.MenuSeparator {}
                                         QQC2.MenuItem {
-                                            text: qsTr("Append Album to Queue")
+                                            text: qsTr("Append to Queue")
                                             icon.name: "media-playlist-append"
                                             onTriggered: {
                                                 let songs = mpdState.library.getSongsByAartistAndAlbum(model.album,
                                                                                                        model.albumartist)
                                                 mpdState.addSongsToQueue(songs.map(song => song.file))
+                                            }
+                                        }
+                                        QQC2.MenuItem {
+                                            text: qsTr("Insert After Current")
+                                            icon.name:"timeline-insert"
+                                            onTriggered: {
+                                                let songs = mpdState.library.getSongsByAartistAndAlbum(model.album,
+                                                                                                       model.albumartist)
+                                                mpdState.addSongsToQueue(songs.map(song => song.file), "insert")
                                             }
                                         }
                                     }

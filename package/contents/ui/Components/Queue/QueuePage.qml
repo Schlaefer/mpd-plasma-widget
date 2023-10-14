@@ -152,7 +152,6 @@ Kirigami.ScrollablePage {
                         // Keep our state in sync with mpd's
                         for (let i = 0; i < songlistView.model.count; i++) {
                             songlistView.model.set(i, {position: i+1 + ""})
-                            console.log(songlistView.model.get(i).position)
                         }
 
                         mpdState.removeFromQueue([positionToRemove])

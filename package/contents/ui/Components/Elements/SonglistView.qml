@@ -11,14 +11,6 @@ ListViewGeneric {
     property var listManager: new ListManager.ListManager()
     property var actionsHook
 
-    function replaceQueue() {
-        mpdState.replaceQueue(getSelectedFilesOrAll())
-    }
-
-    function addToQueue() {
-        mpdState.addSongsToQueue(getSelectedFilesOrAll())
-    }
-
     /**
       * Get all the selected files in the list or all if none is selected
       *
@@ -87,12 +79,27 @@ ListViewGeneric {
             Kirigami.Action {
                 text:  qsTr("Replace Queue")
                 icon.name: "media-play-playback"
-                onTriggered: replaceQueue()
+                onTriggered: {
+                    mpdState.replaceQueue(getSelectedFilesOrAll())
+                }
+            }
+            Kirigami.Action {
+                separator: true
             }
             Kirigami.Action {
                 text: qsTr("Append to Queue")
                 icon.name: "media-playlist-append"
-                onTriggered: addToQueue()
+                onTriggered: {
+                    mpdState.addSongsToQueue(getSelectedFilesOrAll())
+                }
+
+            }
+            Kirigami.Action {
+                text: qsTr("Insert After Current")
+                icon.name: "timeline-insert"
+                onTriggered: {
+                    mpdState.addSongsToQueue(getSelectedFilesOrAll(), "insert")
+                }
             }
             Kirigami.Action {
                 separator: true

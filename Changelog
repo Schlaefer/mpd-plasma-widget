@@ -1,4 +1,5 @@
 # 5.1
+- Adds inserting songs after the currently playing queue item
 - Fixes showing error message if mpc is not installed
 - Fixes cover cache not rotating properly
 - Minor UI tweaks

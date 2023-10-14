@@ -26,7 +26,7 @@ Item {
     Plasmoid.backgroundHints: cfgSolidBackground ? PlasmaCore.Types.StandardBackground : PlasmaCore.Types.NoBackground
 
     Component.onCompleted: {
-//        toggleAppWindow()
+    //    toggleAppWindow()
     }
 
     function toggleAppWindow() {

@@ -43,6 +43,7 @@ Item {
         "qClear": "clear",
         "qDel": "del %1",
         "qGet": "playlist -f '%1'",
+        "qInsert": "insert %1",
         "qMove": "move %1 %2",
         "qNext": "next",
         "qPlay": "play %1",
@@ -295,14 +296,32 @@ Item {
         })
     }
 
-    function addSongsToQueue(items) {
+    /**
+      * Add songs to the queue
+      *
+      * @param {array} array of mpd file IDs
+      * @param {string} insertion mode
+      * - "append" at end of queue
+      * - "insert" after currently playing track
+      */
+    function addSongsToQueue(items, mode = "append") {
         if (!Array.isArray(items)) {
             throw new Error("Invalid argument: items must be an array")
         }
 
-        let cmd = mpdCmds.qAdd.arg(items.map(function (item) {
-            return bEsc(item)
-        }).join(" "))
+        let cmd
+        switch (mode) {
+        case "append":
+            cmd = mpdCmds.qAdd
+            break
+        case "insert":
+            cmd = mpdCmds.qInsert
+            break
+        default:
+            throw new Error("Invalid argument: unknown mode")
+        }
+
+        cmd = cmd.arg(items.map(function (item) { return bEsc(item) }).join(" "))
 
         mpdCommandQueue.add(cmd)
     }

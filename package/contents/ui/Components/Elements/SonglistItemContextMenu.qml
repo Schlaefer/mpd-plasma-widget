@@ -10,11 +10,19 @@ QQC2.Menu {
             mpdState.replaceQueue([model.file])
         }
     }
+    QQC2.MenuSeparator {}
     QQC2.MenuItem {
         text: qsTr("Append Song to Queue")
         icon.name: "media-playlist-append"
         onTriggered: {
             mpdState.addSongsToQueue([model.file])
+        }
+    }
+    QQC2.MenuItem {
+        text: qsTr("Insert Song After Current")
+        icon.name:"timeline-insert"
+        onTriggered: {
+            mpdState.addSongsToQueue([model.file], "insert")
         }
     }
     QQC2.MenuSeparator {}
@@ -70,7 +78,6 @@ QQC2.Menu {
             root.parentView.checkItems()
         }
     }
-    QQC2.MenuSeparator {}
     QQC2.MenuItem {
         text: qsTr('Select Above')
         icon.name: "arrow-up"
