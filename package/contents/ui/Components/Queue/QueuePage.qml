@@ -49,7 +49,7 @@ Kirigami.ScrollablePage {
                             text: qsTr("Queue")
                             Kirigami.Action {
                                 icon.name: "document-save-as"
-                                text: qsTr("Save Queue as New Playlist…")
+                                text: qsTr("Save as New Playlist…")
                                 shortcut: "s"
                                 onTriggered: {
                                     queueDialogSave.open()
@@ -57,7 +57,7 @@ Kirigami.ScrollablePage {
                             }
                             Kirigami.Action {
                                 icon.name: "document-replace"
-                                text: qsTr("Save Queue and Replace Playlist…")
+                                text: qsTr("Replace Playlist…")
                                  shortcut: "shift+s"
                                 onTriggered: {
                                     queueDialogReplacePl.open()
@@ -67,7 +67,7 @@ Kirigami.ScrollablePage {
                                 separator: true
                             }
                             Kirigami.Action {
-                                text: qsTr("Remove Selection From Queue")
+                                text: qsTr("Remove Selection")
                                 icon.name: "bqm-remove"
                                 // icon.name: "checkbox"
                                 shortcut: "del"
