@@ -127,6 +127,7 @@ Kirigami.ScrollablePage {
             isSortable: true
             parentView: songlistView
             playingIndex: mpdState.mpdInfo.position ? mpdState.mpdInfo.position - 1 : -1
+            showSongMenu: false
 
             actions: [
                 Kirigami.Action {
