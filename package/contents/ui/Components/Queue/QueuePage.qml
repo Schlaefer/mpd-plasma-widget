@@ -18,9 +18,7 @@ Kirigami.ScrollablePage {
     header: ToolBar {
         RowLayout {
             anchors.fill: parent
-            GlobalNav {
-                parentWidth: queuePage.width
-            }
+            GlobalNav { }
             RowLayout {
                 Kirigami.ActionToolBar {
                     id: actionToolBar
@@ -146,7 +144,7 @@ Kirigami.ScrollablePage {
                 Kirigami.Action {
                     icon.name: "edit-delete"
                     text: qsTr("Remove from Queue")
-                    visible: appWindow.width > appWindow.simpleLayoutBreakpoint
+                    visible: !appWindow.narrowLayout
                     onTriggered: {
                         let positionToRemove = model.position
 

@@ -18,9 +18,7 @@ Kirigami.ScrollablePage {
     header: ToolBar {
         RowLayout {
             anchors.fill: parent
-            GlobalNav {
-                parentWidth: root.width
-            }
+            GlobalNav { }
         }
     }
 

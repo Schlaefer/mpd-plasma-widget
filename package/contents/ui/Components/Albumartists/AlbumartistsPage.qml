@@ -18,9 +18,7 @@ Kirigami.ScrollablePage {
     header: QQC2.ToolBar {
         RowLayout {
             anchors.fill: parent
-            GlobalNav {
-                parentWidth: root.width
-            }
+            GlobalNav { }
             RowLayout {
                 Layout.fillWidth: true
                 Layout.alignment: Qt.AlignRight
@@ -107,8 +105,8 @@ Kirigami.ScrollablePage {
                 }
 
                 GridLayout {
-                    columns: appWindow.width > simpleLayoutBreakpoint ? 6 : 4
-                    rows: appWindow.width > simpleLayoutBreakpoint ? -1 : 1
+                    columns: appWindow.narrowLayout ? 4 : 6
+                    rows: appWindow.narrowLayout ? 1 : -1
 
                     Layout.alignment: Qt.AlignRight
                     Repeater {

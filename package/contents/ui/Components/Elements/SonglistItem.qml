@@ -107,14 +107,13 @@ Item {
                         Layout.leftMargin: Kirigami.Units.largeSpacing
                         Layout.rightMargin: Kirigami.Units.small
                         color: (playingIndex === index) ? Kirigami.Theme.highlightedTextColor : Kirigami.Theme.textColor
-                        font.bold: appWindow.width > appWindow.simpleLayoutBreakpoint
+                        font.bold: !appWindow.narrowLayout
                         // @SOMEDAY make this look beautiful
-                        text: ((appWindow.width > appWindow.simpleLayoutBreakpoint)
-                               || !model.tracknumber ? "" : model.tracknumber + ". ") + model.title
+                        text: (!appWindow.narrowLayout || !model.tracknumber ? "" : model.tracknumber + ". ") + model.title
                         wrapMode: Text.WordWrap
                     }
                     Text {
-                        visible: appWindow.width > appWindow.simpleLayoutBreakpoint
+                        visible: !appWindow.narrowLayout
                         Layout.fillWidth: true
                         Layout.leftMargin: Kirigami.Units.largeSpacing
                         Layout.rightMargin: Kirigami.Units.small
@@ -124,7 +123,7 @@ Item {
                     }
 
                     Text {
-                        visible: appWindow.width > appWindow.simpleLayoutBreakpoint
+                        visible: !appWindow.narrowLayout
                         Layout.fillWidth: true
                         Layout.leftMargin: Kirigami.Units.largeSpacing
                         Layout.rightMargin: Kirigami.Units.small

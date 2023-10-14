@@ -18,7 +18,7 @@ Kirigami.ApplicationWindow {
     minimumWidth: 280
     minimumHeight: footer.height
 
-    readonly property int simpleLayoutBreakpoint: 520
+    property bool narrowLayout: appWindow.width < 520
     property int windowPreMinimizeSize: -1
 
     flags: Qt.Window
@@ -96,9 +96,9 @@ Kirigami.ApplicationWindow {
                         id: songTitle
                         Layout.fillWidth: true
                         Layout.leftMargin: Kirigami.Units.largeSpacing
-                        Layout.bottomMargin: (appWindow.width > appWindow.simpleLayoutBreakpoint) ?  0 : Kirigami.Units.largeSpacing
+                        Layout.bottomMargin: (appWindow.narrowLayout) ?  Kirigami.Units.largeSpacing : 0
                         color: Kirigami.Theme.textColor
-                        font.bold: appWindow.width > appWindow.simpleLayoutBreakpoint
+                        font.bold: !appWindow.narrowLayout
                         wrapMode: Text.WordWrap
 
                         Connections {
@@ -110,7 +110,7 @@ Kirigami.ApplicationWindow {
                     }
                     Text {
                         id: songArtist
-                        visible: appWindow.width > appWindow.simpleLayoutBreakpoint
+                        visible: !appWindow.narrowLayout
                         Layout.fillWidth: true
                         Layout.leftMargin: Kirigami.Units.largeSpacing
                         color: Kirigami.Theme.textColor
@@ -126,7 +126,7 @@ Kirigami.ApplicationWindow {
 
                     Text {
                         id: songAlbum
-                        visible: appWindow.width > appWindow.simpleLayoutBreakpoint
+                        visible: !appWindow.narrowLayout
                         Layout.fillWidth: true
                         Layout.leftMargin: Kirigami.Units.largeSpacing
                         Layout.bottomMargin: Kirigami.Units.largeSpacing

@@ -3,8 +3,6 @@ import QtQuick.Controls 2.3 as QQC2
 import QtQuick.Layouts 1.15
 
 RowLayout {
-    property int parentWidth
-
     Repeater {
         model: [
             {
@@ -32,7 +30,7 @@ RowLayout {
 
         QQC2.ToolButton {
             icon.name: modelData.icon
-            text: parentWidth > appWindow.simpleLayoutBreakpoint ? modelData.text : ""
+            text: appWindow.narrowLayout ? "" : modelData.text
             checkable: true
             checked: modelData.page.visible
             onClicked: appWindow.showPage(modelData.page)

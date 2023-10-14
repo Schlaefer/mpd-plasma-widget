@@ -8,11 +8,8 @@ Item {
 
     property alias loadingPriority: image.loadingPriority
 
-    Layout.preferredHeight: appWindow.width
-                            > appWindow.simpleLayoutBreakpoint ? Kirigami.Units.iconSizes.large : Kirigami.Units.iconSizes.medium
-    Layout.preferredWidth: appWindow.width
-                           > appWindow.simpleLayoutBreakpoint ? Kirigami.Units.iconSizes.large : Kirigami.Units.iconSizes.medium
-
+    Layout.preferredHeight: appWindow.narrowLayout ? Kirigami.Units.iconSizes.medium : Kirigami.Units.iconSizes.large
+    Layout.preferredWidth: appWindow.narrowLayout ? Kirigami.Units.iconSizes.medium : Kirigami.Units.iconSizes.large
 
     Kirigami.Icon {
         id: coverPlaceholderIcon
