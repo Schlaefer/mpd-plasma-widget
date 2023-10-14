@@ -80,7 +80,7 @@ Item {
      * Check if mpc binary available on the host system
      */
     function checkMpcAvailable() {
-        let callback = function (exitCode, exitStatus, stdout, stderr) {
+        let callback = function (exitCode) {
             if (exitCode !== 0) {
                 return
             }
@@ -101,9 +101,8 @@ Item {
             return
         }
 
-        let callback = function (exitCode, exitStatus, stdout, stderr) {
+        let callback = function (exitCode) {
             if (exitCode !== 0) {
-                main.appLastError = fmtErrorMessage(stderr)
                 mpdRootNetworkTimeout.start()
 
                 return
@@ -153,7 +152,7 @@ Item {
         if (!mpcConnectionAvailable) {
             libraryRequested = true
         }
-        executable.execMpc(mpdCmds.lGet.arg(_songInfoQuery), function (exitCode, exitStatus, stdout, stderr) {
+        executable.execMpc(mpdCmds.lGet.arg(_songInfoQuery), function (exitCode, stdout) {
             if (exitCode !== 0) {
                 return
             }
@@ -167,7 +166,7 @@ Item {
      * @param {sting} title playlist title in MPD
      */
     function saveQueueAsPlaylist(title) {
-        executable.execMpc(mpdCmds.plSave.arg(bEsc(title)), function (exitCode, exitStatus, stdout, stderr) {
+        executable.execMpc(mpdCmds.plSave.arg(bEsc(title)), function (exitCode) {
             if (exitCode !== 0) {
                 return
             }
@@ -197,7 +196,7 @@ Item {
     }
 
     function getVolume() {
-        executable.execMpc(mpdCmds.volumeGet, function (exitCode, exitStatus, stdout, stderr) {
+        executable.execMpc(mpdCmds.volumeGet, function (exitCode, stdout) {
             if (exitCode !== 0) {
                 return
             }
@@ -228,7 +227,7 @@ Item {
       */
     function getInfo() {
         let cmd = mpdCmds.cSongInfo.arg(_songInfoQuery)
-        executable.execMpc(cmd, function (exitCode, exitStatus, stdout, stderr) {
+        executable.execMpc(cmd, function (exitCode, stdout) {
             if (exitCode !== 0) {
                 return
             }
@@ -258,7 +257,7 @@ Item {
                 return
             }
 
-            executable.execMpc(mpdCmds.qQueued.arg(_songInfoQuery), function (exitCode, exitStatus, stdout, stderr) {
+            executable.execMpc(mpdCmds.qQueued.arg(_songInfoQuery), function (exitCode, stdout) {
                 if (exitCode !== 0) {
                     return
                 }
@@ -282,7 +281,7 @@ Item {
 
     function getQueue() {
         let cmd = mpdCmds.qGet.arg(_songInfoQuery)
-        executable.execMpc(cmd, function (exitCode, exitStatus, stdout, stderr) {
+        executable.execMpc(cmd, function (exitCode, stdout) {
             if (exitCode !== 0) {
                 return
             }
@@ -353,7 +352,7 @@ Item {
     }
 
     function getPlaylists() {
-        executable.execMpc(mpdCmds.plsGet, function (exitCode, exitStatus, stdout, stderr) {
+        executable.execMpc(mpdCmds.plsGet, function (exitCode, stdout) {
             if (exitCode !== 0) {
                 return
             }
@@ -372,7 +371,7 @@ Item {
 
     function getPlaylist(playlist) {
         let cmd = mpdCmds.plGet.arg(_songInfoQuery).arg(bEsc(playlist))
-        let clb = function (exitCode, exitStatus, stdout, stderr) {
+        let clb = function (exitCode, stdout) {
             gotPlaylist(songInfoQueryResponseToJson(stdout))
         }
         executable.execMpc(cmd, clb)
@@ -385,7 +384,7 @@ Item {
     }
 
     function getOptions() {
-        executable.execMpc(mpdCmds.optGet, function (exitCode, exitStatus, stdout, stderr) {
+        executable.execMpc(mpdCmds.optGet, function (exitCode, stdout) {
             if (exitCode !== 0) {
                 return
             }
@@ -421,7 +420,7 @@ Item {
         cmd += ' ' + prefix
         cmd += ' "' + ctitle.replace('/', '\\\\/') + '"'
 
-        let clb = function (exitCode, exitStatus, stdout, stderr) {
+        let clb = function (exitCode, stdout) {
             if (exitCode !== 0) {
                 return
             }
@@ -541,7 +540,7 @@ Item {
         id: mpdRootIdleLoopTimer
         interval: 10
         onTriggered: {
-            let clb = function (exitCode, exitStatus, stdout, stderr) {
+            let clb = function (exitCode, stdout) {
                 if (exitCode !== 0) {
                     return
                 }
@@ -616,7 +615,7 @@ Item {
     }
 
     Connections {
-        function onExited(exitCode, exitStatus, stdout, stderr, source) {
+        function onExited(exitCode, stdout, stderr, exitStatus, cmd) {
             main.appLastError = ""
             if (exitCode !== 0) {
                 if (stderr.includes("No data")) {

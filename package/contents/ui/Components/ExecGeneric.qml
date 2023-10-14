@@ -33,11 +33,11 @@ PlasmaCore.DataSource {
         var stderr = data["stderr"]
 
         if (callbacks[sourceName]) {
-            callbacks[sourceName](exitCode, exitStatus, stdout, stderr, sourceName)
+            callbacks[sourceName](exitCode, stdout, stderr, exitStatus)
             delete callbacks[sourceName]
         }
 
-        exited(exitCode, exitStatus, stdout, stderr, sourceName)
+        exited(exitCode, stdout, stderr, exitStatus, sourceName)
         disconnectSource(sourceName)
     }
 }

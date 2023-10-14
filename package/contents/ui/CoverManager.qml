@@ -45,7 +45,7 @@ QQ2.Item {
 
     function getLocalCovers() {
         let cmd = 'find ' + cfgCacheRoot + ' -name "' + coverManager.filePrefix + '*-large.jpg"'
-        executable.exec(cmd, function (exitCode, exitStatus, stdout, stderr) {
+        executable.exec(cmd, function (exitCode, stdout) {
             let lines = stdout.split("\n")
             lines.forEach(function (line) {
                 if (!line) {
@@ -99,9 +99,7 @@ QQ2.Item {
 
     function clearCache() {
         let cmd = "rm " + cfgCacheRoot + "/" + filePrefix + "*"
-        executable.exec(cmd, function (exitCode, exitStatus, stdout, stderr) {
-            coverManager.reset()
-        })
+        executable.exec(cmd, function () { coverManager.reset() })
     }
 
     // Rotate cover cache
@@ -113,9 +111,7 @@ QQ2.Item {
         triggeredOnStart: true
         onTriggered: {
             let cmd = 'find "' + cfgCacheRoot + '" -type f -name "' + filePrefix + '*" -mtime +' + cfgCacheForDays + ' -exec rm "{}" \\;'
-            executable.exec(cmd, function (exitCode, exitStatus, stdout, stderr) {
-                coverManager.reset()
-            })
+            executable.exec(cmd, function () { coverManager.reset() })
         }
     }
 
@@ -146,11 +142,5 @@ QQ2.Item {
 
     ExecGeneric {
         id: executable
-    }
-
-    QQ2.Connections {
-        function onExited(exitCode, exitStatus, stdout, stderr, source) {}
-
-        target: executable
     }
 }
