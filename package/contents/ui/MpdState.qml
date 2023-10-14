@@ -82,9 +82,6 @@ Item {
     function checkMpcAvailable() {
         let callback = function (exitCode, exitStatus, stdout, stderr) {
             if (exitCode !== 0) {
-                main.appLastError = qsTr(
-                            "'mpc' binary wasn't found. - Please install mpc on your system. It is probably available in your system's package manager.")
-
                 return
             }
 
@@ -487,6 +484,8 @@ Item {
             fmtMsg = qsTr("Can't find the MPD-server. - Check the MPD-address in the widget configuration.")
         } else if (fmtMsg.includes("Network is unreachable")) {
             fmtMsg = qsTr("No network connection.")
+        } else if (fmtMsg.includes("no mpc in")) {
+            fmtMsg = qsTr("'mpc' binary wasn't found. - Please install mpc on your system. It should be available in your system's package manager.")
         }
 
         return fmtMsg

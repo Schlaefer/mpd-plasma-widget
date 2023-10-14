@@ -1,4 +1,5 @@
 # 5.1
+- Fixes showing error message if mpc is not installed
 - Fixes cover cache not rotating properly
 
 # 5.0
