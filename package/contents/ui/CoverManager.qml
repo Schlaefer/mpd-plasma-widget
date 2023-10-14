@@ -112,7 +112,7 @@ QQ2.Item {
         repeat: true
         triggeredOnStart: true
         onTriggered: {
-            let cmd = 'find "' + cfgCacheRoot + '" -type f -name "' + filePrefix + '*" -mtime +' + cfgCacheForDays + ' -exec rm "{}" \;'
+            let cmd = 'find "' + cfgCacheRoot + '" -type f -name "' + filePrefix + '*" -mtime +' + cfgCacheForDays + ' -exec rm "{}" \\;'
             executable.exec(cmd, function (exitCode, exitStatus, stdout, stderr) {
                 coverManager.reset()
             })

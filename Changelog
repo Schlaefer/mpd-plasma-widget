@@ -1,3 +1,6 @@
+# 5.1
+- Fixes cover cache not rotating properly
+
 # 5.0
 - Was burned along with the rest of the ship to make it back to London in time
 - The package "imagemagick" is required additionally to "mpc" now
