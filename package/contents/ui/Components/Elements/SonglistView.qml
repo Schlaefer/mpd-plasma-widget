@@ -53,7 +53,22 @@ ListViewGeneric {
         target: appWindow
     }
 
-    model: ListModel {}
+    model: ListModel {
+        /**
+          * Keep the "position" on our end in sync with MPD expeded result
+          *
+          * @param {int} start position 0-based
+          * @param {int} end position 0-based
+          */
+        function updatePositionAfterMove(from, to) {
+            if (from === to) { return }
+            let start = to < from ? to : from
+            let end = to > from ? to : from
+            for (let i = start; i <= end; i++) {
+                root.model.set(i, {"position": i+1+""})
+            }
+        }
+    }
 
     moveDisplaced: Transition {
         YAnimator {

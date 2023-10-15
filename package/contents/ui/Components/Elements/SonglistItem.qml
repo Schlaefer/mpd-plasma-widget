@@ -82,14 +82,8 @@ Item {
                                          listView.model.move(oldIndex, newIndex, 1)
                                      }
                     onDropped: {
-                        // This should match the new state of mpd and prevents a
-                        // queue redraw if our state is identical to mpd's queue.
-                        listView.model.set(startIndex, {position: startIndex + 1 + ""})
-                        listView.model.set(endIndex, {position: endIndex + 1 + ""})
-
-                        // Send queue
+                        listView.model.updatePositionAfterMove(startIndex, endIndex)
                         mpdState.moveInQueue(startIndex + 1, endIndex + 1)
-
                         startIndex = -1
                     }
                 }
