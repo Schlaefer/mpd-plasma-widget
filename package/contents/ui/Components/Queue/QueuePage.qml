@@ -36,16 +36,6 @@ Kirigami.ScrollablePage {
                             checked: true
                         },
                         Kirigami.Action {
-                            text: qsTr("Clear Queue")
-                            icon.name: "edit-delete"
-                            tooltip: text + " (" + qsTr("Shift+C") + ")" // @i18n
-                            shortcut: "shift+c"
-                            displayHint: Kirigami.DisplayHint.IconOnly
-                            onTriggered: {
-                                mpdState.clearQueue()
-                            }
-                        },
-                        Kirigami.Action {
                             text: qsTr("Queue")
                             Kirigami.Action {
                                 icon.name: "document-save-as"
@@ -78,6 +68,16 @@ Kirigami.ScrollablePage {
                                     songlistView.updateMpdPositions()
 
                                     mpdState.removeFromQueue(positions)
+                                }
+                            }
+                            Kirigami.Action {
+                                text: qsTr("Clear Queue")
+                                icon.name: "edit-delete"
+                                tooltip: text + " (" + qsTr("Shift+C") + ")" // @i18n
+                                shortcut: "shift+c"
+                                displayHint: Kirigami.DisplayHint.IconOnly
+                                onTriggered: {
+                                    mpdState.clearQueue()
                                 }
                             }
                         }
