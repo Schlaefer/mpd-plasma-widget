@@ -62,15 +62,6 @@ Item {
                 id: menuLoader
             }
 
-            Rectangle {
-                id: cursorMarker
-                anchors.left: parent.left
-                implicitHeight: mainLayout.height
-                width: Kirigami.Units.smallSpacing
-                opacity: carretIndex === index
-                color: Kirigami.Theme.hoverColor
-            }
-
             RowLayout {
                 id: mainLayout
                 width: root.width
@@ -83,6 +74,7 @@ Item {
                     visible: isSortable
 
                     Layout.preferredWidth: Kirigami.Units.iconSizes.medium
+                    Layout.leftMargin: -Kirigami.Units.gridUnit / 2
 
                     listItem: listItem
                     listView: parentView
@@ -105,8 +97,16 @@ Item {
 
                 ListCoverimage {
                     id: image
-                    Layout.leftMargin: isSortable ? 0 : cursorMarker.width + 2 * Kirigami.Units.smallSpacing
-                    highlight: model.checked
+                    isSelected: model.checked
+                }
+
+                Rectangle {
+                    id: cursorMarker
+                    Layout.fillHeight: true
+                    width: Kirigami.Units.smallSpacing
+                    opacity: carretIndex === index
+                    color: Kirigami.Theme.hoverColor
+                    border.color: Kirigami.Theme.hoverColor
                 }
 
                 // We need a layout-"anchor" for the MouseArea *and* to allow
@@ -120,7 +120,7 @@ Item {
                         spacing: 0
                         Text {
                             Layout.fillWidth: true
-                            Layout.leftMargin: Kirigami.Units.largeSpacing
+//                            Layout.leftMargin: Kirigami.Units.largeSpacing
                             Layout.rightMargin: Kirigami.Units.small
                             color: (playingIndex === index) ? Kirigami.Theme.highlightedTextColor : Kirigami.Theme.textColor
                             font.bold: !appWindow.narrowLayout
@@ -131,7 +131,7 @@ Item {
                         Text {
                             visible: !appWindow.narrowLayout
                             Layout.fillWidth: true
-                            Layout.leftMargin: Kirigami.Units.largeSpacing
+//                            Layout.leftMargin: Kirigami.Units.largeSpacing
                             Layout.rightMargin: Kirigami.Units.small
                             color: (playingIndex === index) ? Kirigami.Theme.highlightedTextColor : Kirigami.Theme.disabledTextColor
                             text: FormatHelpers.artist(model)
@@ -141,7 +141,7 @@ Item {
                         Text {
                             visible: !appWindow.narrowLayout
                             Layout.fillWidth: true
-                            Layout.leftMargin: Kirigami.Units.largeSpacing
+//                            Layout.leftMargin: Kirigami.Units.largeSpacing
                             Layout.rightMargin: Kirigami.Units.small
                             color: (playingIndex === index) ? Kirigami.Theme.highlightedTextColor : Kirigami.Theme.disabledTextColor
                             text: FormatHelpers.queueAlbumLine(model)

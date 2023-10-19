@@ -5,7 +5,7 @@ This release focuses on improving playlist navigation flow.
 - Adds "action toolbar" on top of song-lists
 - Selected items are indicated with marker on cover
 - Adds some keyboard navigation to the Queue:
-    - Cursor position is shown by a box on the left side 
+    - Cursor position is shown by moving caret between cover and text
     - Cursor keys to move up and down
     - Cursor+Shift to select items
     - Space to toggle selection downwards

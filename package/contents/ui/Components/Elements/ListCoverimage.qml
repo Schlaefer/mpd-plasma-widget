@@ -7,7 +7,7 @@ Item {
     id: root
 
     property alias loadingPriority: image.loadingPriority
-    property bool highlight: false
+    property bool isSelected: false
 
     Layout.preferredHeight: appWindow.narrowLayout ? Kirigami.Units.iconSizes.medium : Kirigami.Units.iconSizes.large
     Layout.preferredWidth: appWindow.narrowLayout ? Kirigami.Units.iconSizes.medium : Kirigami.Units.iconSizes.large
@@ -63,13 +63,14 @@ Item {
     }
 
     Rectangle {
+        readonly property int offset: 2
         height: Kirigami.Units.iconSizes.medium / 2
         width: Kirigami.Units.iconSizes.medium / 2
-        x: parent.width - width + 5
-        y: -2
+        x: parent.width - width + offset
+        y: -offset
         color: Kirigami.Theme.highlightColor
         border.color: Kirigami.Theme.hoverColor
-        visible: highlight
+        visible: isSelected
 
         Kirigami.Icon {
             color: Kirigami.Theme.highlightedTextColor
