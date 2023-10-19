@@ -24,6 +24,23 @@ GridLayout {
         shadowColor: cfgShadowColor
         shadowSpread: cfgShadowSpread
 
+        onHeightChanged: sourceSizeTimer.restart()
+        onWidthChanged: sourceSizeTimer.restart()
+
+        // Delay setting the source otherwise resizing the widget is very shoppy.
+        Timer {
+            id: sourceSizeTimer
+            interval: 1000
+            onTriggered: {
+                coverImageContainer.sourceSize.height = height
+                coverImageContainer.sourceSize.width = height
+            }
+        }
+
+        Component.onCompleted: {
+            sourceSizeTimer.start()
+        }
+
         // @BOGUS This seems bogus but is necessary since Image is wrapped by Item
         Layout.minimumWidth: cfgHorizontalLayout ? parent.height : parent.width
     }
@@ -60,7 +77,6 @@ GridLayout {
                 if (volumeSlider.value !== mpdState.mpdVolume)
                     volumeSlider.value = mpdState.mpdVolume
             }
-            target: mpdState
         }
     }
 

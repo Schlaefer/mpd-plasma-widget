@@ -27,6 +27,9 @@ Item {
         mipmap: true
         fillMode: Image.PreserveAspectFit
 
+        sourceSize.height: Kirigami.Units.iconSizes.large
+        sourceSize.width: Kirigami.Units.iconSizes.large
+
         function setCover(coverPath) {
             if (coverPath === null) {
                 return false

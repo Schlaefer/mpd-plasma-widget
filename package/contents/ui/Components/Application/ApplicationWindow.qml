@@ -71,6 +71,9 @@ Kirigami.ApplicationWindow {
                     Layout.preferredHeight: songinfo.height
                     Layout.preferredWidth: songinfo.height
 
+                    sourceSize.height: songinfo.height
+                    sourceSize.width: songinfo.height
+
                     MouseArea {
                         anchors.fill: coverImage
                         acceptedButtons: Qt.MiddleButton

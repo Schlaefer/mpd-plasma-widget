@@ -7,6 +7,8 @@ import org.kde.kirigami 2.20 as Kirigami
 Item {
     id: coverImageContainer
 
+    property alias sourceSize: coverImage.sourceSize
+
     property int coverRadius: 0
     property int shadowSpread: 0
     property string shadowColor
@@ -76,7 +78,6 @@ Item {
         id: coverImage
 
         visible: false
-        cache: false
         mipmap: true
         anchors.fill: parent
         Layout.maximumWidth: height > height ? width : height
