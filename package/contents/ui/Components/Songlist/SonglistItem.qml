@@ -63,15 +63,8 @@ Item {
             }
 
             Rectangle {
-                id: selectMarker
-                implicitHeight: mainLayout.height
-                width: Kirigami.Units.smallSpacing
-                color: Kirigami.Theme.hoverColor
-                opacity: model.checked ? 1 : 0
-            }
-
-            Rectangle {
-                anchors.left: selectMarker.right
+                id: cursorMarker
+                anchors.left: parent.left
                 implicitHeight: mainLayout.height
                 width: Kirigami.Units.smallSpacing
                 opacity: carretIndex === index
@@ -112,7 +105,8 @@ Item {
 
                 ListCoverimage {
                     id: image
-                    Layout.leftMargin: isSortable ? 0 : selectMarker.width + 2 * Kirigami.Units.smallSpacing
+                    Layout.leftMargin: isSortable ? 0 : cursorMarker.width + 2 * Kirigami.Units.smallSpacing
+                    highlight: model.checked
                 }
 
                 // We need a layout-"anchor" for the MouseArea *and* to allow

@@ -7,6 +7,7 @@ Item {
     id: root
 
     property alias loadingPriority: image.loadingPriority
+    property bool highlight: false
 
     Layout.preferredHeight: appWindow.narrowLayout ? Kirigami.Units.iconSizes.medium : Kirigami.Units.iconSizes.large
     Layout.preferredWidth: appWindow.narrowLayout ? Kirigami.Units.iconSizes.medium : Kirigami.Units.iconSizes.large
@@ -58,6 +59,22 @@ Item {
                 return
             }
             coverManager.gotCover.connect(onGotCover)
+        }
+    }
+
+    Rectangle {
+        height: Kirigami.Units.iconSizes.medium / 2
+        width: Kirigami.Units.iconSizes.medium / 2
+        x: parent.width - width + 5
+        y: -2
+        color: Kirigami.Theme.highlightColor
+        border.color: Kirigami.Theme.hoverColor
+        visible: highlight
+
+        Kirigami.Icon {
+            color: Kirigami.Theme.highlightedTextColor
+            source: "object-select-symbolic"
+            anchors.fill: parent
         }
     }
 }
