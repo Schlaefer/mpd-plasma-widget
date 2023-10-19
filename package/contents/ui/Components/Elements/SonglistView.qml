@@ -3,13 +3,88 @@ import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.0
 import org.kde.kirigami 2.20 as Kirigami
 import "../../Components/Elements"
-import "../../../scripts/listManager.js" as ListManager
 
 ListViewGeneric {
     id: root
 
-    property var listManager: new ListManager.ListManager()
     property var actionsHook
+
+    function selectAll(state = true) {
+        select(Array.from({length: model.count}, (v,i) => i), state)
+    }
+
+    function selectNeighborsByAlbum(song, index) {
+        let positions = _getNeighbors(song, index, (a, b) => { return a.album === b.album })
+        select(positions)
+    }
+
+    function selectNeighborsByAartist(song, index) {
+        let positions = _getNeighbors(song, index, (a, b) => { return a.artist === b.artist })
+        select(positions)
+    }
+
+    function _getNeighbors(song, index, comparator) {
+        let found = [index]
+        // find previous
+        var i
+        for (i = index - 1; i >= 0; i--) {
+            var mdl = model.get(i)
+            if (comparator(song, mdl)) {
+                found.push(i)
+            } else {
+                break
+            }
+        }
+        // find next
+        for (i = index + 1; i < model.count; i++) {
+            let mdl = model.get(i)
+            if (comparator(song, mdl)) {
+                found.push(i)
+            } else {
+                break
+            }
+        }
+
+        found.sort(function (a, b) {
+            return a - b;
+        })
+
+        return found
+    }
+
+    function selectAbove(index) {
+        for (let i = 0; i < index; i++) {
+            model.setProperty(i, 'checked', true)
+        }
+    }
+
+    function selectBelow(index) {
+        for (let i = index + 1 ; i < model.count; i++) {
+            model.setProperty(i, 'checked', true)
+        }
+    }
+
+    function select(positions, state = true) {
+        if (!Array.isArray(positions)) {
+            throw new Error("Invalid argument: positions must be an array")
+        }
+        positions.forEach(function(position) {
+            model.setProperty(position, 'checked', state)
+        })
+    }
+
+    function getSelectedPositionsMpdBased() {
+        let positions = []
+
+        for (var i = 0; i < model.count; i++) {
+            let song = model.get(i)
+            if (song.checked === true ) {
+                positions.push(song.position)
+            }
+        }
+
+        return positions
+    }
 
     /**
       * Get all the selected files in the list or all if none is selected
@@ -17,30 +92,23 @@ ListViewGeneric {
       * @return {array} selected files
       */
     function getSelectedFilesOrAll() {
-        let items = root.listManager.getChecked()
         let files = []
+        var i
 
-        if (items.length === 0) {
-            for (var i = 0; i < root.count; i++) {
-                files.push(root.model.get(i).file)
+        for (i = 0; i < model.count; i++) {
+            let song = model.get(i)
+            if (song.checked === true ) {
+                files.push(song.file)
             }
-        } else {
-            items.forEach(function (position) {
-                files.push(root.model.get(position).file)
-            })
-            // @TODO
-            root.checkItems()
-            root.listManager.reset()
+        }
+
+        if (files.length === 0) {
+            for (i = 0; i < model.count; i++) {
+                files.push(model.get(i).file)
+            }
         }
 
         return files
-    }
-
-    function checkItems() {
-        let items = root.listManager.getChecked()
-        for (var i = 0; i < model.count; i++) {
-            model.setProperty(i, 'checked', items.indexOf(i) > -1)
-        }
     }
 
     // onCountChanged: {
@@ -123,15 +191,13 @@ ListViewGeneric {
                 text: qsTr("Select All")
                 icon.name: "edit-select-all-symbolic"
                 onTriggered: {
-                    listView.listManager.checkAll(listView.model)
-                    listView.checkItems()
+                    listView.selectAll()
                 }
             }
             Kirigami.Action {
                 text: qsTr("Deselect All")
                 onTriggered: {
-                    listView.listManager.reset()
-                    listView.checkItems()
+                    listView.selectAll(false)
                 }
             }
         }

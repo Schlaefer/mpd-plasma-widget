@@ -1,6 +1,7 @@
 # next
 - Reducing need to redraw Queue after moving items around
 - Minor UI tweaks
+- Code refactoring
 
 # 5.1
 - Adds inserting songs after the currently playing queue item

@@ -30,60 +30,35 @@ QQC2.Menu {
         text: qsTr("Select All")
         icon.name: "edit-select-all-symbolic"
         onTriggered: {
-            root.parentView.listManager.checkAll(root.parentView.model)
-            root.parentView.checkItems()
+            root.parentView.selectAll(true)
         }
     }
     QQC2.MenuItem {
         text: qsTr("Deselect All")
         onTriggered: {
-            root.parentView.listManager.reset()
-            root.parentView.checkItems()
+            root.parentView.selectAll(false)
         }
     }
     QQC2.MenuSeparator {}
     QQC2.MenuItem {
         text: qsTr('Select by Album')
         icon.name: "media-album-cover"
-        visible: !checkBox.checked
         onTriggered: {
-            let albumItems = root.parentView.listManager.checkNeighboursAlbum(root.parentView.model, model, index)
-            root.parentView.checkItems()
-        }
-    }
-    QQC2.MenuItem {
-        text: qsTr('Deselect by Album')
-        icon.name: "media-album-cover"
-        visible: checkBox.checked
-        onTriggered: {
-            let albumItems = root.parentView.listManager.uncheckNeighboursAlbum(root.parentView.model, model, index)
-            root.parentView.checkItems()
+            root.parentView.selectNeighborsByAlbum(model, index)
         }
     }
     QQC2.MenuItem {
         text: qsTr('Select by Album-Artist')
         icon.name: "view-media-artist"
-        visible: !checkBox.checked
         onTriggered: {
-            let albumItems = root.parentView.listManager.checkNeighboursArtist(root.parentView.model, model, index)
-            root.parentView.checkItems()
-        }
-    }
-    QQC2.MenuItem {
-        text: qsTr('Deselect by Album-Artist')
-        icon.name: "view-media-artist"
-        visible: checkBox.checked
-        onTriggered: {
-            let albumItems = root.parentView.listManager.uncheckNeighboursArtist(root.parentView.model, model, index)
-            root.parentView.checkItems()
+            root.parentView.selectNeighborsByAartist(model, index)
         }
     }
     QQC2.MenuItem {
         text: qsTr('Select Above')
         icon.name: "arrow-up"
         onTriggered: {
-            root.parentView.listManager.checkSongsAbove(root.parentView.model, index)
-            root.parentView.checkItems()
+            root.parentView.selectAbove(index)
         }
         enabled: index > 0
     }
@@ -91,8 +66,7 @@ QQC2.Menu {
         text: qsTr('Select Below')
         icon.name: "arrow-down"
         onTriggered: {
-            root.parentView.listManager.checkSongsBelow(root.parentView.model, index)
-            root.parentView.checkItems()
+            root.parentView.selectBelow(index)
         }
         enabled: index < root.parentView.count - 1
     }

@@ -72,8 +72,8 @@ Kirigami.ScrollablePage {
                                 // icon.name: "checkbox"
                                 shortcut: "del"
                                 onTriggered: {
-                                    let items = songlistView.listManager.getCheckedMpd()
-                                    mpdState.removeFromQueue(items)
+                                    let positions = songlistView.getSelectedPositionsMpdBased()
+                                    mpdState.removeFromQueue(positions)
                                 }
                             }
                         }
@@ -101,8 +101,6 @@ Kirigami.ScrollablePage {
             if (followCurrentSong.checked)  {
                 songlistView.showCurrentItemInList()
             }
-            songlistView.listManager.reset()
-            songlistView.checkItems()
         }
 
         function showCurrentItemInList() {

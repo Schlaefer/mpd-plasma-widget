@@ -91,15 +91,7 @@ Item {
                 CheckBox {
                     id: checkBox
                     checked: model.checked
-                    onCheckedChanged: {
-                        if (checked) {
-                            parentView.listManager.check(index)
-                            model.checked = true
-                        } else {
-                            parentView.listManager.uncheck(index)
-                            model.checked = false
-                        }
-                    }
+                    onCheckedChanged: model.checked = checked
                 }
 
                 ListCoverimage { id: image }
