@@ -21,6 +21,7 @@ This release focuses on improving playlist navigation flow.
     - F jumps to the currently playing song
     - Making changes to the Queue disables Follow-mode for a short time
     - Fixes showing the same song with duplicate song in the Queue
+- Adds Right-Click menu in Artists for whole artist-row
 - Fixes similar named albums ("Best of", "Greatest Hits") sharing the same cover
 - Fixes jumping to Queue with "1" shortcut sometimes needed two presses
 - Reducing need to redraw the Queue after manipulating it
