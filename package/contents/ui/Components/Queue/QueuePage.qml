@@ -256,6 +256,8 @@ Kirigami.ScrollablePage {
         }
     }
 
+    onVisibleChanged: songlistView.focus = true
+
     // @SOMEDAY loader
     QueueDialogSave {
         id: queueDialogSave
