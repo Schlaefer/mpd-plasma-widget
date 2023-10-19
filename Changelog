@@ -1,16 +1,14 @@
-# next
-
-This release focuses on improving playlist navigation flow.
+# 5.2
 
 - Adds "action toolbar" on top of song-lists
-- Selected items are indicated with marker on cover
+- Replaces dedicated checkboxes with marker on cover
 - Adds some keyboard navigation to the Queue:
-    - Cursor position is shown by moving caret between cover and text
-    - Cursor keys to move up and down
-    - Cursor+Shift to select items
+    - Cursor position is shown by moving indicator between cover and text
+    - Up/Down keys to move up and down
+    - Up/Down+Shift to select items
     - Space to toggle selection downwards
     - Shift-D to clear the selection
-    - B to select the album at the caret (Shift+B for deselect)
+    - B to select the album at the cursor (Shift+B for deselect)
     - Enter to play the selected song
 - Adds some mouse actions to the Queue:
     - Single-Click to select a single song
