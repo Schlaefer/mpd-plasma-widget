@@ -239,6 +239,8 @@ Kirigami.ScrollablePage {
                         // As long as mpd-queue matches ours do nothing
                         continue
                     } else {
+                        // Clear out selection (cache) of the item
+                        songlistView.select(i, false)
                         // console.log('Removing our song.')
                         songlistView.model.remove(i)
                     }
