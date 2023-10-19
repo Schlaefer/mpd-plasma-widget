@@ -73,6 +73,10 @@ Kirigami.ScrollablePage {
                                 shortcut: "del"
                                 onTriggered: {
                                     let positions = songlistView.getSelectedPositionsMpdBased()
+
+                                    songlistView.removeSelection()
+                                    songlistView.updateMpdPositions()
+
                                     mpdState.removeFromQueue(positions)
                                 }
                             }
@@ -115,6 +119,7 @@ Kirigami.ScrollablePage {
             }
 
             songlistView.currentIndex = i
+            // ListView.Contain  ListView.Center
             songlistView.positionViewAtIndex(i, ListView.Center)
         }
 
@@ -147,11 +152,9 @@ Kirigami.ScrollablePage {
                     onTriggered: {
                         let positionToRemove = model.position
 
-                        songlistView.model.remove(index)
-                        // Keep our state in sync with mpd's
-                        for (let i = 0; i < songlistView.model.count; i++) {
-                            songlistView.model.set(i, {position: i+1 + ""})
-                        }
+                        songlistView.select([positionToRemove - 1])
+                        songlistView.removeSelection()
+                        songlistView.updateMpdPositions()
 
                         mpdState.removeFromQueue([positionToRemove])
                     }

@@ -73,6 +73,19 @@ ListViewGeneric {
         })
     }
 
+    function getSelection() {
+        let positions = []
+
+        for (var i = 0; i < model.count; i++) {
+            let song = model.get(i)
+            if (song.checked === true ) {
+                positions.push(i)
+            }
+        }
+
+        return positions
+    }
+
     function getSelectedPositionsMpdBased() {
         let positions = []
 
@@ -84,6 +97,22 @@ ListViewGeneric {
         }
 
         return positions
+    }
+
+    function removeSelection() {
+        let positions = getSelection()
+
+        // removing from bottom otherwise the index of lower elements changes
+        for (let i = positions.length - 1; i >= 0; i--) {
+            model.remove(positions[i], 1)
+        }
+    }
+
+    function updateMpdPositions() {
+        for (var i = 0; i < model.count; i++) {
+            let newPosition = i+1
+            model.set(i, {"position": newPosition + ""})
+        }
     }
 
     /**
