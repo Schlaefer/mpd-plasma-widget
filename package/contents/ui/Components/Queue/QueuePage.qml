@@ -157,6 +157,12 @@ Kirigami.ScrollablePage {
                     }
                 }
             ]
+
+            onDoubleClicked: {
+                mpdState.playInQueue(model.position)
+            }
+
+
         }
     }
 

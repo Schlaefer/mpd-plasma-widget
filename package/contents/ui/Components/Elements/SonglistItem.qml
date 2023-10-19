@@ -8,6 +8,8 @@ import "../../../scripts/formatHelpers.js" as FormatHelpers
 Item {
     id: root
 
+    signal doubleClicked(var model, int index)
+
     property alias showSongMenu: showSongMenuBt.visible
     property alias actions: listItem.actions
     property alias alternatingBackground: listItem.alternatingBackground
@@ -43,9 +45,17 @@ Item {
             implicitHeight: mainLayout.implicitHeight
             implicitWidth: mainLayout.implicitWidth
             acceptedButtons: Qt.LeftButton | Qt.RightButton
+
+            Timer {
+                id: dblClTimer
+                // Should be in Qt.application.styleHints.mouseDoubleClickInterval but isn't
+                interval: 400
+            }
+
             onClicked: function (mouse) {
                 if (mouse.button === Qt.LeftButton) {
                     model.checked = !model.checked
+                    dblClTimer.start()
                 }
                 if (mouse.button === Qt.RightButton) {
                     menuLoader.source = "SonglistItemContextMenu.qml"
@@ -54,6 +64,15 @@ Item {
                     }
                 }
             }
+            onDoubleClicked: {
+                root.doubleClicked(model, index)
+                if (dblClTimer.running) {
+                    // Reverse the click action on doubleclick
+                    model.checked = !model.checked
+                    dblClTimer.stop()
+                }
+            }
+
             Loader {
                 id: menuLoader
             }

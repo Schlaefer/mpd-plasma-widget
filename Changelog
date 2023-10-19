@@ -1,4 +1,5 @@
 # next
+- Adds start playing a song when double-clicked in the Queue
 - Removes checkbox indicator in Queue in favor of proper row highlighting
 - Reducing need to redraw Queue after moving items around
 - Minor UI tweaks
