@@ -11,6 +11,7 @@ Item {
 
     signal gotPlaylist(var plData)
     signal onSaveQueueAsPlaylist(bool success)
+    signal playedPlaylist(string title)
 
     property bool mpcAvailable: false
     property bool mpcConnectionAvailable: false
@@ -397,6 +398,7 @@ Item {
         clearQueue()
         addPlaylistToQueue(playlist)
         playInQueue(1)
+        playedPlaylist(playlist)
     }
 
     function getOptions() {
@@ -553,7 +555,6 @@ Item {
             // queue started. We have to check what is playing after the queue
             // changes.
             mpdRoot.getInfo()
-            mpdRoot.getPlaylists()
         }
     }
 
@@ -581,8 +582,12 @@ Item {
                 if (stdout.includes('options'))
                     mpdRoot.getOptions()
 
-                if (stdout.includes('playlist') || stdout.includes('stored_playlist')) {
+                if (stdout.includes('playlist')) {
                     statusUpdateTimer.restart()
+                }
+
+                if (stdout.includes('stored_playlist')) {
+                    mpdRoot.getPlaylists()
                 }
             }
             executable.execMpc(mpdCmds.mpcIdleLoop, clb)

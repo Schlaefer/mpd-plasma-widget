@@ -238,6 +238,10 @@ Kirigami.ScrollablePage {
                 songlistView.showCurrentItemInList()
             }
         }
+
+        function onPlayedPlaylist(playlist) {
+            queueDialogReplacePl.selectPlaylist(playlist)
+        }
     }
 
     Component.onCompleted: {

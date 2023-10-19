@@ -10,6 +10,13 @@ Kirigami.PromptDialog {
     standardButtons: Kirigami.Dialog.NoButton
     showCloseButton: false
 
+    function selectPlaylist(playlist) {
+        let found = listCombo.find(playlist)
+        if (found !== -1) {
+            listCombo.currentIndex = found
+        }
+    }
+
     customFooterActions: [
         Kirigami.Action {
             text: qsTr("Replace Playlist")
