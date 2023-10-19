@@ -63,17 +63,17 @@ Item {
     }
 
     Rectangle {
-        readonly property int offset: 2
+        readonly property int offset: 4
         height: Kirigami.Units.iconSizes.medium / 2
         width: Kirigami.Units.iconSizes.medium / 2
         x: parent.width - width + offset
-        y: -offset
-        color: Kirigami.Theme.highlightColor
+        y: parent.width - height + offset
+        color: Kirigami.Theme.activeBackgroundColor
         border.color: Kirigami.Theme.hoverColor
         visible: isSelected
 
         Kirigami.Icon {
-            color: Kirigami.Theme.highlightedTextColor
+            color: Kirigami.Theme.activeTextColor
             source: "object-select-symbolic"
             anchors.fill: parent
         }
