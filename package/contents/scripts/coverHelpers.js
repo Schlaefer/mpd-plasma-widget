@@ -29,8 +29,9 @@ class FetchQueue {
             // why. Looks like there could be an issue if the key is a file-ID instead
             // of the album?? -  Spend to much time on it already. This works.
             data: {
+                "album": data.album,
+                "albumartist": data.albumartist,
                 "file": data.file,
-                "album": data.album
             },
             priority: priority
         }

@@ -63,7 +63,12 @@ QQ2.Item {
     }
 
     function getId(itemInfo) {
-        return (itemInfo.album || itemInfo.file)
+        let id = itemInfo.file
+        if (itemInfo.album) {
+            id = itemInfo.albumartist + itemInfo.album
+        }
+
+        return id
     }
 
     function getCoverFileName(itemInfo) {
