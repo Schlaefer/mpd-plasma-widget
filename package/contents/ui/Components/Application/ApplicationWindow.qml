@@ -15,7 +15,7 @@ Kirigami.ApplicationWindow {
     id: root
 
     maximumWidth: 719
-    minimumWidth: 280
+    minimumWidth: 250
     minimumHeight: footer.height
 
     property bool narrowLayout: appWindow.width < 520
@@ -102,8 +102,7 @@ Kirigami.ApplicationWindow {
                         Layout.bottomMargin: (appWindow.narrowLayout) ?  Kirigami.Units.largeSpacing : 0
                         color: Kirigami.Theme.textColor
                         font.bold: !appWindow.narrowLayout
-                        wrapMode: Text.WordWrap
-
+                        elide: Text.ElideRight
                         Connections {
                             function onMpdInfoChanged() {
                                 songTitle.text = FormatHelpers.title(mpdState.mpdInfo)
@@ -117,7 +116,7 @@ Kirigami.ApplicationWindow {
                         Layout.fillWidth: true
                         Layout.leftMargin: Kirigami.Units.largeSpacing
                         color: Kirigami.Theme.textColor
-                        wrapMode: Text.WordWrap
+                        elide: Text.ElideRight
 
                         Connections {
                             function onMpdInfoChanged() {
@@ -134,7 +133,7 @@ Kirigami.ApplicationWindow {
                         Layout.leftMargin: Kirigami.Units.largeSpacing
                         Layout.bottomMargin: Kirigami.Units.largeSpacing
                         color: Kirigami.Theme.textColor
-                        wrapMode: Text.WordWrap
+                        elide: Text.ElideRight
 
                         Connections {
                             function onMpdInfoChanged() {
@@ -233,10 +232,8 @@ Kirigami.ApplicationWindow {
                                     }
                                 }
                             }
-
-
-
                         }
+
                         RowLayout {
                             Layout.fillWidth: true
                             Layout.rightMargin: Kirigami.Units.largeSpacing
@@ -246,39 +243,46 @@ Kirigami.ApplicationWindow {
 
                             Repeater {
                                 model: [
-                                    {
-                                        itOpt: "repeat",
-                                        itSc: "shift+z",
-                                        iconName: "media-playlist-repeat",
-                                        itTtp: "Toggle MPD's repeat mode",
-                                    },
-                                    {
-                                        itOpt: "random",
-                                        itSc: "z",
-                                        iconName: "media-playlist-shuffle",
-                                        itTtp: "Toogle MPD's random mode",
-                                    },
-                                    {
-                                        itOpt: "consume",
-                                        itSc: "r",
-                                        iconName: "draw-eraser",
-                                        itTtp: "Toogle MPD's consume mode",
-                                    }
+                                    mpdToggleConsumeAct,
+                                    mpdToggleRandomAct,
+                                    mpdToggleRepeatAct,
                                 ]
-
-                                MpdToggleOptionItem {
-                                    iconName: modelData.iconName
-                                    itSc: modelData.itSc
-                                    itOpt: modelData.itOpt
-                                    itTtp: modelData.itTtp
-                                }
+                                MpdToggleOptionItem {}
                             }
-
                         }
                     }
                 }
             }
         }
+    }
+
+    Kirigami.Action {
+        id: mpdToggleRepeatAct
+        property string mpdOption: "repeat"
+        text: qsTr("Repeat")
+        icon.name: "media-playlist-repeat"
+        shortcut: "Shift+Z"
+        tooltip: "Toggle MPD's Repeat mode"
+        onTriggered: { mpdState.toggleOption("repeat") }
+    }
+
+    Kirigami.Action {
+        id: mpdToggleRandomAct
+        property string mpdOption: "random"
+        text: qsTr("Random")
+        icon.name: "media-playlist-shuffle"
+        shortcut: "Z"
+        tooltip: "Toggle MPD's Random mode"
+        onTriggered: { mpdState.toggleOption("random") }
+    }
+    Kirigami.Action {
+        id: mpdToggleConsumeAct
+        property string mpdOption: "consume"
+        text: qsTr("Consume")
+        icon.name: "draw-eraser"
+        shortcut: "R"
+        tooltip: "Toggle MPD's Consume mode"
+        onTriggered: { mpdState.toggleOption("consume") }
     }
 
     function minimize() {

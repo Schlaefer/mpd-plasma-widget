@@ -58,6 +58,30 @@ Kirigami.ScrollablePage {
                                 separator: true
                             }
                             Kirigami.Action {
+                                icon.name: mpdToggleConsumeAct.icon.name
+                                text: mpdToggleConsumeAct.text
+                                shortcut: mpdToggleConsumeAct.shortcut
+                                tooltip: mpdToggleConsumeAct.tooltip
+                                onTriggered: mpdToggleConsumeAct.onTriggered()
+                            }
+                            Kirigami.Action {
+                                icon.name: mpdToggleRandomAct.icon.name
+                                text: mpdToggleRandomAct.text
+                                shortcut: mpdToggleRandomAct.shortcut
+                                tooltip: mpdToggleRandomAct.tooltip
+                                onTriggered: mpdToggleRandomAct.onTriggered()
+                            }
+                            Kirigami.Action {
+                                icon.name: mpdToggleRepeatAct.icon.name
+                                text: mpdToggleRepeatAct.text
+                                shortcut: mpdToggleRepeatAct.shortcut
+                                tooltip: mpdToggleRepeatAct.tooltip
+                                onTriggered: mpdToggleRepeatAct.onTriggered()
+                            }
+                            Kirigami.Action {
+                                separator: true
+                            }
+                            Kirigami.Action {
                                 text: qsTr("Clear Queue")
                                 icon.name: "edit-delete"
                                 tooltip: text + " (" + qsTr("Shift+C") + ")" // @i18n
