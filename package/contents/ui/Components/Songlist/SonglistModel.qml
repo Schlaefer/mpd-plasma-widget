@@ -34,6 +34,6 @@ ListModel {
     }
 
     onRowsMoved: {
-        updateMpdPositions(start, row)
+        updateMpdPositions(start, row - 1)
     }
 }

@@ -7,7 +7,7 @@ QQC2.Menu {
         text: qsTr("Replace Queue")
         icon.name: "media-play-playback"
         onTriggered: {
-            let songs = parent.getSelectedSongs().map(song => { return song.file })
+            let songs = parentView.getSelectedSongs().map(song => { return song.file })
             mpdState.replaceQueue(songs)
         }
     }
@@ -16,7 +16,7 @@ QQC2.Menu {
         text: qsTr("Append")
         icon.name: "media-playlist-append"
         onTriggered: {
-            let songs = parent.getSelectedSongs().map(song => { return song.file })
+            let songs = parentView.getSelectedSongs().map(song => { return song.file })
             mpdState.addSongsToQueue(songs)
         }
     }
@@ -24,7 +24,7 @@ QQC2.Menu {
         text: qsTr("Insert")
         icon.name:"timeline-insert"
         onTriggered: {
-            let songs = parent.getSelectedSongs().map(song => { return song.file })
+            let songs = parentView.getSelectedSongs().map(song => { return song.file })
             mpdState.addSongsToQueue(songs, "insert")
         }
     }
