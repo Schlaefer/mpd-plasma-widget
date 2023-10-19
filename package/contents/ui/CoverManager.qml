@@ -64,8 +64,8 @@ QQ2.Item {
 
     function getId(itemInfo) {
         let id = itemInfo.file
-        if (itemInfo.album) {
-            id = itemInfo.albumartist + itemInfo.album
+        if (itemInfo.album && (itemInfo.albumartist || itemInfo.artist)) {
+            id = (itemInfo.albumartist || itemInfo.artist) + " - " + itemInfo.album
         }
 
         return id
@@ -123,21 +123,24 @@ QQ2.Item {
     // Trigger fetching new covers
     QQ2.Timer {
         id: fetchingQueueTimer
-        running: false
+
+        property int watchdog
+
         repeat: true
         interval: 500
         triggeredOnStart: true
         onTriggered: {
-            // @TODO
-            // if (fetching) {
-            // return
-            // }
+            if (fetching && watchdog !== 0) {
+                watchdog--
+                return
+            }
             let itemToFetch = fetchQueue.next()
             if (!itemToFetch) {
                 fetchingQueueTimer.stop()
                 return
             }
 
+            watchdog = 120
             fetching = true
             currentlyFetching = itemToFetch
             // @TODO Execute here instead of mpdstate?

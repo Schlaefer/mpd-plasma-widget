@@ -27,10 +27,11 @@ class FetchQueue {
             // Looks silly. But alas sometimes if you just do a "data: data" it will
             // store the whole queue-item as empty and therefore undefined. Don't know
             // why. Looks like there could be an issue if the key is a file-ID instead
-            // of the album?? -  Spend to much time on it already. This works.
+            // of the album?? - Spend to much time on it already. This works.
             data: {
                 "album": data.album,
                 "albumartist": data.albumartist,
+                "artist": data.albumartist,
                 "file": data.file,
             },
             priority: priority
