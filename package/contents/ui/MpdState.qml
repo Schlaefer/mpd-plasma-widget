@@ -15,7 +15,6 @@ Item {
     property bool mpcAvailable: false
     property bool mpcConnectionAvailable: false
     property int mpdVolume: 0
-    property string mpdFile: ""
     property string scriptRoot
     property bool mpdPlaying: false
     property var library
@@ -237,8 +236,6 @@ Item {
             // Normal playback
             if (info.length > 2) {
                 mpdInfo = songInfoQueryResponseToJson(info.shift())[0]
-                mpdFile = mpdInfo.file
-
                 mpdPlaying = info.shift().includes('[playing]')
 
                 return
