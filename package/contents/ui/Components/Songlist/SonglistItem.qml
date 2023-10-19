@@ -8,8 +8,6 @@ import "../../../scripts/formatHelpers.js" as FormatHelpers
 Item {
     id: root
 
-    signal doubleClicked(var model, int index)
-
     property alias actions: listItem.actions
     property alias alternatingBackground: listItem.alternatingBackground
     property alias coverLoadingPriority: image.loadingPriority
@@ -31,12 +29,6 @@ Item {
             implicitWidth: mainLayout.implicitWidth
             acceptedButtons: Qt.LeftButton | Qt.RightButton
 
-            Timer {
-                id: dblClTimer
-                // Should be in Qt.application.styleHints.mouseDoubleClickInterval but isn't
-                interval: 400
-            }
-
             onClicked: function (mouse) {
                 parentView.userInteracted()
                 if (mouse.button === Qt.LeftButton) {
@@ -49,7 +41,6 @@ Item {
                     }
                     parent.forceActiveFocus()
                     parentView.currentIndex = index
-                    dblClTimer.start()
                 }
                 if (mouse.button === Qt.RightButton) {
                     // If we click on selected items we wanna act on them in the
@@ -64,14 +55,6 @@ Item {
                     if (!menuLoader.item.visible) {
                         menuLoader.item.popup()
                     }
-                }
-            }
-            onDoubleClicked: {
-                root.doubleClicked(model, index)
-                if (dblClTimer.running) {
-                    // Reverse the click action on doubleclick
-                    parentView.selectToggle(index)
-                    dblClTimer.stop()
                 }
             }
 

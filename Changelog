@@ -15,7 +15,6 @@ I'm not too happy about the two boxes on the left, but it works good enough for 
     - B to select the album at the caret (Shift+B for deselect)
     - Enter to play the selected song
 - Adds some mouse actions to the Queue:
-    - Double-Click to start a song
     - Single-Click to select a single song
     - Shift+Single-Click to select a range
     - Single-Click+Ctrl to select or deselect a single song
