@@ -88,12 +88,6 @@ Item {
                     }
                 }
 
-                CheckBox {
-                    id: checkBox
-                    checked: model.checked
-                    onCheckedChanged: model.checked = checked
-                }
-
                 ListCoverimage { id: image }
 
                 // We need a layout-"anchor" for the MouseArea *and* to allow

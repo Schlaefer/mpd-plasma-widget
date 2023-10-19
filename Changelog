@@ -1,4 +1,5 @@
 # next
+- Removes checkbox indicator in Queue in favor of proper row highlighting
 - Reducing need to redraw Queue after moving items around
 - Minor UI tweaks
 - Code refactoring
