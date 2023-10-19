@@ -57,20 +57,6 @@ Kirigami.ScrollablePage {
                                 separator: true
                             }
                             Kirigami.Action {
-                                text: qsTr("Remove Selection")
-                                icon.name: "edit-delete-remove"
-                                // icon.name: "checkbox"
-                                shortcut: "del"
-                                onTriggered: {
-                                    let positions = songlistView.getSelectedPositionsMpdBased()
-
-                                    songlistView.removeSelection()
-                                    songlistView.updateMpdPositions()
-
-                                    mpdState.removeFromQueue(positions)
-                                }
-                            }
-                            Kirigami.Action {
                                 text: qsTr("Clear Queue")
                                 icon.name: "edit-delete"
                                 tooltip: text + " (" + qsTr("Shift+C") + ")" // @i18n
@@ -91,8 +77,35 @@ Kirigami.ScrollablePage {
     SonglistView {
         id: songlistView
 
-        QueueEmptyPlaceholder {
-            anchors.centerIn: parent
+        header: SonglistHeader {
+            leftActions: [
+                Kirigami.Action {
+                    id: rmSelctBtn
+                    text: qsTr("Remove Selection")
+                    tooltip: qsTr("Remove Selected Songs")
+                    icon.name: "edit-delete-remove"
+                    shortcut: "Del"
+                    enabled: numberSelected
+                    onTriggered: {
+                        let positions = songlistView.getSelectedPositionsMpdBased()
+                        songlistView.removeSelection()
+                        songlistView.updateMpdPositions()
+                        mpdState.removeFromQueue(positions)
+                    }
+                }
+            ]
+            // @TODO Should be default action of SonglistView without repeating here
+            rightActions: [
+                Kirigami.Action {
+                    text: appWindow.narrowLayout ? "" : qsTr("Deselect")
+                    tooltip: qsTr("Deselect All")
+                    icon.name: "edit-select-none"
+                    shortcut: "Shift+D"
+                    onTriggered: {
+                        songlistView.deselectAll()
+                    }
+                }
+            ]
         }
 
         function showCurrentItemInList() {
@@ -105,6 +118,15 @@ Kirigami.ScrollablePage {
             centerInView(index)
         }
 
+        onSelectedChanged: {
+            // @TODO
+            songlistView.headerItem.numberSelected = selected.length
+        }
+
+        QueueEmptyPlaceholder {
+            anchors.centerIn: parent
+        }
+
         delegate: SonglistItem {
             id: songlistItem
 
@@ -113,7 +135,6 @@ Kirigami.ScrollablePage {
             parentView: songlistView
             playingIndex: mpdState.mpdInfo.position ? mpdState.mpdInfo.position - 1 : -1
             carretIndex: songlistView.currentIndex
-            showSongMenu: false
 
             actions: [
                 Kirigami.Action {
@@ -133,13 +154,10 @@ Kirigami.ScrollablePage {
                     text: qsTr("Remove from Queue")
                     visible: !appWindow.narrowLayout
                     onTriggered: {
-                        let positionToRemove = model.position
-
-                        songlistView.select([positionToRemove - 1])
-                        songlistView.removeSelection()
+                        let index = model.index
+                        songlistView.model.remove(index)
                         songlistView.updateMpdPositions()
-
-                        mpdState.removeFromQueue([positionToRemove])
+                        mpdState.removeFromQueue([index + 1])
                     }
                 }
             ]

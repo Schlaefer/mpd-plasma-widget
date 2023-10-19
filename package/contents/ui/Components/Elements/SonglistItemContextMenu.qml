@@ -4,25 +4,28 @@ import QtQuick.Controls 2.3 as QQC2
 QQC2.Menu {
     id: contextMenu
     QQC2.MenuItem {
-        text: qsTr("Replace Queue with Song")
+        text: qsTr("Replace Queue")
         icon.name: "media-play-playback"
         onTriggered: {
-            mpdState.replaceQueue([model.file])
+            let songs = parent.getSelectedSongs().map(song => { return song.file })
+            mpdState.replaceQueue(songs)
         }
     }
     QQC2.MenuSeparator {}
     QQC2.MenuItem {
-        text: qsTr("Append Song to Queue")
+        text: qsTr("Append")
         icon.name: "media-playlist-append"
         onTriggered: {
-            mpdState.addSongsToQueue([model.file])
+            let songs = parent.getSelectedSongs().map(song => { return song.file })
+            mpdState.addSongsToQueue(songs)
         }
     }
     QQC2.MenuItem {
-        text: qsTr("Insert Song After Current")
+        text: qsTr("Insert")
         icon.name:"timeline-insert"
         onTriggered: {
-            mpdState.addSongsToQueue([model.file], "insert")
+            let songs = parent.getSelectedSongs().map(song => { return song.file })
+            mpdState.addSongsToQueue(songs, "insert")
         }
     }
     QQC2.MenuSeparator {}
@@ -30,11 +33,12 @@ QQC2.Menu {
         text: qsTr("Select All")
         icon.name: "edit-select-all-symbolic"
         onTriggered: {
-            root.parentView.selectAll(true)
+            parentView.selectAll(true)
         }
     }
     QQC2.MenuItem {
-        text: qsTr("Deselect All")
+        text: qsTr("Deselect")
+        icon.name: "edit-select-none"
         onTriggered: {
             parentView.deselectAll()
         }
@@ -44,21 +48,21 @@ QQC2.Menu {
         text: qsTr('Select by Album')
         icon.name: "media-album-cover"
         onTriggered: {
-            root.parentView.selectNeighborsByAlbum(model, index)
+            parentView.selectNeighborsByAlbum(model, index)
         }
     }
     QQC2.MenuItem {
         text: qsTr('Select by Album-Artist')
         icon.name: "view-media-artist"
         onTriggered: {
-            root.parentView.selectNeighborsByAartist(model, index)
+            parentView.selectNeighborsByAartist(model, index)
         }
     }
     QQC2.MenuItem {
         text: qsTr('Select Above')
         icon.name: "arrow-up"
         onTriggered: {
-            root.parentView.selectAbove(index)
+            parentView.selectAbove(index)
         }
         enabled: index > 0
     }
@@ -66,8 +70,8 @@ QQC2.Menu {
         text: qsTr('Select Below')
         icon.name: "arrow-down"
         onTriggered: {
-            root.parentView.selectBelow(index)
+            parentView.selectBelow(index)
         }
-        enabled: index < root.parentView.count - 1
+        enabled: index < parentView.count - 1
     }
 }

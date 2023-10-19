@@ -23,8 +23,8 @@ Kirigami.ApplicationWindow {
 
     flags: Qt.Window
     title: qsTr("MPD")
-    pageStack.initialPage: queuePage
-//    pageStack.initialPage: albumartistsPage
+     pageStack.initialPage: queuePage
+//   pageStack.initialPage: albumartistsPage
 
     QueuePage {
         id: queuePage

@@ -7,16 +7,10 @@ Kirigami.ScrollablePage {
 
     property alias songs: listView.songs
 
-    NavQueue {
-        parentPage: root
-    }
-
     SonglistView {
         id: listView
 
         property var songs
-
-        actionsHook: root.actions.contextualActions
 
         delegate: SonglistItem {
             id: songlistItem

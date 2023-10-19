@@ -9,8 +9,6 @@ ListViewGeneric {
 
     signal userInteracted()
 
-    property var actionsHook
-
      /**
       * Last selected item
       *
@@ -60,6 +58,7 @@ ListViewGeneric {
         }
 
         selected.sort(function(a, b) { return a - b; })
+        selectedChanged()
     }
 
     function selectToggle(index) {
@@ -144,6 +143,10 @@ ListViewGeneric {
         }
     }
 
+    function getSelectedSongs() {
+        return selected.map(function(index) { return model.get(index) })
+    }
+
     function getSelected() {
         return selected;
     }
@@ -161,10 +164,15 @@ ListViewGeneric {
         }
     }
 
-    function updateMpdPositions() {
+    // @TODO rename; listen to model?
+    function updateMpdPositions(from) {
+        selected = []
         for (var i = 0; i < model.count; i++) {
-            let newPosition = i+1
-            model.set(i, {"position": newPosition + ""})
+            if (model.get(i).checked) {
+                selected.push(i)
+            }
+            // @TODO still
+            model.set(i, {"position": i+1+""})
         }
     }
 
@@ -198,15 +206,13 @@ ListViewGeneric {
     }
 
     Keys.onPressed: {
-        if (event.key === Qt.Key_B) {
+        if (event.key === Qt.Key_A) {
+            if (event.modifiers & Qt.ControlModifier) {
+                root.selectAll()
+            }
+        } else if (event.key === Qt.Key_B) {
             let state = !(event.modifiers & Qt.ShiftModifier)
             root.selectNeighborsByAlbum(model.get(root.currentIndex), root.currentIndex, state)
-        } else if (event.key === Qt.Key_D) {
-            if (event.modifiers & Qt.ShiftModifier) {
-                root.deselectAll()
-            }
-        } else if (event.key === Qt.Key_L) {
-            centerInView()
         }
         event.accepted = true
     }
@@ -284,13 +290,23 @@ ListViewGeneric {
           * @param {int} start position 0-based
           * @param {int} end position 0-based
           */
-        function updatePositionAfterMove(from, to) {
+        // @TODO double still
+        function updateMpdPositions(from = 0, to) {
+            to = to || count - 1
             if (from === to) { return }
+
             let start = to < from ? to : from
             let end = to > from ? to : from
+
             for (let i = start; i <= end; i++) {
                 root.model.set(i, {"position": i+1+""})
             }
+
+            return
+        }
+
+        onRowsMoved: {
+            updateMpdPositions(start, row)
         }
     }
 
@@ -301,61 +317,46 @@ ListViewGeneric {
         }
     }
 
-    Component.onCompleted: {
-        if (actionsHook) {
-            let menu = contextualMenuItems.createObject(actionsHook.parent)
-            // @SOMEDAY why is that not working adding items to the Queue menu in queue?
-//            actionsHook.push(menu.children[0])
-            actionsHook.push(menu)
-        }
-    }
 
-    Component {
-        id: contextualMenuItems
-
-        Kirigami.Action {
-            text: qsTr("Songs")
+    headerPositioning: ListView.OverlayHeader
+    header: SonglistHeader {
+        leftActions: [
             Kirigami.Action {
-                text:  qsTr("Replace Queue")
+                text: qsTr("Play")
+                tooltip: qsTr("Replace Queue and Start Playing")
                 icon.name: "media-play-playback"
                 onTriggered: {
                     mpdState.replaceQueue(getSelectedFilesOrAll())
                 }
-            }
+            },
             Kirigami.Action {
-                separator: true
-            }
-            Kirigami.Action {
-                text: qsTr("Append to Queue")
+                text: qsTr("Append")
                 icon.name: "media-playlist-append"
+                tooltip: qsTr("Append to End of Queue")
                 onTriggered: {
                     mpdState.addSongsToQueue(getSelectedFilesOrAll())
                 }
 
-            }
+            },
             Kirigami.Action {
-                text: qsTr("Insert After Current")
+                text: qsTr("Insert")
+                tooltip: qsTr("Insert After Current Song")
                 icon.name: "timeline-insert"
                 onTriggered: {
                     mpdState.addSongsToQueue(getSelectedFilesOrAll(), "insert")
                 }
             }
+        ]
+        rightActions: [
             Kirigami.Action {
-                separator: true
-            }
-            Kirigami.Action {
-                text: qsTr("Select All")
-                icon.name: "edit-select-all-symbolic"
+                text: appWindow.narrowLayout ? "" : qsTr("Deselect")
+                tooltip: qsTr("Deselect All")
+                icon.name: "edit-select-none"
+                shortcut: "Shift+D"
                 onTriggered: {
-                    listView.selectAll()
+                    root.deselectAll()
                 }
             }
-            Kirigami.Action {
-                text: qsTr("Deselect All")
-                onTriggered: {
-                    listView.deselectAll()
-                }
-            }
-        }
+        ]
     }
 }

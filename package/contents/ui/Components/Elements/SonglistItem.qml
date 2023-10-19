@@ -10,7 +10,6 @@ Item {
 
     signal doubleClicked(var model, int index)
 
-    property alias showSongMenu: showSongMenuBt.visible
     property alias actions: listItem.actions
     property alias alternatingBackground: listItem.alternatingBackground
     property alias coverLoadingPriority: image.loadingPriority
@@ -26,21 +25,6 @@ Item {
         id: listItem
 
         highlightIndex: playingIndex
-
-        actions: [
-            Kirigami.Action {
-                id: showSongMenuBt
-                visible: true
-                icon.name: "application-menu"
-                text: qsTr("Song Menu")
-                onTriggered: {
-                    menuLoader.source = "SonglistItemContextMenu.qml"
-                    if (!menuLoader.item.visible) {
-                        menuLoader.item.popup()
-                    }
-                }
-            }
-        ]
 
         MouseArea {
             implicitHeight: mainLayout.implicitHeight
