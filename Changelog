@@ -2,6 +2,7 @@
 - Adds start playing a song when double-clicked in the Queue
 - Removes checkbox indicator in Queue in favor of proper row highlighting
 - Reducing need to redraw the Queue after manipulating it
+- Improve follow mode reliability with duplicate songs
 - Minor UI tweaks
 - Code refactoring
 

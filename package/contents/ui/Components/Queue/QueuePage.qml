@@ -113,7 +113,7 @@ Kirigami.ScrollablePage {
             }
             let i
             for (i = 0; i < model.count; i++) {
-                if (model.get(i).file === mpdState.mpdFile) {
+                if (model.get(i).position === mpdState.mpdInfo.position) {
                     break
                 }
             }
@@ -195,7 +195,7 @@ Kirigami.ScrollablePage {
             }
         }
 
-        function onMpdFileChanged() {
+        function onMpdInfoChanged() {
             if (followCurrentSong.checked)  {
                 songlistView.showCurrentItemInList()
             }
