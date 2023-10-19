@@ -26,7 +26,6 @@ Kirigami.ScrollablePage {
             function onGotPlaylist(playlistData) {
                 listView.model.clear()
                 for (let i in playlistData) {
-                    playlistData[i].checked = false
                     listView.model.append(playlistData[i])
                 }
             }

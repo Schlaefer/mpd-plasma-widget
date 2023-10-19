@@ -26,6 +26,12 @@ ListModel {
         return
     }
 
+    onRowsInserted: {
+        for(let i = first; i <= last; i++) {
+            // Autoinitialize the checked property for item selection
+            root.set(i, {"checked": false})
+        }
+    }
 
     onRowsMoved: {
         updateMpdPositions(start, row)

@@ -22,7 +22,6 @@ Kirigami.ScrollablePage {
         Component.onCompleted: {
             listView.model.clear()
             listView.songs.forEach(function (song) {
-                song.checked = false
                 listView.model.append(song)
             })
         }

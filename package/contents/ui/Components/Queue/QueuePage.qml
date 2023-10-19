@@ -223,7 +223,6 @@ Kirigami.ScrollablePage {
                     }
 
                 }
-                mpdSong.checked = false
                 songlistView.model.insert(i, mpdSong)
             }
 
