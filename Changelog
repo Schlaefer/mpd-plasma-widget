@@ -3,6 +3,7 @@
 - Removes checkbox indicator in Queue in favor of proper row highlighting
 - Reducing need to redraw the Queue after manipulating it
 - Improve follow mode reliability with duplicate songs
+- Fixes jumping to Queue with 1 shortcut sometimes needed two presses
 - Reduces memory usage
 - Minor UI tweaks
 - Code refactoring
