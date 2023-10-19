@@ -459,6 +459,13 @@ Item {
      * @return {string} The escaped string
      */
     function bEsc(str, quote = true) {
+        if (typeof(str) !== "string") {
+            console.trace()
+            throw new Error("Invalid argument error: expected string, got " + typeof(str))
+        } 
+        if (str === "") {
+            throw new Error("Invalid argument error: got empty string")
+        }
         let specialChars = ['$', '`', '"', '\\']
         let escapedStr = str.split('').map(character => {
                                                if (specialChars.includes(character)) {

@@ -21,6 +21,7 @@ Kirigami.ScrollablePage {
         delegate: SonglistItem {
             id: songlistItem
             parentView: listView
+            carretIndex: listView.currentIndex
         }
 
         Component.onCompleted: {

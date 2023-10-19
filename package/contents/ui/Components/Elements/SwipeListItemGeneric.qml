@@ -4,23 +4,17 @@ import org.kde.kirigami 2.20 as Kirigami
 
 Kirigami.SwipeListItem {
     property int highlightIndex: -1
+    property int carretIndex: -1
 
     width: root.width ? root.width : implicitWidth
 
+    backgroundColor:
+        (highlightIndex !== index)
+        ? Kirigami.Theme.backgroundColor
+        : Kirigami.Theme.highlightColor
     alternatingBackground: true
-    // I don't know what you mean, looks very save very normal to me.
-    backgroundColor: (model.checked)
-                     ? Kirigami.Theme.highlightColor
-                     : (highlightIndex !== index)
-                       ? Kirigami.Theme.backgroundColor
-                       : Qt.application.active
-                         ? Kirigami.Theme.focusColor
-                         : Kirigami.Theme.highlightColor
-    alternateBackgroundColor: (model.checked)
-                              ? Kirigami.Theme.highlightColor
-                              : (highlightIndex !== index)
-                                ? Kirigami.Theme.alternateBackgroundColor
-                                : Qt.application.active
-                                  ? Kirigami.Theme.focusColor
-                                  : Kirigami.Theme.highlightColor
+    alternateBackgroundColor:
+        (highlightIndex !== index)
+        ? Kirigami.Theme.alternateBackgroundColor
+        : Kirigami.Theme.highlightColor
 }

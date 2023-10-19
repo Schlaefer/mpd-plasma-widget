@@ -15,8 +15,9 @@ Item {
     property alias alternatingBackground: listItem.alternatingBackground
     property alias coverLoadingPriority: image.loadingPriority
     property bool isSortable: false
+    property int carretIndex: -1
     property int playingIndex: -1
-    property var parentView
+    property SonglistView parentView
 
     width: parentView.width
     implicitHeight: listItem.implicitHeight
@@ -53,11 +54,28 @@ Item {
             }
 
             onClicked: function (mouse) {
+                parentView.userInteracted()
                 if (mouse.button === Qt.LeftButton) {
-                    model.checked = !model.checked
+                    if (mouse.modifiers & Qt.ShiftModifier) {
+                        parentView.selectTo(index)
+                    } else if (mouse.modifiers & Qt.ControlModifier) {
+                        parentView.selectToggle(index)
+                    } else {
+                        parentView.selectToggle(index)
+                    }
+                    parent.forceActiveFocus()
+                    parentView.currentIndex = index
                     dblClTimer.start()
                 }
                 if (mouse.button === Qt.RightButton) {
+                    // If we click on selected items we wanna act on them in the
+                    // context menu. Right clicking on a deselected item creates
+                    // a new selection.
+                    if (!model.checked) {
+                        parentView.deselectAll()
+                        parentView.select(index)
+                        parentView.currentIndex = index
+                    }
                     menuLoader.source = "SonglistItemContextMenu.qml"
                     if (!menuLoader.item.visible) {
                         menuLoader.item.popup()
@@ -68,7 +86,7 @@ Item {
                 root.doubleClicked(model, index)
                 if (dblClTimer.running) {
                     // Reverse the click action on doubleclick
-                    model.checked = !model.checked
+                    parentView.selectToggle(index)
                     dblClTimer.stop()
                 }
             }
@@ -77,6 +95,21 @@ Item {
                 id: menuLoader
             }
 
+            Rectangle {
+                id: selectMarker
+                implicitHeight: mainLayout.height
+                width: Kirigami.Units.smallSpacing
+                color: Kirigami.Theme.hoverColor
+                opacity: model.checked ? 1 : 0
+            }
+
+            Rectangle {
+                anchors.left: selectMarker.right
+                implicitHeight: mainLayout.height
+                width: Kirigami.Units.smallSpacing
+                opacity: carretIndex === index
+                color: Kirigami.Theme.hoverColor
+            }
 
             RowLayout {
                 id: mainLayout
@@ -101,13 +134,19 @@ Item {
                                          listView.model.move(oldIndex, newIndex, 1)
                                      }
                     onDropped: {
-                        listView.model.updatePositionAfterMove(startIndex, endIndex)
-                        mpdState.moveInQueue(startIndex + 1, endIndex + 1)
+                        parentView.userInteracted()
+                        if (startIndex !== endIndex) {
+                            mpdState.moveInQueue(startIndex + 1, endIndex + 1)
+                        }
+
                         startIndex = -1
                     }
                 }
 
-                ListCoverimage { id: image }
+                ListCoverimage {
+                    id: image
+                    Layout.leftMargin: isSortable ? 0 : selectMarker.width + 2 * Kirigami.Units.smallSpacing
+                }
 
                 // We need a layout-"anchor" for the MouseArea *and* to allow
                 // fillWide-aware word-wrap on the text fields

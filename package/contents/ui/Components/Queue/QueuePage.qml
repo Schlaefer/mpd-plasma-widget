@@ -30,7 +30,7 @@ Kirigami.ScrollablePage {
                             text: qsTr("Follow Playing Song")
                             icon.name: "mark-location"
                             tooltip: qsTr("Follow Mode - Scroll the queue to keep the currently playing song visible.") + " (" + qsTr("L") + ")" // @i18n
-                            shortcut: "l"
+                            shortcut: "shift+l"
                             displayHint: Kirigami.DisplayHint.IconOnly
                             checkable: true
                             checked: true
@@ -95,32 +95,14 @@ Kirigami.ScrollablePage {
             anchors.centerIn: parent
         }
 
-        function loadQueue(queue) {
-            songlistView.model.clear()
-            for (let i in queue) {
-                let item = queue[i]
-                item.checked = false
-                songlistView.model.append(item)
-            }
-            if (followCurrentSong.checked)  {
-                songlistView.showCurrentItemInList()
-            }
-        }
-
         function showCurrentItemInList() {
             if (!appWindow.visible) {
                 return
             }
-            let i
-            for (i = 0; i < model.count; i++) {
-                if (model.get(i).position === mpdState.mpdInfo.position) {
-                    break
-                }
-            }
 
-            songlistView.currentIndex = i
-            // ListView.Contain  ListView.Center
-            songlistView.positionViewAtIndex(i, ListView.Center)
+            let index = mpdState.mpdInfo.position - 1
+            songlistView.currentIndex = index
+            centerInView(index)
         }
 
         delegate: SonglistItem {
@@ -130,6 +112,7 @@ Kirigami.ScrollablePage {
             isSortable: true
             parentView: songlistView
             playingIndex: mpdState.mpdInfo.position ? mpdState.mpdInfo.position - 1 : -1
+            carretIndex: songlistView.currentIndex
             showSongMenu: false
 
             actions: [
@@ -164,8 +147,31 @@ Kirigami.ScrollablePage {
             onDoubleClicked: {
                 mpdState.playInQueue(model.position)
             }
+        }
 
+        Keys.onPressed: {
+            if (event.key === Qt.Key_L) {
+                 songlistView.showCurrentItemInList()
+            }
+        }
 
+        Connections {
+            function onUserInteracted() {
+                if (!followCurrentSong.checked) {
+                    return
+                }
+                followCurrentSong.checked = false
+                disableFollowOnEditTimer.restart()
+            }
+        }
+
+        Timer {
+            id: disableFollowOnEditTimer
+            interval: 120000
+            onTriggered: {
+                followCurrentSong.checked = true
+                songlistView.showCurrentItemInList()
+            }
         }
     }
 
@@ -173,25 +179,43 @@ Kirigami.ScrollablePage {
         target: mpdState
 
         function onMpdQueueChanged() {
-            if (songlistView.model.count === 0 || songlistView.model.count !== mpdState.mpdQueue.length) {
-                songlistView.loadQueue(mpdState.mpdQueue)
-
+            // Queue is empty, clear everything
+            if (mpdState.mpdQueue.length === 0) {
+                songlistView.model.clear()
                 return
             }
 
-            // Check if the mpd queue is identical with ours and only update
-            // ours if it doesn't match. That prevents redrawing and losing
-            // our scroll position when e.g. reordering or deleting songs.
-            // @SOMEDAY Could be improved by only changing songs that don't match ours
-            for (let i = 0; i < songlistView.model.count; i++) {
-                let sameFile = mpdState.mpdQueue[i].file === songlistView.model.get(i).file
-                let samePosition = (mpdState.mpdQueue[i].position === songlistView.model.get(i).position)
-                if (!sameFile || !samePosition) {
-                    songlistView.loadQueue(mpdState.mpdQueue)
+            var i = 0
+            for (i; i < mpdState.mpdQueue.length; i++) {
+                let mpdSong = mpdState.mpdQueue[i]
+                let ourSong = songlistView.model.get(i)
 
-                    return
+                //console.log("------- Queue Refresh Item ---------")
+                //console.log(`mpd-file: ${mpdSong.file}`)
+
+                if (ourSong) {
+                    // console.log(`our-file: ${ourSong.file}`)
+                    if (mpdSong.file === ourSong.file) {
+                        //console.log('Keeping our song.')
+                        // As long as mpd-queue matches ours do nothing
+                        continue
+                    } else {
+                        // console.log('Removing our song.')
+                        songlistView.model.remove(i)
+                    }
 
                 }
+                mpdSong.checked = false
+                songlistView.model.insert(i, mpdSong)
+            }
+
+            // Remove all additional items in our queue not in mpd's
+            for (let k = songlistView.count - 1; k >= i; k--) {
+                songlistView.model.remove(k)
+            }
+
+            if (followCurrentSong.checked)  {
+                songlistView.showCurrentItemInList()
             }
         }
 

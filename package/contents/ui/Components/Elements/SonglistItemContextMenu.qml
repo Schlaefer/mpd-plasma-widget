@@ -36,7 +36,7 @@ QQC2.Menu {
     QQC2.MenuItem {
         text: qsTr("Deselect All")
         onTriggered: {
-            root.parentView.selectAll(false)
+            parentView.deselectAll()
         }
     }
     QQC2.MenuSeparator {}

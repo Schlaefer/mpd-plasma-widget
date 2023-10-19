@@ -22,6 +22,7 @@ Kirigami.ScrollablePage {
             id: songlistItem
             parentView: listView
             alternatingBackground: true
+            carretIndex: listView.currentIndex
         }
 
         Component.onCompleted: {

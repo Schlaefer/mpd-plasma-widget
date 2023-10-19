@@ -1,13 +1,30 @@
 # next
-- Adds start playing a song when double-clicked in the Queue
-- Removes checkbox indicator in Queue in favor of proper row highlighting
-- Reducing need to redraw the Queue after manipulating it
-- Improve follow mode reliability with duplicate songs
+
+Big changes in this release is about reasonable playlist navigation. I'm not too happy about the two boxes on the left, but it works good enough for now.
+
+- Selected items are shown by a box highlight on left side now
+- Adds some keyboard navigation to the Queue:
+    - Cursor position is shown by a box on the left side
+    - Cursor keys to move up and down
+    - Cursor+Shift to select items
+    - Space to toggle selection downwards
+    - Shift-D to clear the selection
+    - B to select the album at the caret (Shift+B for deselect)
+    - Enter to play the selected song
+- Adds some mouse actions to the Queue:
+    - Double-Click to start a song
+    - Single-Click to select a single song
+    - Single-Click+Shift to select a range
+    - Single-Click+Ctrl to select or deselect a single song
+- Follow-mode changes:
+    - Toggling Follow-mode manually moved to Shift+F
+    - F jumps to the currently playing song
+    - Moving or selecting items automatically disables Follow-mode for a short time
+    - Fixes showing the same song with duplicate song in the Queue
+- Fixes similar named albums ("Best of", "Greatest Hits") sharing the same cover
 - Fixes jumping to Queue with "1" shortcut sometimes needed two presses
-- Fixes similar named albums sharing (wrong) cover
+- Reducing need to redraw the Queue after manipulating it
 - Reduces memory usage
-- Minor UI tweaks
-- Code refactoring
 
 # 5.1
 - Adds inserting songs after the currently playing queue item
