@@ -43,14 +43,6 @@ Item {
                     parentView.currentIndex = index
                 }
                 if (mouse.button === Qt.RightButton) {
-                    // If we click on selected items we wanna act on them in the
-                    // context menu. Right clicking on a deselected item creates
-                    // a new selection.
-                    if (!model.checked) {
-                        parentView.deselectAll()
-                        parentView.select(index)
-                        parentView.currentIndex = index
-                    }
                     menuLoader.source = "SonglistItemContextMenu.qml"
                     if (!menuLoader.item.visible) {
                         menuLoader.item.popup()

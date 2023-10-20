@@ -107,7 +107,7 @@ Kirigami.ScrollablePage {
             leftActions: [
                 Kirigami.Action {
                     id: rmSelctBtn
-                    text: qsTr("Remove Selection")
+                    text: qsTr("Remove")
                     tooltip: qsTr("Remove Selected Songs")
                     icon.name: Mpdw.icons.queueRemoveSelected
                     shortcut: "Del"
