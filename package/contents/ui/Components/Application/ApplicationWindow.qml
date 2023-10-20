@@ -15,17 +15,32 @@ import "../../../scripts/formatHelpers.js" as FormatHelpers
 Kirigami.ApplicationWindow {
     id: root
 
+    property bool narrowLayout: appWindow.width < 520
+    property int windowPreMinimizeSize: -1
+    property int initialHeight: -1
+
+    flags: Qt.Window
+    title: qsTr("MPD")
     maximumWidth: 719
     minimumWidth: 250
     minimumHeight: footer.height
 
-    property bool narrowLayout: appWindow.width < 520
-    property int windowPreMinimizeSize: -1
-
-    flags: Qt.Window
-    title: qsTr("MPD")
-     pageStack.initialPage: queuePage
+    pageStack.initialPage: queuePage
 //   pageStack.initialPage: albumartistsPage
+
+    function showPage(page) {
+        if (!page.visible) {
+            while (appWindow.pageStack.depth > 0)
+                appWindow.pageStack.pop()
+            appWindow.pageStack.push(page)
+        }
+    }
+
+    Component.onCompleted: {
+        if (initialHeight > 800) {
+            height = initialHeight
+        }
+    }
 
     QueuePage {
         id: queuePage
@@ -46,14 +61,6 @@ Kirigami.ApplicationWindow {
                 sequence: modelData.globalShortcut
                 onActivated: showPage(modelData)
             }
-        }
-    }
-
-    function showPage(page) {
-        if (!page.visible) {
-            while (appWindow.pageStack.depth > 0)
-                appWindow.pageStack.pop()
-            appWindow.pageStack.push(page)
         }
     }
 

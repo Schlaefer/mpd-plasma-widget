@@ -31,7 +31,9 @@ Item {
 
     function toggleAppWindow() {
         if (!appWindowLoader.item) {
-            appWindowLoader.source = "Components/Application/ApplicationWindow.qml"
+            appWindowLoader.setSource(
+                        "Components/Application/ApplicationWindow.qml",
+                        { initialHeight: 0.95 * Plasmoid.availableScreenRect.height })
         } else {
             appWindowLoader.item.visible = appWindowLoader.item.visible ? false : true
         }
@@ -66,7 +68,7 @@ Item {
 
     Timer {
         id: appWindowUnloader
-        interval: 60000
+        interval: 120000
         onTriggered: {
             if (appWindowLoader.item.visible) {
                 start()
