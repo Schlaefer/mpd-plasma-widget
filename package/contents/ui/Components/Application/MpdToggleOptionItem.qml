@@ -6,7 +6,7 @@ QQC2.ToolButton {
 
     checkable: true
     icon.name: modelData.icon.name
-    visible: checked
+    visible: !appWindow.narrowLayout || checked
 
     QQC2.ToolTip {
         text: modelData.tooltip + " (" + modelData.shortcut.toUpperCase() + ")"

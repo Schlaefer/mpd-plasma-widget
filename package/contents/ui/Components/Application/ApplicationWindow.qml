@@ -250,9 +250,9 @@ Kirigami.ApplicationWindow {
 
                             Repeater {
                                 model: [
-                                    mpdToggleConsumeAct,
-                                    mpdToggleRandomAct,
                                     mpdToggleRepeatAct,
+                                    mpdToggleRandomAct,
+                                    mpdToggleConsumeAct,
                                 ]
                                 MpdToggleOptionItem {}
                             }
