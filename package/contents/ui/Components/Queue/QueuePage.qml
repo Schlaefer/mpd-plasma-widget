@@ -289,7 +289,11 @@ Kirigami.ScrollablePage {
         }
     }
 
-    onVisibleChanged: songlistView.focus = true
+    onVisibleChanged: {
+        if (visible) {
+            songlistView.forceActiveFocus()
+        }
+    }
 
     // @SOMEDAY loader
     QueueDialogSave {
