@@ -97,8 +97,7 @@ Item {
                     Layout.fillHeight: true
                     width: Kirigami.Units.smallSpacing
                     opacity: carretIndex === index
-                    color: Kirigami.Theme.hoverColor
-                    border.color: Kirigami.Theme.hoverColor
+                    color: playingIndex === index ? Kirigami.Theme.activeBackgroundColor : Kirigami.Theme.hoverColor
                 }
 
                 // We need a layout-"anchor" for the MouseArea *and* to allow

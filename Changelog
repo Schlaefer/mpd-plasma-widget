@@ -1,7 +1,8 @@
 # next
 
+- Increases cursor visibility on currently paying item
 - Adds page titles to some views
-- Fixes switching to Queue doesn't have focus on song list for keyboard navigation
+- Fixes keyboard navigation not working when switching to Queue view
 - Fixes missing icons in breeze icon theme
 - Better handling of missing songs in playlists
 - Opens the app window a little bit taller if possible
