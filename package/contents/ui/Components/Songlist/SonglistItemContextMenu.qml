@@ -1,11 +1,12 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.3 as QQC2
+import "../../Mpdw.js" as Mpdw
 
 QQC2.Menu {
     id: contextMenu
     QQC2.MenuItem {
         text: qsTr("Replace Queue")
-        icon.name: "media-play-playback"
+        icon.name: Mpdw.icons.queuePlay
         onTriggered: {
             let songs = parentView.getSelectedSongs().map(song => { return song.file })
             mpdState.replaceQueue(songs)
@@ -14,7 +15,7 @@ QQC2.Menu {
     QQC2.MenuSeparator {}
     QQC2.MenuItem {
         text: qsTr("Append")
-        icon.name: "media-playlist-append"
+        icon.name: Mpdw.icons.queueAppend
         onTriggered: {
             let songs = parentView.getSelectedSongs().map(song => { return song.file })
             mpdState.addSongsToQueue(songs)
@@ -22,7 +23,7 @@ QQC2.Menu {
     }
     QQC2.MenuItem {
         text: qsTr("Insert")
-        icon.name:"timeline-insert"
+        icon.name: Mpdw.icons.queueInsert
         onTriggered: {
             let songs = parentView.getSelectedSongs().map(song => { return song.file })
             mpdState.addSongsToQueue(songs, "insert")
@@ -31,14 +32,14 @@ QQC2.Menu {
     QQC2.MenuSeparator {}
     QQC2.MenuItem {
         text: qsTr("Select All")
-        icon.name: "edit-select-all-symbolic"
+        icon.name: Mpdw.icons.selectAll
         onTriggered: {
             parentView.selectAll(true)
         }
     }
     QQC2.MenuItem {
         text: qsTr("Deselect")
-        icon.name: "edit-select-none"
+        icon.name: Mpdw.icons.selectNone
         onTriggered: {
             parentView.deselectAll()
         }
@@ -46,21 +47,21 @@ QQC2.Menu {
     QQC2.MenuSeparator {}
     QQC2.MenuItem {
         text: qsTr('Select by Album')
-        icon.name: "media-album-cover"
+        icon.name: Mpdw.icons.selectAlbum
         onTriggered: {
             parentView.selectNeighborsByAlbum(model, index)
         }
     }
     QQC2.MenuItem {
         text: qsTr('Select by Album-Artist')
-        icon.name: "view-media-artist"
+        icon.name: Mpdw.icons.selectArtist
         onTriggered: {
             parentView.selectNeighborsByAartist(model, index)
         }
     }
     QQC2.MenuItem {
         text: qsTr('Select Above')
-        icon.name: "arrow-up"
+        icon.name: Mpdw.icons.selectAbove
         onTriggered: {
             parentView.selectAbove(index)
         }
@@ -68,7 +69,7 @@ QQC2.Menu {
     }
     QQC2.MenuItem {
         text: qsTr('Select Below')
-        icon.name: "arrow-down"
+        icon.name: Mpdw.icons.selectBelow
         onTriggered: {
             parentView.selectBelow(index)
         }

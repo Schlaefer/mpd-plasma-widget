@@ -3,6 +3,7 @@ import QtQuick.Controls 2.3 as QQC2
 import QtQuick.Layouts 1.15
 import org.kde.kirigami 2.20 as Kirigami
 import org.kde.plasma.components 2.0 as PlasmaComponents
+import "../../Mpdw.js" as Mpdw
 import "../../Components/Elements"
 
 Kirigami.ScrollablePage {
@@ -210,7 +211,7 @@ Kirigami.ScrollablePage {
         QQC2.Menu {
             id: contextMenu
             QQC2.MenuItem {
-                icon.name: "media-play-playback"
+                icon.name: Mpdw.icons.queuePlay
                 text: qsTr("Replace Queue")
                 onTriggered: {
                     let songs = getSongs()
@@ -220,7 +221,7 @@ Kirigami.ScrollablePage {
             QQC2.MenuSeparator {}
             QQC2.MenuItem {
                 text: qsTr("Append to Queue")
-                icon.name: "media-playlist-append"
+                icon.name: Mpdw.icons.queueAppend
                 onTriggered: {
                     let songs = getSongs()
                     mpdState.addSongsToQueue(songs.map(song => song.file))
@@ -228,7 +229,7 @@ Kirigami.ScrollablePage {
             }
             QQC2.MenuItem {
                 text: qsTr("Insert After Current")
-                icon.name:"timeline-insert"
+                icon.name:Mpdw.icons.queueInsert
                 onTriggered: {
                     let songs = getSongs()
                     mpdState.addSongsToQueue(songs.map(song => song.file), "insert")

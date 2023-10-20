@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.15
 import org.kde.kirigami 2.20 as Kirigami
 import org.kde.plasma.components 2.0 as PlasmaComponents
 import org.kde.plasma.core 2.0 as PlasmaCore
+import "./../../Mpdw.js" as Mpdw
 import "./../../Components/"
 import "./../../Components/Albumartists"
 import "./../../Components/Application"
@@ -161,7 +162,13 @@ Kirigami.ApplicationWindow {
 
                             ToolButton {
                                 id: volmBtn
-                                icon.name: "audio-volume-" + (mpdState.mpdVolume > 80  ? "high" : (mpdState.mpdVolume > 20 ? "medium" : (mpdState.mpdVolume > 0 ? "low" : "muted")))
+                                icon.name: mpdState.mpdVolume > 80
+                                    ? Mpdw.icons.volumeHigh
+                                    : mpdState.mpdVolume > 20
+                                        ? Mpdw.icons.volumeMedium
+                                        : mpdState.mpdVolume > 0
+                                        ? Mpdw.icons.volumeMedium
+                                        : Mpdw.icons.volumeMuted
                                 text: mpdState.mpdVolume
                                 ToolTip {text: qsTr("Volume (+/=/-/Scroll Wheel)")}
                                 Shortcut {
@@ -194,7 +201,7 @@ Kirigami.ApplicationWindow {
                                         Kirigami.Icon {
                                             Layout.preferredWidth: Kirigami.Units.iconSizes.small
                                             Layout.fillHeight: false
-                                            source: "audio-volume-muted"
+                                            source: Mpdw.icons.volumeMuted
                                         }
 
                                         // @TODO refactor all volume sliders
@@ -260,7 +267,7 @@ Kirigami.ApplicationWindow {
         id: mpdToggleRepeatAct
         property string mpdOption: "repeat"
         text: qsTr("Repeat")
-        icon.name: "media-playlist-repeat"
+        icon.name: Mpdw.icons.queueRepeat
         shortcut: "Shift+Z"
         tooltip: "Toggle MPD's Repeat mode"
         onTriggered: { mpdState.toggleOption("repeat") }
@@ -270,7 +277,7 @@ Kirigami.ApplicationWindow {
         id: mpdToggleRandomAct
         property string mpdOption: "random"
         text: qsTr("Random")
-        icon.name: "media-playlist-shuffle"
+        icon.name: Mpdw.icons.queueRandom
         shortcut: "Z"
         tooltip: "Toggle MPD's Random mode"
         onTriggered: { mpdState.toggleOption("random") }
@@ -279,10 +286,24 @@ Kirigami.ApplicationWindow {
         id: mpdToggleConsumeAct
         property string mpdOption: "consume"
         text: qsTr("Consume")
-        icon.name: "draw-eraser"
+        icon.name: Mpdw.icons.queueConsume
         shortcut: "R"
         tooltip: "Toggle MPD's Consume mode"
         onTriggered: { mpdState.toggleOption("consume") }
+    }
+
+    Kirigami.Action {
+        shortcut: "F10"
+        onTriggered: {
+            if (!debugWindowLoader.item) {
+                debugWindowLoader.source = "./../../Components/Debug/DebugIcons.qml"
+            } else {
+                debugWindowLoader.item.visible = debugWindowLoader.item.visible ? false : true
+            }
+        }
+    }
+    Loader {
+        id: debugWindowLoader
     }
 
     function minimize() {

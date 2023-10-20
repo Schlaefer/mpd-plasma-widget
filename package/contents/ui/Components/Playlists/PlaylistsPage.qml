@@ -3,6 +3,7 @@ import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.15
 import org.kde.kirigami 2.20 as Kirigami
 import org.kde.plasma.components 2.0 as PlasmaComponents
+import "../../Mpdw.js" as Mpdw
 import "../../Components/Elements"
 
 Kirigami.ScrollablePage {
@@ -37,21 +38,21 @@ Kirigami.ScrollablePage {
             width: ListView.view ? ListView.view.width : implicitWidth
             actions: [
                 Kirigami.Action {
-                    icon.name: "list-add"
+                    icon.name: Mpdw.icons.queueAppend
                     text: qsTr("Add Playlist to Queue")
                     onTriggered: {
                         mpdState.addPlaylistToQueue(model.title)
                     }
                 },
                 Kirigami.Action {
-                    icon.name: "media-playback-start"
+                    icon.name: Mpdw.icons.queuePlay
                     text: qsTr("Replace Queue with Playlist")
                     onTriggered: {
                         mpdState.playPlaylist(model.title)
                     }
                 },
                 Kirigami.Action {
-                    icon.name: "edit-delete"
+                    icon.name: Mpdw.icons.playlistDelete
                     text: qsTr("Remove Playlist…")
                     onTriggered: {
                         deleteConfirmationDialog.open()
@@ -68,7 +69,7 @@ Kirigami.ScrollablePage {
                 }
                 DialogConfirm {
                     id: deleteConfirmationDialog
-                    icon: "edit-delete"
+                    icon: Mpdw.icons.playlistDelete
                     title: qsTr("Delete Playlist")
                     label: qsTr("The following playlist will be deleted")
                     buttonText: qsTr("Delete Playlist")

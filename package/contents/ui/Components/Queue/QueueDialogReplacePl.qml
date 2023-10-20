@@ -3,6 +3,7 @@ import QtQuick.Controls 2.3 as QQC2
 import QtQuick.Layouts 1.15
 import org.kde.kirigami 2.20 as Kirigami
 import org.kde.plasma.components 2.0 as PlasmaComponents
+import "../../Mpdw.js" as Mpdw
 
 Kirigami.PromptDialog {
     id: root
@@ -21,8 +22,7 @@ Kirigami.PromptDialog {
         Kirigami.Action {
             text: qsTr("Replace Playlist")
             id: actionButton
-            iconName: "dialog-ok"
-            icon.name: "document-new-symbolic"
+            iconName: Mpdw.icons.dialogOk
             onTriggered: {
                 mpdState.removePlaylist(listCombo.currentText)
                 mpdState.saveQueueAsPlaylist(listCombo.currentText)
@@ -31,7 +31,7 @@ Kirigami.PromptDialog {
         },
         Kirigami.Action {
             text: qsTr("Cancel")
-            iconName: "cancel"
+            iconName: Mpdw.icons.dialogCancel
             onTriggered: {
                 root.close()
             }

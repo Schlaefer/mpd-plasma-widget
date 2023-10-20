@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.0
 import org.kde.kirigami 2.20 as Kirigami
+import "../../Mpdw.js" as Mpdw
 import "../../Components/Elements"
 
 ListViewGeneric {
@@ -299,14 +300,14 @@ ListViewGeneric {
             Kirigami.Action {
                 text: qsTr("Play")
                 tooltip: qsTr("Replace Queue and Start Playing")
-                icon.name: "media-play-playback"
+                icon.name: Mpdw.icons.queuePlay
                 onTriggered: {
                     mpdState.replaceQueue(getSelectedFilesOrAll())
                 }
             },
             Kirigami.Action {
                 text: qsTr("Append")
-                icon.name: "media-playlist-append"
+                icon.name: Mpdw.icons.queueAppend
                 tooltip: qsTr("Append to End of Queue")
                 onTriggered: {
                     mpdState.addSongsToQueue(getSelectedFilesOrAll())
@@ -316,7 +317,7 @@ ListViewGeneric {
             Kirigami.Action {
                 text: qsTr("Insert")
                 tooltip: qsTr("Insert After Current Song")
-                icon.name: "timeline-insert"
+                icon.name: Mpdw.icons.queueInsert
                 onTriggered: {
                     mpdState.addSongsToQueue(getSelectedFilesOrAll(), "insert")
                 }
@@ -326,7 +327,7 @@ ListViewGeneric {
             Kirigami.Action {
                 text: appWindow.narrowLayout ? "" : qsTr("Deselect")
                 tooltip: qsTr("Deselect All")
-                icon.name: "edit-select-none"
+                icon.name: Mpdw.icons.selectNone
                 shortcut: "Shift+D"
                 onTriggered: {
                     root.deselectAll()

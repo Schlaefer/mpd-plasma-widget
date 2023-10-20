@@ -3,6 +3,7 @@ import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.15
 import QtGraphicalEffects 1.12
 import org.kde.kirigami 2.20 as Kirigami
+import "./../Mpdw.js" as Mpdw
 
 Item {
     id: coverImageContainer
@@ -50,7 +51,7 @@ Item {
                 id: contextMenu
                 MenuItem {
                     text: qsTr("Update MPD Data")
-                    icon.name: "view-refresh"
+                    icon.name: Mpdw.icons.mpdUpdate
                     onTriggered: {
                         mpdState.forceReloadEverything()
                     }
@@ -58,7 +59,7 @@ Item {
                 MenuSeparator {}
                 MenuItem {
                     text: qsTr("Clear Cover Cache")
-                    icon.name: "emblem-warning"
+                    icon.name: Mpdw.icons.clearCache
                     onTriggered: {
                         coverManager.clearCache()
                     }
@@ -69,7 +70,7 @@ Item {
 
     Kirigami.Icon {
         id: coverPlaceholderIcon
-        source: "media-default-album"
+        source: Mpdw.icons.queuePlaceholderCover
         anchors.fill: parent
         visible: !coverImage.source.toString()
     }

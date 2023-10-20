@@ -1,7 +1,8 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.3 as QQC2
-import QtQuick.Layouts 1.0
+import QtQuick.Layouts 1.15
 import org.kde.kirigami 2.20 as Kirigami
+import "./../../Mpdw.js" as Mpdw
 
 Item {
     id: root
@@ -14,7 +15,7 @@ Item {
 
     Kirigami.Icon {
         id: coverPlaceholderIcon
-        source: "media-default-album"
+        source: Mpdw.icons.queuePlaceholderCover
         anchors.fill: parent
         visible: !image.source.toString()
     }
@@ -74,7 +75,7 @@ Item {
 
         Kirigami.Icon {
             color: Kirigami.Theme.activeTextColor
-            source: "object-select-symbolic"
+            source: Mpdw.icons.selectMarker
             anchors.fill: parent
         }
     }

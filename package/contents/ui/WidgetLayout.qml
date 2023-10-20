@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.15
 import QtGraphicalEffects 1.12
 import org.kde.plasma.components 2.0 as PlasmaComponents
 import org.kde.kirigami 2.20 as Kirigami
+import "./Mpdw.js" as Mpdw
 import "./Components"
 import "./Components/Queue"
 import "../scripts/formatHelpers.js" as FormatHelpers
@@ -172,7 +173,7 @@ GridLayout {
             }
 
             ToolButton {
-                icon.name: "dialog-close"
+                icon.name: Mpdw.icons.dialogClose
                 icon.height: Kirigami.Units.iconSizes.small
                 icon.width: Kirigami.Units.iconSizes.small
                 onClicked: notification.text = ''

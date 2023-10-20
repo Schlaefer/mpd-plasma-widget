@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.0
 import org.kde.kirigami 2.20 as Kirigami
+import "../../Mpdw.js" as Mpdw
 import "../../Components/Elements"
 import "../../Components/Songlist"
 import "../../Components/Queue"
@@ -29,7 +30,7 @@ Kirigami.ScrollablePage {
                         Kirigami.Action {
                             id: followCurrentSong
                             text: qsTr("Follow Playing Song")
-                            icon.name: "mark-location"
+                            icon.name: Mpdw.icons.queueFollowMode
                             tooltip: qsTr("Follow Mode - Scroll the queue to keep the currently playing song visible.") + " (" + qsTr("L") + ")" // @i18n
                             shortcut: "shift+l"
                             displayHint: Kirigami.DisplayHint.IconOnly
@@ -39,7 +40,7 @@ Kirigami.ScrollablePage {
                         Kirigami.Action {
                             text: qsTr("Queue")
                             Kirigami.Action {
-                                icon.name: "document-save-as"
+                                icon.name: Mpdw.icons.queueSaveNew
                                 text: qsTr("Save as New Playlist…")
                                 shortcut: "s"
                                 onTriggered: {
@@ -47,7 +48,7 @@ Kirigami.ScrollablePage {
                                 }
                             }
                             Kirigami.Action {
-                                icon.name: "document-replace"
+                                icon.name: Mpdw.icons.queueSaveReplace
                                 text: qsTr("Replace Playlist…")
                                  shortcut: "shift+s"
                                 onTriggered: {
@@ -83,7 +84,7 @@ Kirigami.ScrollablePage {
                             }
                             Kirigami.Action {
                                 text: qsTr("Clear Queue")
-                                icon.name: "edit-delete"
+                                icon.name: Mpdw.icons.queueClear
                                 tooltip: text + " (" + qsTr("Shift+C") + ")" // @i18n
                                 shortcut: "shift+c"
                                 displayHint: Kirigami.DisplayHint.IconOnly
@@ -108,7 +109,7 @@ Kirigami.ScrollablePage {
                     id: rmSelctBtn
                     text: qsTr("Remove Selection")
                     tooltip: qsTr("Remove Selected Songs")
-                    icon.name: "edit-delete-remove"
+                    icon.name: Mpdw.icons.queueRemoveSelected
                     shortcut: "Del"
                     enabled: numberSelected
                     onTriggered: {
@@ -124,7 +125,7 @@ Kirigami.ScrollablePage {
                 Kirigami.Action {
                     text: appWindow.narrowLayout ? "" : qsTr("Deselect")
                     tooltip: qsTr("Deselect All")
-                    icon.name: "edit-select-none"
+                    icon.name: Mpdw.icons.selectNone
                     shortcut: "Shift+D"
                     onTriggered: {
                         songlistView.deselectAll()
@@ -163,8 +164,10 @@ Kirigami.ScrollablePage {
 
             actions: [
                 Kirigami.Action {
-                    icon.name: (playingIndex === model.index
-                                && mpdState.mpdPlaying) ? "media-playback-pause" : "media-playback-start"
+//                    icon.name: (playingIndex === model.index && mpdState.mpdPlaying) ? "media-playback-pause" : "media-playback-start"
+                    icon.name: (playingIndex === model.index && mpdState.mpdPlaying)
+                               ? "media-playback-pause"
+                               : Mpdw.icons.queuePlay
                     text: qsTr("Play Now")
                     onTriggered: {
                         if (playingIndex === model.index) {
@@ -175,7 +178,7 @@ Kirigami.ScrollablePage {
                     }
                 },
                 Kirigami.Action {
-                    icon.name: "edit-delete"
+                    icon.name: Mpdw.icons.queueRemoveSingle
                     text: qsTr("Remove from Queue")
                     visible: !appWindow.narrowLayout
                     onTriggered: {
