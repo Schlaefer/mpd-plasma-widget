@@ -30,10 +30,12 @@ Kirigami.ScrollablePage {
             id: listItemPlaylist
 
             onClicked: {
-                appWindow.pageStack.push(Qt.resolvedUrl("PlaylistSongsPage.qml"), {
-                                               "depth": root.depth + 1,
-                                               "playlistId": model.title
-                                           })
+                let properties =  {
+                    "depth": root.depth + 1,
+                    "playlistId": model.title,
+                    "title": model.title,
+                }
+                appWindow.pageStack.push(Qt.resolvedUrl("PlaylistSongsPage.qml"), properties)
             }
             width: ListView.view ? ListView.view.width : implicitWidth
             actions: [

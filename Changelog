@@ -1,5 +1,6 @@
 # next
 
+- Adds page titles to some views
 - Fixes switching to Queue doesn't have focus on song list for keyboard navigation
 - Fixes missing icons in breeze icon theme
 - Better handling of missing songs in playlists

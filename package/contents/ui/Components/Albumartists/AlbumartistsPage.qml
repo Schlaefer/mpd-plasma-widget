@@ -107,7 +107,8 @@ Kirigami.ScrollablePage {
                     shownAlbumartist = model.albumartist
                     let properties = {
                         "depth": root.depth + 1,
-                        "songs": mpdState.library.getSongsOfAartist(model.albumartist)
+                        "songs": mpdState.library.getSongsOfAartist(model.albumartist),
+                        "title": model.albumartist,
                     }
                     appWindow.pageStack.push(Qt.resolvedUrl("AlbumartistSongsPage.qml"), properties)
                 }
@@ -157,8 +158,11 @@ Kirigami.ScrollablePage {
                                         if (mouse.button == Qt.LeftButton) {
                                             let properties = {
                                                 "depth": root.depth + 1,
-                                                "songs": mpdState.library.getSongsByAartistAndAlbum(model.album,
-                                                                                                    model.albumartist)
+                                                "songs": mpdState.library.getSongsByAartistAndAlbum(
+                                                             model.album,
+                                                             model.albumartist),
+                                                // @i18n
+                                                "title": model.album + " - " + model.albumartist,
                                             }
                                             appWindow.pageStack.push(Qt.resolvedUrl("AlbumartistSongsPage.qml"),
                                                                      properties)
@@ -212,7 +216,7 @@ Kirigami.ScrollablePage {
             id: contextMenu
             QQC2.MenuItem {
                 icon.name: Mpdw.icons.queuePlay
-                text: qsTr("Replace Queue")
+                text: qsTr("Play")
                 onTriggered: {
                     let songs = getSongs()
                     mpdState.replaceQueue(songs.map(song => song.file))
@@ -220,7 +224,7 @@ Kirigami.ScrollablePage {
             }
             QQC2.MenuSeparator {}
             QQC2.MenuItem {
-                text: qsTr("Append to Queue")
+                text: qsTr("Append")
                 icon.name: Mpdw.icons.queueAppend
                 onTriggered: {
                     let songs = getSongs()
@@ -228,7 +232,7 @@ Kirigami.ScrollablePage {
                 }
             }
             QQC2.MenuItem {
-                text: qsTr("Insert After Current")
+                text: qsTr("Insert")
                 icon.name:Mpdw.icons.queueInsert
                 onTriggered: {
                     let songs = getSongs()
