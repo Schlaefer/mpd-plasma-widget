@@ -1,3 +1,5 @@
+.pragma library
+
 function title(mpdItem) {
     let title = mpdItem.title;
     if (mpdItem.tracknumber)
@@ -18,13 +20,16 @@ function album(mpdItem) {
     return album
 }
 
-// @SOMEDAY i10n i18n
 function queueAlbumLine(model) {
     let line = []
     line.push(model.tracknumber ? model.tracknumber + ". " : "")
-    line.push(model.album || "")
-    line.push(line === "" ? "" : " ")
-    line.push("(" + model.time + ")")
+
+    if (model.album) {
+        line.push(model.album + " ")
+    }
+    if (model.time) {
+        line.push("(" + model.time + ")")
+    }
 
     return line.join("")
 }

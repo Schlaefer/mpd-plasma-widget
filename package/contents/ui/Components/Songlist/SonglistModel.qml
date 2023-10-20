@@ -28,8 +28,22 @@ ListModel {
 
     onRowsInserted: {
         for(let i = first; i <= last; i++) {
-            // Autoinitialize the checked property for item selection
-            root.set(i, {"checked": false})
+            let data = {
+                // Autoinitialize the checked property for item selection
+                "checked": false,
+                // MPD can giv us a song but has no information about it except
+                // "file". This can happen if a file is listed in loaded
+                // playlist but the actual file is missing on disk.
+                "orphaned": false,
+            }
+
+            let insertedSong = root.get(i)
+            if (insertedSong.time === "") {
+                data.title = insertedSong.file
+                data.orphaned = true
+            }
+
+            root.set(i, data)
         }
     }
 

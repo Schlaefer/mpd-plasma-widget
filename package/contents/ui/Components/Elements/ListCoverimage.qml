@@ -53,6 +53,10 @@ Item {
         }
 
         Component.onCompleted: {
+            if (model.orphaned) {
+                return
+            }
+
             let coverPath = coverManager.getCover(model, loadingPriority)
             if (coverPath) {
                 setCover(coverPath)

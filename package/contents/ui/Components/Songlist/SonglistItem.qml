@@ -3,7 +3,7 @@ import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.0
 import org.kde.kirigami 2.20 as Kirigami
 import "../../Components/Elements"
-import "../../../scripts/formatHelpers.js" as FormatHelpers
+import "../../../scripts/formatHelpers.js" as FmH
 
 Item {
     id: root
@@ -120,31 +120,27 @@ Item {
                         spacing: 0
                         Text {
                             Layout.fillWidth: true
-//                            Layout.leftMargin: Kirigami.Units.largeSpacing
                             Layout.rightMargin: Kirigami.Units.small
                             color: (playingIndex === index) ? Kirigami.Theme.highlightedTextColor : Kirigami.Theme.textColor
                             font.bold: !appWindow.narrowLayout
-                            // @SOMEDAY make this look beautiful
-                            text: (!appWindow.narrowLayout || !model.tracknumber ? "" : model.tracknumber + ". ") + model.title
+                            text: appWindow.narrowLayout ? FmH.title(model) : model.title
                             wrapMode: Text.WordWrap
                         }
                         Text {
                             visible: !appWindow.narrowLayout
                             Layout.fillWidth: true
-//                            Layout.leftMargin: Kirigami.Units.largeSpacing
                             Layout.rightMargin: Kirigami.Units.small
                             color: (playingIndex === index) ? Kirigami.Theme.highlightedTextColor : Kirigami.Theme.disabledTextColor
-                            text: FormatHelpers.artist(model)
+                            text: FmH.artist(model)
                             wrapMode: Text.WordWrap
                         }
 
                         Text {
                             visible: !appWindow.narrowLayout
                             Layout.fillWidth: true
-//                            Layout.leftMargin: Kirigami.Units.largeSpacing
                             Layout.rightMargin: Kirigami.Units.small
                             color: (playingIndex === index) ? Kirigami.Theme.highlightedTextColor : Kirigami.Theme.disabledTextColor
-                            text: FormatHelpers.queueAlbumLine(model)
+                            text: FmH.queueAlbumLine(model)
                             wrapMode: Text.WordWrap
                         }
                     }
