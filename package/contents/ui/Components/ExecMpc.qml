@@ -11,7 +11,11 @@ ExecGeneric {
         if (mpcAvailable !== true || mpcConnectionAvailable !== true) {
             return
         }
-        let cmd = "mpc --host=" + cfgMpdHost + " " + command
-        exec(cmd, callback)
+        let cmd = ["mpc"]
+        if (cfgMpdHost !== "") {
+            cmd.push("--host=" + cfgMpdHost)
+        }
+        cmd.push(command)
+        exec(cmd.join(" "), callback)
     }
 }
