@@ -1,6 +1,7 @@
 # next
 
-- That smooth moving volume slider. You don't need it. But you want it. You … *deserve* it! It's **yours** now. - But it's a filthy little liar. I'm telling you. Deceiving us all! Don't trust it.
+- Sorts internally instead of relying of the filesystem sorting
+- Fixes volume slider jankiness
 - Only set the "host" config on mpc commands if it one is provided in the config
 - Reorganized widget configuration sections
 

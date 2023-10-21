@@ -1,7 +1,6 @@
 class SongLibrary {
     constructor(library) {
         this._albums = {}
-        this._lastSearchHits = []
 
         this._buildAlbums(library)
     }
@@ -32,7 +31,7 @@ class SongLibrary {
                 songs.push(song)
             })
         }
-        return songs
+        return this._songSorter(songs)
     }
 
     /**
@@ -47,7 +46,33 @@ class SongLibrary {
             songs.push(this._albums[albumartist][album][0])
         }
 
-        return songs
+        return this._songSorter(songs)
+    }
+
+    _songSorter(songs) {
+        return songs.sort((a, b) => {
+            if (a.date !== "" && b.date !== "") {
+                let aDate = parseInt(a.date)
+                let bDate = parseInt(b.date)
+                if (aDate > bDate) return 1
+                if (aDate < bDate) return -1
+            }
+
+            let aAlbum = a.album.toLowerCase()
+            let bAlbum = b.album.toLowerCase()
+            if (aAlbum > bAlbum) return 1
+            if (aAlbum < bAlbum) return -1
+
+            if (a.tracknumber !== "" && b.tracknumber !== "") {
+                let aTrack = a.tracknumber !== "" ? parseInt(a.tracknumber) : 0
+                let bTrack = b.tracknumber !== "" ? parseInt(b.tracknumber) : 0
+
+                if (aTrack > bTrack) return 1
+                if (aTrack < bTrack) return -1
+            }
+
+            return 0
+        })
     }
 
     /**
@@ -57,38 +82,38 @@ class SongLibrary {
      * @returns {array} List of albumartists
      */
     searchAlbumartists(searchText = "") {
-        if (searchText === "") {
-            return this.getAlbumartists()
-        }
-
         let found = []
-        searchText = searchText.toLowerCase()
 
-        onFound:
-        for (const aartist in this._albums) {
-            if (aartist.toLowerCase().indexOf(searchText) !== -1) {
-                found.push(aartist)
-                continue onFound
-            }
-            for (const album in this._albums[aartist]) {
-                if (album.toLowerCase().indexOf(searchText) !== -1) {
+        if (searchText === "") {
+            found = Object.keys(this._albums)
+        } else {
+            searchText = searchText.toLowerCase()
+            onFound:
+            for (const aartist in this._albums) {
+                if (aartist.toLowerCase().indexOf(searchText) !== -1) {
                     found.push(aartist)
                     continue onFound
                 }
-
-                for (let i = 0; i < this._albums[aartist][album].length; i++) {
-                    if (this._albums[aartist][album][i].title.toLowerCase().indexOf(searchText) !== -1) {
+                for (const album in this._albums[aartist]) {
+                    if (album.toLowerCase().indexOf(searchText) !== -1) {
                         found.push(aartist)
                         continue onFound
+                    }
+
+                    for (let i = 0; i < this._albums[aartist][album].length; i++) {
+                        if (this._albums[aartist][album][i].title.toLowerCase().indexOf(searchText) !== -1) {
+                            found.push(aartist)
+                            continue onFound
+                        }
                     }
                 }
             }
         }
 
-        return found
-    }
+        found.sort((a, b) => {
+            return a.toLowerCase() > b.toLowerCase() ? 1 : -1
+        })
 
-    getAlbumartists() {
-        return Object.keys(this._albums)
+        return found
     }
 }
