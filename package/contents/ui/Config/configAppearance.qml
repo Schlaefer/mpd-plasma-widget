@@ -6,77 +6,25 @@ import org.kde.kirigami 2.20 as Kirigami
 import org.kde.kquickcontrols 2.0 as KQControls
 
 Kirigami.FormLayout {
-    id: page
+    id: root
 
-    property alias cfg_cfgMpdHost: cfgMpdHost.text
     property alias cfg_cfgAlignment: cfgAlignment.selected
     property alias cfg_cfgHorizontalLayout: cfgHorizontalLayout.checked
     property alias cfg_cfgFontSize: cfgFontSize.value
-    property alias cfg_cfgCacheRoot: cfgCacheRoot.cleanPath
-    property alias cfg_cfgCacheForDays: cfgCacheForDays.value
     property alias cfg_cfgCornerRadius: cfgCornerRadius.value
     property alias cfg_cfgShadowSpread: cfgShadowSpread.value
     property alias cfg_cfgShadowColor: cfgShadowColor.color
     property alias cfg_cfgSolidBackground: cfgSolidBackground.checked
 
     Item {
-        Kirigami.FormData.label: i18n("MPD Connection")
+        Kirigami.FormData.label: i18n("Layout")
         Kirigami.FormData.isSection: true
     }
 
-    TextField {
-        id: cfgMpdHost
+    CheckBox {
+        id: cfgHorizontalLayout
 
-        Kirigami.FormData.label: i18n("MPD Server Address:")
-        placeholderText: i18n("192.168.y.x")
-        Layout.preferredWidth: 200
-    }
-
-    Item {
-        Kirigami.FormData.label: i18n("Local Covers")
-        Kirigami.FormData.isSection: true
-    }
-
-    RowLayout {
-        Kirigami.FormData.label: i18n("Path to Cover Folder:")
-
-        TextField {
-            id: cfgCacheRootText
-
-            text: cfgCacheRoot.cleanPath
-            placeholderText: i18n("No file selected.")
-            Layout.preferredWidth: 200
-        }
-
-        Button {
-            text: i18n("Select Folder")
-            onClicked: cfgCacheRoot.open()
-        }
-
-        FileDialog {
-            id: cfgCacheRoot
-
-            property string cleanPath
-
-            selectFolder: true
-            title: i18n("Please Choose a Folder")
-            folder: shortcuts.home
-            onAccepted: {
-                cleanPath = decodeURIComponent(cfgCacheRoot.fileUrl.toString(
-                                                   ).replace(/^file:\/\//, ""))
-            }
-        }
-    }
-
-    SpinBox {
-        id: cfgCacheForDays
-
-        Kirigami.FormData.label: i18n("Cache Covers for Days:")
-    }
-
-    Item {
-        Kirigami.FormData.label: i18n("Visuals")
-        Kirigami.FormData.isSection: true
+        Kirigami.FormData.label: i18n("Horizontal Layout:")
     }
 
     CheckBox {
@@ -85,10 +33,9 @@ Kirigami.FormLayout {
         Kirigami.FormData.label: i18n("Solid Background:")
     }
 
-    CheckBox {
-        id: cfgHorizontalLayout
-
-        Kirigami.FormData.label: i18n("Horizontal Layout:")
+    Item {
+        Kirigami.FormData.label: i18n("Text")
+        Kirigami.FormData.isSection: true
     }
 
     GroupBox {
@@ -144,6 +91,11 @@ Kirigami.FormLayout {
 
         to: 1000
         Kirigami.FormData.label: i18n("Font Size:")
+    }
+
+    Item {
+        Kirigami.FormData.label: i18n("Cover Image")
+        Kirigami.FormData.isSection: true
     }
 
     SpinBox {

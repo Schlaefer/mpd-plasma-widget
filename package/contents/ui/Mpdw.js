@@ -39,6 +39,7 @@ const icons = {
     volumeHigh: "audio-volume-high",
 
     appConfigGeneral: "configure",
+    appConfigAppearance: "preferences-desktop-color",
     clearCache: "emblem-warning",
     mpdUpdate: "view-refresh",
 }

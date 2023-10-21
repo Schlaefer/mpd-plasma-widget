@@ -6,6 +6,11 @@ ConfigModel {
     ConfigCategory {
         name: qsTr("General")
         icon: Mpdw.icons.appConfigGeneral
-        source: "configGeneral.qml"
+        source: "Config/configGeneral.qml"
+    }
+    ConfigCategory {
+        name: qsTr("Appearance")
+        icon: Mpdw.icons.appConfigAppearance
+        source: "Config/configAppearance.qml"
     }
 }
