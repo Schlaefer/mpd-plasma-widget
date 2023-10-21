@@ -164,9 +164,8 @@ Kirigami.ScrollablePage {
 
             actions: [
                 Kirigami.Action {
-//                    icon.name: (playingIndex === model.index && mpdState.mpdPlaying) ? "media-playback-pause" : "media-playback-start"
                     icon.name: (playingIndex === model.index && mpdState.mpdPlaying)
-                               ? "media-playback-pause"
+                               ? Mpdw.icons.queuePause
                                : Mpdw.icons.queuePlay
                     text: qsTr("Play Now")
                     onTriggered: {

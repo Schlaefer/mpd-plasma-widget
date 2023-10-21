@@ -157,7 +157,7 @@ Kirigami.ApplicationWindow {
                             Layout.leftMargin: Kirigami.Units.largeSpacing
                             ToolButton {
                                 id: ppBtn
-                                icon.name: mpdState.mpdPlaying ? "media-playback-pause" : "media-playback-start"
+                                icon.name: mpdState.mpdPlaying ? Mpdw.icons.queuePause : Mpdw.icons.queuePlay
                                 function toggle() { mpdState.toggle() }
                                 onClicked:  ppBtn.toggle()
                                 Shortcut {

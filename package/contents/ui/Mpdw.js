@@ -2,6 +2,7 @@
 
 const icons = {
     queuePlay: "media-playback-start",
+    queuePause: "media-playback-pause",
     queueAppend: "media-playlist-append",
     queueInsert: "timeline-insert",
     queueConsume: "draw-eraser",
