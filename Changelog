@@ -1,4 +1,4 @@
-# next
+# 5.4
 
 - Sorts internally instead of relying of the filesystem sorting
 - Fixes volume slider jankiness
