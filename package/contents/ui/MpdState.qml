@@ -206,8 +206,7 @@ Item {
             if (!parsed) {
                 throw new Error("Invalid mpc response: No volume information in " + stdout)
             }
-
-            mpdRoot.mpdVolume = parsed[1]
+            mpdRoot.mpdVolume = parseInt(parsed[1])
         })
     }
 

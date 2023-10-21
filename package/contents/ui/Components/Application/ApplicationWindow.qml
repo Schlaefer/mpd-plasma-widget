@@ -169,22 +169,22 @@ Kirigami.ApplicationWindow {
 
                             ToolButton {
                                 id: volmBtn
-                                icon.name: mpdState.mpdVolume > 80
+                                icon.name: volumeState.volume > 80
                                     ? Mpdw.icons.volumeHigh
-                                    : mpdState.mpdVolume > 20
+                                    : volumeState.volume > 20
                                         ? Mpdw.icons.volumeMedium
-                                        : mpdState.mpdVolume > 0
+                                        : volumeState.volume > 0
                                         ? Mpdw.icons.volumeMedium
                                         : Mpdw.icons.volumeMuted
-                                text: mpdState.mpdVolume
+                                text: volumeState.volume
                                 ToolTip {text: qsTr("Volume (+/=/-/Scroll Wheel)")}
                                 Shortcut {
                                     sequences: ["+", "="]
-                                    onActivated: mpdState.setVolume("+2")
+                                    onActivated: volumeState.change(2)
                                 }
                                 Shortcut {
                                     sequence: "-"
-                                    onActivated: mpdState.setVolume("-2")
+                                    onActivated: volumeState.change(-2)
                                 }
                                 MouseArea {
                                     anchors.fill: parent
@@ -192,7 +192,7 @@ Kirigami.ApplicationWindow {
                                         volmSlider.visible = volmSlider.visible? false : true
                                     }
                                     onWheel: function (wheel) {
-                                        widgetLayout.volume = widgetLayout.volume + wheel.angleDelta.y / 60
+                                        volumeState.wheel(wheel.angleDelta.y)
                                     }
                                 }
 
@@ -211,31 +211,18 @@ Kirigami.ApplicationWindow {
                                             source: Mpdw.icons.volumeMuted
                                         }
 
-                                        // @TODO refactor all volume sliders
                                         PlasmaComponents.Slider {
-                                            id: slider
+                                            id: volumeSlider
                                             minimumValue: 0
                                             maximumValue: 100
-                                            // Leave at 1. Otherwise the slider fights with mpd if mpd sends a value that doesn't fit the step size.
                                             stepSize: 1
-                                            value: mpdState.mpdVolume
-
-                                            onValueChanged: {
-                                                // Don't trigger sending to mpd again if we just received the "mixer"
-                                                // event value from our own slider value change.
-                                                if (slider.value !== mpdState.mpdVolume) {
-                                                    mpdState.setVolume(value)
-                                                }
-                                            }
-
+                                            onValueChanged: volumeState.set(volumeSlider.value)
                                             Connections {
-                                                function onMpdVolumeChanged() {
-                                                    if (slider.value !== mpdState.mpdVolume)
-                                                        slider.value = mpdState.mpdVolume
+                                                target: volumeState
+                                                function onVolumeChanged() {
+                                                    volumeSlider.value = volumeState.volume
                                                 }
-                                                target: mpdState
                                             }
-
                                         }
                                         Kirigami.Icon {
                                             source: "audio-volume-high"

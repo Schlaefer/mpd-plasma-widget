@@ -35,7 +35,7 @@ Item {
         }
 
         onWheel: function (wheel) {
-            widgetLayout.volume = widgetLayout.volume + wheel.angleDelta.y / 60
+            volumeState.wheel(wheel.angleDelta.y)
         }
         onDoubleClicked: {
             mpdState.playNext()

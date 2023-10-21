@@ -10,10 +10,6 @@ import "./Components/Queue"
 import "../scripts/formatHelpers.js" as FormatHelpers
 
 GridLayout {
-    // @TODO better way to change volume globally
-    // @TODO Consolidate all the sprinkled wheel change in one place
-    property alias volume: volumeSlider.value
-
     columns: cfgHorizontalLayout ? 3 : 1
     rows: cfgHorizontalLayout ? 1 : 3
 
@@ -50,7 +46,6 @@ GridLayout {
     PlasmaComponents.Slider {
         id: volumeSlider
 
-        value: mpdState.mpdVolume
         Layout.fillHeight: cfgHorizontalLayout
         Layout.fillWidth: !cfgHorizontalLayout
         Layout.leftMargin: !cfgHorizontalLayout ? Kirigami.Units.largeSpacing : 0
@@ -63,20 +58,13 @@ GridLayout {
         visible: !cfgHorizontalLayout
         minimumValue: 0
         maximumValue: 100
-        // Leave at 1. Otherwise the slider fights with mpd if mpd sends a value that doesn't fit the step size.
         stepSize: 1
-        onValueChanged: {
-            // Don't trigger sending to mpd again if we just received the "mixer"
-            // event value from our own slider value change.
-            if (volumeSlider.value !== mpdState.mpdVolume) {
-                mpdState.setVolume(value)
-            }
-        }
+        onValueChanged: volumeState.set(volumeSlider.value)
 
         Connections {
-            function onMpdVolumeChanged() {
-                if (volumeSlider.value !== mpdState.mpdVolume)
-                    volumeSlider.value = mpdState.mpdVolume
+            target: volumeState
+            function onVolumeChanged() {
+                volumeSlider.value = volumeState.volume
             }
         }
     }
