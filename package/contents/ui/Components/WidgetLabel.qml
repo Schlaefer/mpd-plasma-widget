@@ -9,7 +9,7 @@ PlasmaComponents.Label {
 
     font.pointSize: cfgFontSize
     horizontalAlignment: cfgAlignment == 2 ? Text.AlignRight : (cfgAlignment == 1 ? Text.AlignHCenter : Text.AlignLeft)
-    wrapMode: Text.Wrap
+    elide: Text.ElideRight
     Layout.fillWidth: true
 
     layer.enabled: !cfgSolidBackground

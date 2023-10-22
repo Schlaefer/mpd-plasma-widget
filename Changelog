@@ -1,3 +1,7 @@
+# next
+- Fixes widget layout jumping around between empty queue and playing 
+- Widget will no longer adjust size to show full info text
+
 # 5.4
 
 - Sorts internally instead of relying of the filesystem sorting
