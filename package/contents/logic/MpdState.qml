@@ -3,8 +3,7 @@ import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.15
 import org.kde.plasma.components 2.0 as PlasmaComponents
 import org.kde.plasma.core 2.0 as PlasmaCore
-import "./Components"
-import "../scripts/songLibrary.js" as SongLibrary
+import "songLibrary.js" as SongLibrary
 
 Item {
     id: mpdRoot

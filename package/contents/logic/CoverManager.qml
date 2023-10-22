@@ -1,7 +1,6 @@
 import QtQuick 2.15 as QQ2
 import org.kde.plasma.core 2.0 as PlasmaCore
-import "./Components"
-import "../scripts/coverHelpers.js" as CoverHelpers
+import "coverHelpers.js" as CoverHelpers
 
 QQ2.Item {
     id: coverManager
