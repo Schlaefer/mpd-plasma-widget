@@ -149,8 +149,11 @@ Kirigami.ScrollablePage {
             songlistView.headerItem.numberSelected = selected.length
         }
 
-        QueueEmptyPlaceholder {
+        Kirigami.PlaceholderMessage {
             anchors.centerIn: parent
+            width: parent.width - (Kirigami.Units.largeSpacing * 4)
+            text: qsTr("Queue is empty")
+            visible: !mpdState.countQueue()
         }
 
         delegate: SonglistItem {
