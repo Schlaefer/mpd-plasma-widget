@@ -1,6 +1,7 @@
 # next
 - Fixes widget layout jumping around between empty queue and playing 
-- Widget will no longer adjust size to show full info text
+- Widget will no longer adjust its size to show full info text
+- Minor UI tweaks
 
 # 5.4
 
