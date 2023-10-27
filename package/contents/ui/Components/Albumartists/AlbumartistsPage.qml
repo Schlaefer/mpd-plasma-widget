@@ -13,40 +13,54 @@ Kirigami.ScrollablePage {
     property string shownAlbumartist
     readonly property string globalShortcut: "2"
 
+    property alias searchField: searchField
+    property alias viewState: controller.viewState
+
     visible: false
+
+    AlbumartistsController { id: controller }
 
     globalToolBarStyle: Kirigami.ApplicationHeaderStyle.None
     header: QQC2.ToolBar {
         RowLayout {
             anchors.fill: parent
             GlobalNav { }
+            QQC2.ToolButton {
+                id: shuffleBtn
+                icon.name: Mpdw.icons.queueRandom
+                checkable: true
+                checked: controller.viewState === "shuffle"
+                onClicked: checked ? controller.viewState = "shuffle" : controller.viewState = "normal"
+                QQC2.ToolTip {
+                    text: qsTr("Suggest")
+                }
+            }
             RowLayout {
-                Layout.fillWidth: true
                 Layout.alignment: Qt.AlignRight
                 Layout.rightMargin: Kirigami.Units.gritUnit
                 Kirigami.SearchField {
                     id: searchField
                     // Per default the text field is stuck at 200 width and cut off at
                     // small sizes
-                    implicitWidth: root.width > 400 ? 200 : root.width / 2
+                    implicitWidth: root.width > 400 ? 200 : (root.width/2) - (10000/root.width)
                     placeholderText: qsTr("Search…")
-                    onTextChanged: listView.filter(text)
+                    onTextChanged: controller.searchTerm = text
 
+                    // Don't double navigate in search field (left, right) and
+                    // list view (up, down) at the same time.
+                    Keys.onUpPressed: { event.accepted = true }
+                    Keys.onDownPressed: { event.accepted = true }
+                    Keys.onTabPressed: { listView.forceActiveFocus() }
+
+                    // Disable default Ctrl+F behavior
+                    focusSequence: undefined
                     Keys.onEscapePressed: {
-                        if (searchField.text) {
+                        if (searchField.text.length > 0) {
                             searchField.text = ""
                         } else {
-                            listView.forceActiveFocus()
+                            controller.viewState = "normal"
                         }
-                    }
-                    Shortcut {
-                        sequence: StandardKey.Find
-                        onActivated: {
-                            if (!searchField.visible) {
-                                appWindow.showPage(albumartistsPage)
-                            }
-                            searchField.forceActiveFocus()
-                        }
+                        event.accepted = true
                     }
                 }
             }
@@ -56,29 +70,7 @@ Kirigami.ScrollablePage {
     ListViewGeneric {
         id: listView
 
-        /**
-          * Populates list model with hits according ot search field content
-          *
-          * @param {string} searchtext
-          */
-        function filter(searchText = "") {
-            if (searchText) {
-                searchText = searchText.toLowerCase()
-            }
-
-            model.clear()
-            let hits = mpdState.library.searchAlbumartists(searchText)
-            hits.forEach(hit => {
-                             let item = {
-                                 "albumartist": hit
-                             }
-                             model.append(item)
-                         })
-        }
-
-        model: ListModel {
-            id: model
-        }
+        model: ListModel { id: model }
 
         delegate: SwipeListItemGeneric {
             id: listItemPlaylist
@@ -195,17 +187,6 @@ Kirigami.ScrollablePage {
                     }
                 }
             }
-        }
-
-        Connections {
-            target: mpdState
-            function onLibraryChanged() {
-                listView.filter()
-            }
-        }
-
-        Component.onCompleted: {
-            mpdState.getLibrary()
         }
     }
 

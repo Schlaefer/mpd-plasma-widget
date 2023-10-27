@@ -251,6 +251,15 @@ Kirigami.ApplicationWindow {
     }
 
     Kirigami.Action {
+        shortcut: StandardKey.Find
+        onTriggered: {
+            if (!albumartistsPage.visible) { appWindow.showPage(albumartistsPage) }
+            while (appWindow.pageStack.depth > 1) { appWindow.pageStack.pop() } // Exit subviews
+            albumartistsPage.viewState = "startSearch"
+        }
+    }
+
+    Kirigami.Action {
         id: mpdToggleRepeatAct
         property string mpdOption: "repeat"
         text: qsTr("Repeat")

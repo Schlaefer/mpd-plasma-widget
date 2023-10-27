@@ -206,11 +206,12 @@ ListViewGeneric {
             if (event.modifiers & Qt.ControlModifier) {
                 root.selectAll()
             }
+            event.accepted = true
         } else if (event.key === Qt.Key_B) {
             let state = !(event.modifiers & Qt.ShiftModifier)
             root.selectNeighborsByAlbum(model.get(root.currentIndex), root.currentIndex, state)
+            event.accepted = true
         }
-        event.accepted = true
     }
 
 
