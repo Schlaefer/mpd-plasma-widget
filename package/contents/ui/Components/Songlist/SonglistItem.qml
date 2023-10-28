@@ -21,122 +21,118 @@ Item {
 
     SwipeListItemGeneric {
         id: listItem
-
+        width: root.width
         highlightIndex: playingIndex
 
-        MouseArea {
-            implicitHeight: mainLayout.implicitHeight
-            implicitWidth: mainLayout.implicitWidth
-            acceptedButtons: Qt.LeftButton | Qt.RightButton
+        RowLayout {
+            id: mainLayout
 
-            onClicked: function (mouse) {
-                parentView.userInteracted()
-                if (mouse.button === Qt.LeftButton) {
-                    if (mouse.modifiers & Qt.ShiftModifier) {
-                        parentView.selectTo(index)
-                    } else if (mouse.modifiers & Qt.ControlModifier) {
-                        parentView.selectToggle(index)
-                    } else {
-                        parentView.selectToggle(index)
+            Kirigami.ListItemDragHandle {
+                id: dragHandle
+                property int startIndex: -1
+                property int endIndex
+
+                visible: isSortable
+
+                Layout.preferredWidth: Kirigami.Units.iconSizes.medium
+                Layout.leftMargin: -Kirigami.Units.gridUnit / 2
+
+                listItem: listItem
+                listView: parentView
+                onMoveRequested: function(oldIndex, newIndex) {
+                    if (startIndex === -1) {
+                        startIndex = oldIndex
                     }
-                    parent.forceActiveFocus()
-                    parentView.currentIndex = index
+                    endIndex = newIndex
+                    listView.model.move(oldIndex, newIndex, 1)
                 }
-                if (mouse.button === Qt.RightButton) {
-                    menuLoader.source = "SonglistItemContextMenu.qml"
-                    if (!menuLoader.item.visible) {
-                        menuLoader.item.popup()
+                onDropped: {
+                    parentView.userInteracted()
+                    if (startIndex !== endIndex) {
+                        mpdState.moveInQueue(startIndex, endIndex)
                     }
+
+                    startIndex = -1
                 }
             }
 
-            Loader {
-                id: menuLoader
+            ListCoverimage {
+                id: image
+                isSelected: model.checked
             }
 
-            RowLayout {
-                id: mainLayout
-                width: root.width
-                // Without we don't have word wrap with the text below!
-                anchors.fill: parent
+            Rectangle {
+                id: cursorMarker
+                Layout.fillHeight: true
+                width: Kirigami.Units.smallSpacing
+                opacity: carretIndex === index
+                color: playingIndex === index ? Kirigami.Theme.activeBackgroundColor : Kirigami.Theme.hoverColor
+            }
 
-                Kirigami.ListItemDragHandle {
-                    property int startIndex: -1
-                    property int endIndex
-                    visible: isSortable
+            ColumnLayout {
+                id: textArea
+                spacing: 0
+                Layout.fillHeight: true
+                Layout.fillWidth: true
 
-                    Layout.preferredWidth: Kirigami.Units.iconSizes.medium
-                    Layout.leftMargin: -Kirigami.Units.gridUnit / 2
-
-                    listItem: listItem
-                    listView: parentView
-                    onMoveRequested: (oldIndex, newIndex) => {
-                                         if (startIndex === -1) {
-                                             startIndex = oldIndex
-                                         }
-                                         endIndex = newIndex
-                                         listView.model.move(oldIndex, newIndex, 1)
-                                     }
-                    onDropped: {
-                        parentView.userInteracted()
-                        if (startIndex !== endIndex) {
-                            mpdState.moveInQueue(startIndex, endIndex)
-                        }
-
-                        startIndex = -1
-                    }
-                }
-
-                ListCoverimage {
-                    id: image
-                    isSelected: model.checked
-                }
-
-                Rectangle {
-                    id: cursorMarker
-                    Layout.fillHeight: true
-                    width: Kirigami.Units.smallSpacing
-                    opacity: carretIndex === index
-                    color: playingIndex === index ? Kirigami.Theme.activeBackgroundColor : Kirigami.Theme.hoverColor
-                }
-
-                // We need a layout-"anchor" for the MouseArea *and* to allow
-                // fillWide-aware word-wrap on the text fields
                 ColumnLayout {
-                    id: mouseAreaAnchor
                     spacing: 0
-                    Layout.fillHeight: true
+                    Layout.rightMargin: Kirigami.Units.smallSpacing
+                    Text {
+                        Layout.fillWidth: true
+                        color: (playingIndex === index) ? Kirigami.Theme.highlightedTextColor : Kirigami.Theme.textColor
+                        font.bold: !appWindow.narrowLayout
+                        text: appWindow.narrowLayout ? FmH.title(model) : model.title
+                        wrapMode: Text.WordWrap
+                    }
+                    Text {
+                        visible: !appWindow.narrowLayout
+                        Layout.fillWidth: true
+                        color: (playingIndex === index) ? Kirigami.Theme.highlightedTextColor : Kirigami.Theme.disabledTextColor
+                        text: FmH.artist(model)
+                        wrapMode: Text.WordWrap
+                    }
 
-                    ColumnLayout {
-                        spacing: 0
-                        Text {
-                            Layout.fillWidth: true
-                            Layout.rightMargin: Kirigami.Units.small
-                            color: (playingIndex === index) ? Kirigami.Theme.highlightedTextColor : Kirigami.Theme.textColor
-                            font.bold: !appWindow.narrowLayout
-                            text: appWindow.narrowLayout ? FmH.title(model) : model.title
-                            wrapMode: Text.WordWrap
-                        }
-                        Text {
-                            visible: !appWindow.narrowLayout
-                            Layout.fillWidth: true
-                            Layout.rightMargin: Kirigami.Units.small
-                            color: (playingIndex === index) ? Kirigami.Theme.highlightedTextColor : Kirigami.Theme.disabledTextColor
-                            text: FmH.artist(model)
-                            wrapMode: Text.WordWrap
-                        }
-
-                        Text {
-                            visible: !appWindow.narrowLayout
-                            Layout.fillWidth: true
-                            Layout.rightMargin: Kirigami.Units.small
-                            color: (playingIndex === index) ? Kirigami.Theme.highlightedTextColor : Kirigami.Theme.disabledTextColor
-                            text: FmH.queueAlbumLine(model)
-                            wrapMode: Text.WordWrap
-                        }
+                    Text {
+                        visible: !appWindow.narrowLayout
+                        Layout.fillWidth: true
+                        color: (playingIndex === index) ? Kirigami.Theme.highlightedTextColor : Kirigami.Theme.disabledTextColor
+                        text: FmH.queueAlbumLine(model)
+                        wrapMode: Text.WordWrap
                     }
                 }
             }
+        }
+    }
+    MouseArea {
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+        anchors.left: parent.left
+        anchors.leftMargin: dragHandle.width
+        width: textArea.width + cursorMarker.width + image.width
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
+        onClicked: function (mouse) {
+            parentView.userInteracted()
+            if (mouse.button === Qt.LeftButton) {
+                if (mouse.modifiers & Qt.ShiftModifier) {
+                    parentView.selectTo(index)
+                } else if (mouse.modifiers & Qt.ControlModifier) {
+                    parentView.selectToggle(index)
+                } else {
+                    parentView.selectToggle(index)
+                }
+                parent.forceActiveFocus()
+                parentView.currentIndex = index
+            }
+            if (mouse.button === Qt.RightButton) {
+                menuLoader.source = "SonglistItemContextMenu.qml"
+                if (!menuLoader.item.visible) {
+                    menuLoader.item.popup()
+                }
+            }
+        }
+        Loader {
+            id: menuLoader
         }
     }
 }
