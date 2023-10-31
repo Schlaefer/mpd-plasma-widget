@@ -27,6 +27,7 @@ Kirigami.ApplicationWindow {
 
     pageStack.initialPage: queuePage
 //   pageStack.initialPage: albumartistsPage
+//   pageStack.initialPage: playlistPage
 
     function showPage(page) {
         if (!page.visible) {
@@ -158,12 +159,7 @@ Kirigami.ApplicationWindow {
                             ToolButton {
                                 id: ppBtn
                                 icon.name: mpdState.mpdPlaying ? Mpdw.icons.queuePause : Mpdw.icons.queuePlay
-                                function toggle() { mpdState.toggle() }
-                                onClicked:  ppBtn.toggle()
-                                Shortcut {
-                                    sequence: "p"
-                                    onActivated: ppBtn.toggle()
-                                }
+                                onClicked: mpdTogglePlayPauseAct.onTriggered()
                                 ToolTip { text: qsTr("Starts and pauses playback") + " (P)" }
                             }
 
@@ -257,6 +253,12 @@ Kirigami.ApplicationWindow {
             while (appWindow.pageStack.depth > 1) { appWindow.pageStack.pop() } // Exit subviews
             albumartistsPage.viewState = "startSearch"
         }
+    }
+
+    Kirigami.Action {
+        id: mpdTogglePlayPauseAct
+        shortcut: "p"
+        onTriggered: { mpdState.togglePlayPause() }
     }
 
     Kirigami.Action {

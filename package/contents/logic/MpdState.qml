@@ -19,7 +19,7 @@ Item {
       */
     property var mpdInfo: undefined
     property var mpdQueue: []
-    property bool mpdPlaying: false
+    property bool mpdPlaying
     property var mpdPlaylists: ({})
     property var library
     property bool consume: false
@@ -30,6 +30,13 @@ Item {
     property bool binaryAvailable: false
     property bool mpdConnectionAvailable: false
     property bool libraryRequested: false
+
+    property int _playState
+    enum PlayState {
+        Play,
+        Pause,
+        Stop
+    }
 
     /**
      * Starts the bootstrap process of a fresh connection to the mpd instance
@@ -172,10 +179,27 @@ Item {
             }
 
             root.volume = parseInt(parsed.volume)
-            root.mpdPlaying = parsed.state === "play"
             root.consume = parsed.consume === "1"
             root.random = parsed.random === "1"
             root.repeat = parsed.repeat === "1"
+
+            switch (parsed.state) {
+                case("play"):
+                    root._playState = MpdState.PlayState.Play
+                    root.mpdPlaying = true
+                    break
+                case("pause"):
+                    root._playState = MpdState.PlayState.Pause
+                    root.mpdPlaying = false
+                    break
+                case("stop"):
+                    root._playState = MpdState.PlayState.Stop
+                    root.mpdPlaying = false
+                    break
+                default:
+                    throw new Error("Unknown mpd play status " + parsed.state)
+            }
+
         })
     }
 
@@ -194,8 +218,23 @@ Item {
         })
     }
 
-    function toggle() {
+    function togglePlayPause() {
+        // Sending play/pause doesn't start from stopped state in python-mpd2
+        if (root._playState === MpdState.PlayState.Stop && root.mpdInfo) {
+            playInQueue(root.mpdInfo.pos)
+            return
+        }
+
         executable.execCmd("pause")
+    }
+
+    /**
+     * Play specific item in queue
+     *
+     * @param {int} position Position in queue
+     */
+    function playInQueue(position) {
+        executable.execCmd("play", [position])
     }
 
     function playNext() {
@@ -240,15 +279,6 @@ Item {
 
     function clearQueue() {
         executable.execCmd("clear")
-    }
-
-    /**
-     * Play specific item in queue
-     *
-     * @param {int} position Position in queue
-     */
-    function playInQueue(position) {
-        executable.execCmd("play", [position])
     }
 
     function replaceQueue(songs) {

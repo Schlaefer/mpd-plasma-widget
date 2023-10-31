@@ -20,7 +20,7 @@ Item {
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         onClicked: function (mouse) {
             if (mouse.button === Qt.LeftButton) {
-                mpdState.toggle()
+                mpdState.togglePlayPause()
             } else if (mouse.button === Qt.RightButton) {
                 if (!contextMenuLoader.item) {
                     contextMenuLoader.sourceComponent = contextMenuComponent

@@ -179,7 +179,7 @@ Kirigami.ScrollablePage {
                     text: qsTr("Play Now")
                     onTriggered: {
                         if (playingIndex === model.index) {
-                            mpdState.toggle()
+                            mpdState.togglePlayPause()
                         } else {
                             mpdState.playInQueue(model.pos)
                         }
