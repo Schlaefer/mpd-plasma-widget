@@ -9,7 +9,6 @@ const icons = {
     queueRandom: "media-playlist-shuffle",
     queueRepeat: "media-playlist-repeat",
     queueShowCurrent: "mark-location",
-    queueFollowMode: "edit-link",
     queueSaveNew: "document-save-as",
     queueSaveReplace: "document-replace",
     queueRemoveSingle: "edit-delete",

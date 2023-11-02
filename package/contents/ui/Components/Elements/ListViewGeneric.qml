@@ -7,8 +7,6 @@ ListView {
     highlightMoveDuration: 0
 
     Keys.onPressed: {
-        event.accepted = true
-
         if (event.key === Qt.Key_PageUp) {
             let xPos = root.contentX
             let yPos = root.contentY
@@ -37,6 +35,7 @@ ListView {
             root.positionViewAtIndex(newPosition, root.Beginning)
             root.currentIndex = newPosition
 
+            event.accepted = true
             return
         }
 
@@ -48,18 +47,24 @@ ListView {
             }
             root.positionViewAtIndex(bottomIndex, root.Beginning)
             root.currentIndex = bottomIndex
+
+            event.accepted = true
             return
         }
 
         if (event.key === Qt.Key_Home) {
             root.positionViewAtIndex(0, root.Beginning)
             root.currentIndex = 0
+
+            event.accepted = true
             return
         }
 
         if (event.key === Qt.Key_End) {
             root.positionViewAtIndex(root.count - 1, root.Beginning)
             root.currentIndex = root.count - 1
+
+            event.accepted = true
             return
         }
 
@@ -68,6 +73,8 @@ ListView {
             if (newIndex >= 0) {
                 root.currentIndex = newIndex
             }
+
+            event.accepted = true
             return
         }
 
@@ -76,6 +83,8 @@ ListView {
             if (newIndex < root.count) {
                 root.currentIndex = newIndex
             }
+
+            event.accepted = true
             return
         }
     }

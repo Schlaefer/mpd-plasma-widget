@@ -8,6 +8,8 @@ import "../../Components/Elements"
 ListViewGeneric {
     id: root
 
+    // @TODO We only care about it on the QueuePage for the follow mode,
+    // so this should be handled on the QueuePage only if possible.
     signal userInteracted()
 
     property alias actionDeselect: actionDeselect
@@ -199,19 +201,19 @@ ListViewGeneric {
         return files
     }
 
-    function centerInView(index) {
-        songlistView.positionViewAtIndex(index, ListView.Center)
-    }
-
     Keys.onPressed: {
         if (event.key === Qt.Key_A) {
             if (event.modifiers & Qt.ControlModifier) {
                 root.selectAll()
+
+                event.accepted = true
+                userInteracted()
             }
-            event.accepted = true
         } else if (event.key === Qt.Key_B) {
             let state = !(event.modifiers & Qt.ShiftModifier)
             root.selectNeighborsByAlbum(model.get(root.currentIndex), root.currentIndex, state)
+
+            userInteracted()
             event.accepted = true
         }
     }
@@ -229,6 +231,7 @@ ListViewGeneric {
         if (event.modifiers && (Qt.ShiftModifier)) {
             root.select(root.currentIndex)
         }
+
         userInteracted()
         event.accepted = true
     }
@@ -245,6 +248,7 @@ ListViewGeneric {
         if (event.modifiers && Qt.ShiftModifier) {
             root.select(root.currentIndex)
         }
+
         userInteracted()
         event.accepted = true
     }
@@ -279,9 +283,6 @@ ListViewGeneric {
         interval: 400
     }
 
-    // onCountChanged: {
-    // }
-
     model: SonglistModel {}
 
     moveDisplaced: Transition {
@@ -297,6 +298,7 @@ ListViewGeneric {
             Kirigami.Action {
                 text: qsTr("Play")
                 shortcut: "Q"
+                enabled: root.activeFocus
                 tooltip: qsTr("Replace Queue and Start Playing")
                 icon.name: Mpdw.icons.queuePlay
                 onTriggered: {
@@ -306,6 +308,7 @@ ListViewGeneric {
             Kirigami.Action {
                 text: qsTr("Append")
                 shortcut: "W"
+                enabled: root.activeFocus
                 icon.name: Mpdw.icons.queueAppend
                 tooltip: qsTr("Append to End of Queue")
                 onTriggered: {
@@ -316,6 +319,7 @@ ListViewGeneric {
             Kirigami.Action {
                 text: qsTr("Insert")
                 shortcut: "E"
+                enabled: root.activeFocus
                 tooltip: qsTr("Insert After Current Song")
                 icon.name: Mpdw.icons.queueInsert
                 onTriggered: {
@@ -323,7 +327,7 @@ ListViewGeneric {
                 }
             }
         ]
-        rightActions: [deleteAction]
+        rightActions: [actionDeselect]
     }
 
     Kirigami.Action {
@@ -332,6 +336,11 @@ ListViewGeneric {
         tooltip: qsTr("Deselect All")
         icon.name: Mpdw.icons.selectNone
         shortcut: "Shift+D"
+        enabled: root.activeFocus
         onTriggered: root.deselectAll()
+    }
+
+    onCurrentIndexChanged: {
+        forceActiveFocus(root.itemAtIndex(root.currentIndex))
     }
 }

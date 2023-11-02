@@ -29,19 +29,6 @@ Kirigami.ScrollablePage {
 
                     actions: [
                         Kirigami.Action {
-                            id: followCurrentSong
-                            text: qsTr("Follow Playing Song")
-                            icon.name: Mpdw.icons.queueFollowMode
-                            tooltip: FmH.tooltipWithShortcut(
-                                         qsTr("Follow Mode - Scroll the queue to keep the currently playing song visible."),
-                                         shortcut
-                                         )
-                            shortcut: "Shift+L"
-                            displayHint: Kirigami.DisplayHint.IconOnly
-                            checkable: true
-                            checked: true
-                        },
-                        Kirigami.Action {
                             id: queueMenu
                             text: qsTr("Queue")
                             Kirigami.Action {
@@ -88,12 +75,14 @@ Kirigami.ScrollablePage {
                                 separator: true
                             }
                             Kirigami.Action {
+                                id: showCurrentSongAction
                                 icon.name: Mpdw.icons.queueShowCurrent
                                 text: qsTr("Show Current Song")
                                 shortcut: "L"
                                 onTriggered: {
                                     if (!queuePage.visible) { appWindow.showPage(queuePage) }
-                                    songlistView.showCurrentItemInList()
+                                    followMode.autoMode = true
+                                    followMode.showCurrent()
                                 }
                             }
                             Kirigami.Action {
@@ -146,19 +135,6 @@ Kirigami.ScrollablePage {
             }
         }
 
-        function showCurrentItemInList() {
-            if (!appWindow.visible) {
-                return
-            }
-
-            if (!mpdState.mpdInfo) {
-                return
-            }
-
-            songlistView.currentIndex = mpdState.mpdInfo.pos
-            centerInView(songlistView.currentIndex)
-        }
-
         Kirigami.PlaceholderMessage {
             anchors.centerIn: parent
             width: parent.width - (Kirigami.Units.largeSpacing * 4)
@@ -202,25 +178,12 @@ Kirigami.ScrollablePage {
                 }
             ]
         }
+    }
 
-        Connections {
-            function onUserInteracted() {
-                if (!followCurrentSong.checked) {
-                    return
-                }
-                followCurrentSong.checked = false
-                disableFollowOnEditTimer.restart()
-            }
-        }
-
-        Timer {
-            id: disableFollowOnEditTimer
-            interval: 120000
-            onTriggered: {
-                followCurrentSong.checked = true
-                songlistView.showCurrentItemInList()
-            }
-        }
+    QueueFollowModeController {
+        id: followMode
+        currentPosition: mpdState.mpdInfo ? mpdState.mpdInfo.pos : -1
+        listView: songlistView
     }
 
     Connections {
@@ -263,15 +226,11 @@ Kirigami.ScrollablePage {
                 songlistView.model.remove(k)
             }
 
-            if (followCurrentSong.checked)  {
-                songlistView.showCurrentItemInList()
-            }
+            followMode.showCurrent()
         }
 
         function onMpdInfoChanged() {
-            if (followCurrentSong.checked)  {
-                songlistView.showCurrentItemInList()
-            }
+            followMode.showCurrent()
         }
     }
 
@@ -285,9 +244,7 @@ Kirigami.ScrollablePage {
     Connections {
         target: appWindow
         function onHeightChanged() {
-            if (followCurrentSong.checked)  {
-                songlistView.showCurrentItemInList()
-            }
+            followMode.showCurrent()
         }
     }
 

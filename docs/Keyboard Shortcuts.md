@@ -39,6 +39,5 @@
 | Shortcut | Action                |
 | -------- | --------------------- |
 | L        | Jump to Current Song  |
-| Shift+L  | Toggle Follow Mode    |
 | Shift+C  | Clear Queue           |
 | Del      | Delete Selected Items |
