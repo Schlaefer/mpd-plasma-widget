@@ -1,4 +1,9 @@
+# 5.5.1
+
+- Fixes widget locking-up while loading covers from songs with no albumartist
+
 # 5.5
+
 - Fixes widget layout jumping around between empty queue and playing 
 - Widget will no longer adjust its size to show full info text
 - Minor UI tweaks

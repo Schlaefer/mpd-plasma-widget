@@ -31,7 +31,7 @@ class FetchQueue {
             data: {
                 "album": data.album,
                 "albumartist": data.albumartist,
-                "artist": data.albumartist,
+                "artist": data.artist,
                 "file": data.file,
             },
             priority: priority
