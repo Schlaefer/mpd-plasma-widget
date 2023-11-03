@@ -1,5 +1,5 @@
 import QtQuick 2.15
-import QtQuick.Controls 2.3
+import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.0
 import org.kde.kirigami 2.20 as Kirigami
 import "../../Components/Elements"

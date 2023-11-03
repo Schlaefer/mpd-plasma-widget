@@ -1,7 +1,8 @@
 import QtQuick 2.15
-import QtQuick.Controls 2.3 as QQC2
+import QtQuick.Controls 2.15 as QQC2
 import QtQuick.Layouts 1.15
 import "../../Mpdw.js" as Mpdw
+import "../../../scripts/formatHelpers.js" as FmH
 
 RowLayout {
     Repeater {
@@ -37,7 +38,7 @@ RowLayout {
             onClicked: appWindow.showPage(modelData.page)
 
             QQC2.ToolTip {
-                text: modelData.tooltip + " (" + modelData.shortcut + ")"
+                text: FmH.tooltipWithShortcut(modelData.tooltip, modelData.shortcut)
             }
         }
     }

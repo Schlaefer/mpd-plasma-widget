@@ -1,11 +1,12 @@
 import QtQuick 2.15
-import QtQuick.Controls 2.3
+import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.0
 import org.kde.kirigami 2.20 as Kirigami
 import "../../Mpdw.js" as Mpdw
 import "../../Components/Elements"
 import "../../Components/Songlist"
 import "../../Components/Queue"
+import "../../../scripts/formatHelpers.js" as FmH
 
 Kirigami.ScrollablePage {
     id: queuePage
@@ -31,18 +32,22 @@ Kirigami.ScrollablePage {
                             id: followCurrentSong
                             text: qsTr("Follow Playing Song")
                             icon.name: Mpdw.icons.queueFollowMode
-                            tooltip: qsTr("Follow Mode - Scroll the queue to keep the currently playing song visible.") + " (" + qsTr("L") + ")" // @i18n
-                            shortcut: "shift+l"
+                            tooltip: FmH.tooltipWithShortcut(
+                                         qsTr("Follow Mode - Scroll the queue to keep the currently playing song visible."),
+                                         shortcut
+                                         )
+                            shortcut: "Shift+L"
                             displayHint: Kirigami.DisplayHint.IconOnly
                             checkable: true
                             checked: true
                         },
                         Kirigami.Action {
+                            id: queueMenu
                             text: qsTr("Queue")
                             Kirigami.Action {
                                 icon.name: Mpdw.icons.queueSaveNew
                                 text: qsTr("Save as New Playlist…")
-                                shortcut: "s"
+                                shortcut: "Ctrl+S"
                                 onTriggered: {
                                     queueDialogSave.open()
                                 }
@@ -50,7 +55,7 @@ Kirigami.ScrollablePage {
                             Kirigami.Action {
                                 icon.name: Mpdw.icons.queueSaveReplace
                                 text: qsTr("Replace Playlist…")
-                                 shortcut: "shift+s"
+                                 shortcut: "Ctrl+Shift+S"
                                 onTriggered: {
                                     queueDialogReplacePl.open()
                                 }
@@ -83,10 +88,21 @@ Kirigami.ScrollablePage {
                                 separator: true
                             }
                             Kirigami.Action {
+                                icon.name: Mpdw.icons.queueShowCurrent
+                                text: qsTr("Show Current Song")
+                                shortcut: "L"
+                                onTriggered: {
+                                    if (!queuePage.visible) { appWindow.showPage(queuePage) }
+                                    songlistView.showCurrentItemInList()
+                                }
+                            }
+                            Kirigami.Action {
+                                separator: true
+                            }
+                            Kirigami.Action {
                                 text: qsTr("Clear Queue")
                                 icon.name: Mpdw.icons.queueClear
-                                tooltip: text + " (" + qsTr("Shift+C") + ")" // @i18n
-                                shortcut: "shift+c"
+                                shortcut: "Shift+C"
                                 displayHint: Kirigami.DisplayHint.IconOnly
                                 onTriggered: {
                                     mpdState.clearQueue()
@@ -98,7 +114,6 @@ Kirigami.ScrollablePage {
             }
         }
     }
-
 
     SonglistView {
         id: songlistView
@@ -120,18 +135,7 @@ Kirigami.ScrollablePage {
                     }
                 }
             ]
-            // @TODO Should be default action of SonglistView without repeating here
-            rightActions: [
-                Kirigami.Action {
-                    text: appWindow.narrowLayout ? "" : qsTr("Deselect")
-                    tooltip: qsTr("Deselect All")
-                    icon.name: Mpdw.icons.selectNone
-                    shortcut: "Shift+D"
-                    onTriggered: {
-                        songlistView.deselectAll()
-                    }
-                }
-            ]
+            rightActions: [songlistView.actionDeselect]
 
             Connections {
                 target: songlistView
@@ -197,12 +201,6 @@ Kirigami.ScrollablePage {
                     }
                 }
             ]
-        }
-
-        Keys.onPressed: {
-            if (event.key === Qt.Key_L) {
-                 songlistView.showCurrentItemInList()
-            }
         }
 
         Connections {

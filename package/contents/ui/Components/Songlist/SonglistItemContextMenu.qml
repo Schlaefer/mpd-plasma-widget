@@ -1,17 +1,20 @@
 import QtQuick 2.15
-import QtQuick.Controls 2.3 as QQC2
+import QtQuick.Controls 2.15 as QQC2
+import QtQuick.Layouts 1.15
 import "../../Mpdw.js" as Mpdw
 
 QQC2.Menu {
     id: contextMenu
-    QQC2.MenuItem {
+
+    QQC2.Action {
         text: qsTr('Select Album')
         icon.name: Mpdw.icons.selectAlbum
+        shortcut: "B"
         onTriggered: {
             parentView.selectNeighborsByAlbum(model, index)
         }
     }
-    QQC2.MenuItem {
+    QQC2.Action {
         text: qsTr('Select Album-Artist')
         icon.name: Mpdw.icons.selectArtist
         onTriggered: {
@@ -19,7 +22,7 @@ QQC2.Menu {
         }
     }
     QQC2.MenuSeparator {}
-    QQC2.MenuItem {
+    QQC2.Action {
         text: qsTr('Select Above')
         icon.name: Mpdw.icons.selectAbove
         onTriggered: {
@@ -27,7 +30,7 @@ QQC2.Menu {
         }
         enabled: index > 0
     }
-    QQC2.MenuItem {
+    QQC2.Action {
         text: qsTr('Select Below')
         icon.name: Mpdw.icons.selectBelow
         onTriggered: {
@@ -36,18 +39,18 @@ QQC2.Menu {
         enabled: index < parentView.count - 1
     }
     QQC2.MenuSeparator {}
-    QQC2.MenuItem {
+    QQC2.Action {
         text: qsTr("Select All")
         icon.name: Mpdw.icons.selectAll
+        shortcut: "ctrl+a"
         onTriggered: {
             parentView.selectAll(true)
         }
     }
-    QQC2.MenuItem {
-        text: qsTr("Deselect")
-        icon.name: Mpdw.icons.selectNone
-        onTriggered: {
-            parentView.deselectAll()
-        }
+    QQC2.Action {
+        text: parentView.actionDeselect.text
+        icon.name: parentView.actionDeselect.icon.name
+        shortcut: parentView.actionDeselect.shortcut
+        onTriggered: parentView.actionDeselect.onTriggered()
     }
 }

@@ -62,3 +62,8 @@ function queueAlbumLine(model) {
     return line.join("")
 }
 
+function tooltipWithShortcut(tooltip, shortcut) {
+    return tooltip + " (" + shortcut + ")"
+
+}
+

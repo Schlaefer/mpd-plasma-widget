@@ -1,5 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15 as QQC2
+import "../../../scripts/formatHelpers.js" as FmH
 
 QQC2.ToolButton {
     id: root
@@ -9,7 +10,7 @@ QQC2.ToolButton {
     visible: !appWindow.narrowLayout || checked
 
     QQC2.ToolTip {
-        text: modelData.tooltip + " (" + modelData.shortcut.toUpperCase() + ")"
+        text: FmH.tooltipWithShortcut(modelData.tooltip, modelData.shortcut)
     }
 
     function update() {

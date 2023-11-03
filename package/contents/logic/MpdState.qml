@@ -1,6 +1,4 @@
 import QtQuick 2.15
-import QtQuick.Controls 2.3
-import QtQuick.Layouts 1.15
 import "songLibrary.js" as SongLibrary
 
 Item {

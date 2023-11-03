@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.0
 import QtQuick.Controls 2.15 as QQC2
 import org.kde.kirigami 2.20 as Kirigami
 import QtGraphicalEffects 1.12
+ import "../../../scripts/formatHelpers.js" as FmH
 
 Item {
     id: root
@@ -53,7 +54,7 @@ Item {
             enabled: modelData.enabled
             flat: true
             QQC2.ToolTip {
-                text: modelData.tooltip + (modelData.shortcut ? " (" + modelData.shortcut + ")" : "")
+                text: FmH.tooltipWithShortcut(modelData.tooltip, modelData.shortcut)
             }
         }
     }

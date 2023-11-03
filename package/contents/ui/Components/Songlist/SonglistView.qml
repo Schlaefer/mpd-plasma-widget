@@ -1,5 +1,5 @@
 import QtQuick 2.15
-import QtQuick.Controls 2.3
+import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.0
 import org.kde.kirigami 2.20 as Kirigami
 import "../../Mpdw.js" as Mpdw
@@ -9,6 +9,8 @@ ListViewGeneric {
     id: root
 
     signal userInteracted()
+
+    property alias actionDeselect: actionDeselect
 
      /**
       * Last selected item
@@ -289,12 +291,12 @@ ListViewGeneric {
         }
     }
 
-
     headerPositioning: ListView.OverlayHeader
     header: SonglistHeader {
         leftActions: [
             Kirigami.Action {
                 text: qsTr("Play")
+                shortcut: "Q"
                 tooltip: qsTr("Replace Queue and Start Playing")
                 icon.name: Mpdw.icons.queuePlay
                 onTriggered: {
@@ -303,6 +305,7 @@ ListViewGeneric {
             },
             Kirigami.Action {
                 text: qsTr("Append")
+                shortcut: "W"
                 icon.name: Mpdw.icons.queueAppend
                 tooltip: qsTr("Append to End of Queue")
                 onTriggered: {
@@ -312,6 +315,7 @@ ListViewGeneric {
             },
             Kirigami.Action {
                 text: qsTr("Insert")
+                shortcut: "E"
                 tooltip: qsTr("Insert After Current Song")
                 icon.name: Mpdw.icons.queueInsert
                 onTriggered: {
@@ -319,16 +323,15 @@ ListViewGeneric {
                 }
             }
         ]
-        rightActions: [
-            Kirigami.Action {
-                text: appWindow.narrowLayout ? "" : qsTr("Deselect")
-                tooltip: qsTr("Deselect All")
-                icon.name: Mpdw.icons.selectNone
-                shortcut: "Shift+D"
-                onTriggered: {
-                    root.deselectAll()
-                }
-            }
-        ]
+        rightActions: [deleteAction]
+    }
+
+    Kirigami.Action {
+        id: actionDeselect
+        text: appWindow.narrowLayout ? "" : qsTr("Deselect")
+        tooltip: qsTr("Deselect All")
+        icon.name: Mpdw.icons.selectNone
+        shortcut: "Shift+D"
+        onTriggered: root.deselectAll()
     }
 }

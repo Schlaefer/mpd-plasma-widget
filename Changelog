@@ -5,6 +5,7 @@ Python 3 (3.6+) is required now. Mpc was dropped as a requirement. Make sure pyt
 - Changes backend from mpc to python-mpd2 (requires python 3.6+)
 - Adds "Don't make me scroll over the same library over and over" shuffle button
 - Fixes Ctrl+F not reliably jumping to search
+- Cleans up and changes some keyboard shortcuts
 
 # 5.6.0
 

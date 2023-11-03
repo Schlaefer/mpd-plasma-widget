@@ -1,5 +1,5 @@
 import QtQuick 2.15
-import QtQuick.Controls 2.3
+import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import org.kde.kirigami 2.20 as Kirigami
 import org.kde.plasma.components 2.0 as PlasmaComponents
@@ -266,9 +266,9 @@ Kirigami.ApplicationWindow {
         property string mpdOption: "repeat"
         text: qsTr("Repeat")
         icon.name: Mpdw.icons.queueRepeat
-        shortcut: "Shift+Z"
+        shortcut: "R"
         tooltip: "Toggle MPD's Repeat mode"
-        onTriggered: { mpdState.toggleOption("repeat") }
+        onTriggered: mpdState.toggleOption("repeat")
     }
 
     Kirigami.Action {
@@ -276,22 +276,22 @@ Kirigami.ApplicationWindow {
         property string mpdOption: "random"
         text: qsTr("Random")
         icon.name: Mpdw.icons.queueRandom
-        shortcut: "Z"
+        shortcut: "X"
         tooltip: "Toggle MPD's Random mode"
-        onTriggered: { mpdState.toggleOption("random") }
+        onTriggered: mpdState.toggleOption("random")
     }
     Kirigami.Action {
         id: mpdToggleConsumeAct
         property string mpdOption: "consume"
         text: qsTr("Consume")
         icon.name: Mpdw.icons.queueConsume
-        shortcut: "R"
+        shortcut: "C"
         tooltip: "Toggle MPD's Consume mode"
-        onTriggered: { mpdState.toggleOption("consume") }
+        onTriggered: mpdState.toggleOption("consume")
     }
 
     Kirigami.Action {
-        shortcut: "F10"
+        shortcut: "F9"
         onTriggered: {
             if (!debugWindowLoader.item) {
                 debugWindowLoader.source = "./../../Components/Debug/DebugIcons.qml"
