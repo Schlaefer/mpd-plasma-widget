@@ -56,7 +56,6 @@ Kirigami.ScrollablePage {
     ListViewGeneric {
         id: listView
 
-
         /**
           * Populates list model with hits according ot search field content
           *

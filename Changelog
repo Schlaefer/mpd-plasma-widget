@@ -1,3 +1,6 @@
+# Next
+- Implements keyboard navigation for list views
+
 # 5.5.1
 
 - Fixes widget locking-up while loading covers from songs with no albumartist
