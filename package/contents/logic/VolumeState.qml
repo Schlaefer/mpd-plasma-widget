@@ -43,9 +43,8 @@ Item {
      */
     function change(value) {
         value =  root.volume + value
-        if (value < 0 || value > 100) {
-            return
-        }
+        value = value < 0 ? 0 : value
+        value = value > 100 ? 100 : value
         set(value)
     }
 

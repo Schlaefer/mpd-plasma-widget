@@ -1,5 +1,6 @@
 # Next
 - Implements keyboard navigation for list views
+- Fixes scrollwheel volume change not reaching min or max value
 
 # 5.5.1
 
