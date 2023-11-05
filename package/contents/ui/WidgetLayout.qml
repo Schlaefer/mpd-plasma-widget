@@ -65,13 +65,7 @@ Item {
             maximumValue: 100
             stepSize: 1
             onValueChanged: volumeState.set(volumeSlider.value)
-
-            Connections {
-                target: volumeState
-                function onVolumeChanged() {
-                    volumeSlider.value = volumeState.volume
-                }
-            }
+            value: volumeState.volume
         }
 
         // Title

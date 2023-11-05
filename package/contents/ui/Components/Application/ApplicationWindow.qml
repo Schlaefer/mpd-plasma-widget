@@ -169,9 +169,9 @@ Kirigami.ApplicationWindow {
 
                             ToolButton {
                                 id: volmBtn
-                                icon.name: volumeState.volume > 80
+                                icon.name: volumeState.volume > 75
                                     ? Mpdw.icons.volumeHigh
-                                    : volumeState.volume > 20
+                                    : volumeState.volume > 25
                                         ? Mpdw.icons.volumeMedium
                                         : volumeState.volume > 0
                                         ? Mpdw.icons.volumeLow
@@ -201,33 +201,26 @@ Kirigami.ApplicationWindow {
                                     delay: -1
                                     x: volmBtn.x - volmSlider.width / 2
                                     y: volmBtn.y
-//                                    visible: true
-                                    contentItem:
-                                        RowLayout {
+                                    // visible: true // debug
+                                    contentItem: RowLayout {
                                         height:parent.height
                                         Kirigami.Icon {
                                             Layout.preferredWidth: Kirigami.Units.iconSizes.small
                                             Layout.fillHeight: false
                                             source: Mpdw.icons.volumeMuted
                                         }
-
                                         PlasmaComponents.Slider {
                                             id: volumeSlider
                                             minimumValue: 0
                                             maximumValue: 100
                                             stepSize: 1
                                             onValueChanged: volumeState.set(volumeSlider.value)
-                                            Connections {
-                                                target: volumeState
-                                                function onVolumeChanged() {
-                                                    volumeSlider.value = volumeState.volume
-                                                }
-                                            }
+                                            value: volumeState.volume
                                         }
                                         Kirigami.Icon {
-                                            source: "audio-volume-high"
                                             Layout.preferredWidth: Kirigami.Units.iconSizes.small
                                             Layout.fillHeight: false
+                                            source: Mpdw.icons.volumeHigh
                                         }
 
                                     }

@@ -9,11 +9,17 @@ Item {
     /**
      * Our internal volume value that is considered as the "truth" by the UI
      */
-    property int volume
+    property int volume: 50
 
     function set(value) {
         if (value < 0 || value > 100) {
             throw new Error("Invalid argument: volume must be between 0 and 100, is " + value)
+        }
+
+        // If one volume slider changes every other will update and therefore
+        // try to set that same value again. We ignore that identical value.
+        if (volume === value) {
+            return
         }
 
         // Use int. Otherwise our value fights with mpd's if mpd sends back a
@@ -23,17 +29,19 @@ Item {
 
         // Don't trigger sending to mpd again if we just received the "mixer"
         // event value from mpd for our own value change.
-        if (root.volume !== mpdState.mpdVolume) {
-            volumeDebounceTimer.value = value
-            // Don't use restart(). We don't want to send just the end value,
-            // the user has to receive volume change feedback while adjusting.
-            volumeDebounceTimer.start()
-            // Use restart(), we only care about the final value here and don't
-            // want to receive data we send before, but is outdated now (slider
-            // janks back to an older value).
-            volumeReceiverTimer.restart()
+
+        if (root.volume === mpdState.mpdVolume) {
+            return
         }
 
+        volumeDebounceTimer.value = value
+        // Don't use restart(). We don't want to send just the end value,
+        // the user has to receive volume change feedback while adjusting.
+        volumeDebounceTimer.start()
+        // Use restart(), we only care about the final value here and don't
+        // want to receive data we send before, but is outdated now (slider
+        // janks back to an older value).
+        volumeReceiverTimer.restart()
     }
 
     /**
@@ -86,8 +94,9 @@ Item {
         property int value
         // We have to at least wait for the time of our own send debounce-send to
         // pass, otherwise we "jank back" to a previous, outdated value mpdState
-        // just received.
-        interval: 2 * volumeDebounceTimer.interval
+        // just received. Also wait at least a second, otherwise mpd may still
+        // serve the old value.
+        interval: 2 * volumeDebounceTimer.interval < 2000 ? 2000 : 2 * volumeDebounceTimer.interval
         onTriggered: {
             if (root.volume !== mpdState.mpdVolume) {
                 root.volume = mpdState.mpdVolume
