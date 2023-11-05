@@ -22,9 +22,12 @@ Item {
 
     property string appLastError: ""
 
-    Layout.preferredWidth: 300
-    Layout.preferredHeight: 410
     Plasmoid.backgroundHints: cfgSolidBackground ? PlasmaCore.Types.StandardBackground : PlasmaCore.Types.NoBackground
+
+    // Make sure a somewhat reasonable layout with text and cover image is visible
+    // when the user puts the widget on the desktop for the first time.
+    Layout.minimumHeight: cfgHorizontalLayout ? 40 : 180
+    Layout.minimumWidth: cfgHorizontalLayout ? 150 : 50
 
     Component.onCompleted: {
     //    toggleAppWindow()
