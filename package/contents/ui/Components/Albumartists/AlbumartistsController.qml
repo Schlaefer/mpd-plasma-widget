@@ -13,13 +13,15 @@ Item {
       */
     function filter(searchText = "") {
         listView.model.clear()
-        let hits = mpdState.library.searchAlbumartists(searchText)
+        mpdState.library.filterLibrary(searchText)
+        let hits = mpdState.library.getAartists(searchText)
         hits.forEach((hit) => { listView.model.append({"albumartist": hit}) })
     }
 
     function shuffle() {
         listView.model.clear()
-        let hits = mpdState.library.searchAlbumartists()
+        mpdState.library.filterLibrary()
+        let hits = mpdState.library.getAartists()
         hits.sort((a, b) => { return Math.floor(Math.random() * 2) > 0 ? 1 : -1 })
         hits.forEach(hit => { listView.model.append({ "albumartist": hit }) })
     }
@@ -40,6 +42,7 @@ Item {
             break
         case "normal":
         default:
+            searchField.text = ""
             filter()
             listView.positionViewAtIndex(0, ListView.Beginning)
             listView.forceActiveFocus()
