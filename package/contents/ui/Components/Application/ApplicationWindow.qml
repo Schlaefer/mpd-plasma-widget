@@ -174,7 +174,7 @@ Kirigami.ApplicationWindow {
                                     : volumeState.volume > 20
                                         ? Mpdw.icons.volumeMedium
                                         : volumeState.volume > 0
-                                        ? Mpdw.icons.volumeMedium
+                                        ? Mpdw.icons.volumeLow
                                         : Mpdw.icons.volumeMuted
                                 text: volumeState.volume
                                 ToolTip {text: qsTr("Volume (+/=/-/Scroll Wheel)")}
