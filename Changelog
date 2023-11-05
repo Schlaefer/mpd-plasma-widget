@@ -1,5 +1,8 @@
 # Next
-- Implements keyboard navigation for list views
+
+# 5.6.0
+
+- Adds page-up/down key functionality in list views
 - Fixes scrollwheel volume change not reaching min or max value
 - Fixes low volume showing wrong volume icon
 - Fixes to prevent volume slider jankiness
