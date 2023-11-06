@@ -1,7 +1,7 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.0
-import org.kde.kirigami 2.20 as Kirigami
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import org.kde.kirigami as Kirigami
 import "../../Mpdw.js" as Mpdw
 import "../../Components/Elements"
 
@@ -332,7 +332,7 @@ ListViewGeneric {
 
     Kirigami.Action {
         id: actionDeselect
-        text: appWindow.narrowLayout ? "" : qsTr("Deselect")
+        text: main.appWindow.narrowLayout ? "" : qsTr("Deselect")
         tooltip: qsTr("Deselect All")
         icon.name: Mpdw.icons.selectNone
         shortcut: "Shift+D"

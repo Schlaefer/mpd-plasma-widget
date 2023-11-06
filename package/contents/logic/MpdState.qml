@@ -1,4 +1,4 @@
-import QtQuick 2.15
+import QtQuick
 import "songLibrary.js" as SongLibrary
 
 Item {
@@ -392,10 +392,10 @@ Item {
         let cmd = ''
         cmd += '/usr/bin/env bash'
         cmd += ' "' + scriptRoot + '/downloadCover.sh"'
-        cmd += ' ' + cfgMpdHost
+        cmd += ' ' + main.cfgMpdHost
         cmd += ' ' + bEsc(title)
         cmd += ' "' + root + '"'
-        cmd += ' ' + cfgMpdPort
+        cmd += ' ' + main.cfgMpdPort
         cmd += ' "' + ctitle.replace('/', '\\\\/') + '"'
 
         let clb = function (exitCode, stdout) {
@@ -598,8 +598,8 @@ Item {
             let cmd = []
             cmd.push("/usr/bin/env python3")
             cmd.push('"' + root.scriptRoot + '/mpdPlasmaWidgetExec.py"')
-            cmd.push("--host " + cfgMpdHost)
-            cmd.push("--port " + cfgMpdPort)
+            cmd.push("--host " + main.cfgMpdHost)
+            cmd.push("--port " + main.cfgMpdPort)
 
             exec(cmd.join(" ") + " " + command, callback)
         }

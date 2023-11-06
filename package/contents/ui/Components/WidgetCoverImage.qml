@@ -1,8 +1,9 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
-import QtGraphicalEffects 1.12
-import org.kde.kirigami 2.20 as Kirigami
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+// @TODO QT6
+import Qt5Compat.GraphicalEffects
+import org.kde.kirigami as Kirigami
 import "./../Mpdw.js" as Mpdw
 
 Item {
@@ -103,7 +104,7 @@ Item {
             // the cover "got stuck" for whatever reason: a play next even in the same
             // album will always trigger.
             coverImage.source = ""
-            coverImage.source = cover + "-large.jpg"
+            coverImage.source = "file://" + cover + "-large.jpg"
         }
 
         Connections {

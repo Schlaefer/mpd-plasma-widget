@@ -1,9 +1,8 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
-import org.kde.kirigami 2.20 as Kirigami
-import org.kde.plasma.components 2.0 as PlasmaComponents
-import org.kde.plasma.core 2.0 as PlasmaCore
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import org.kde.kirigami as Kirigami
+import org.kde.plasma.components as PlasmaComponents
 import "./../../Mpdw.js" as Mpdw
 import "./../../Components/"
 import "./../../Components/Albumartists"
@@ -15,7 +14,7 @@ import "../../../scripts/formatHelpers.js" as FormatHelpers
 Kirigami.ApplicationWindow {
     id: root
 
-    property bool narrowLayout: appWindow.width < 520
+    property bool narrowLayout: root.width < 520
     property int windowPreMinimizeSize: -1
     property int initialHeight: -1
 
@@ -26,14 +25,14 @@ Kirigami.ApplicationWindow {
     minimumHeight: footer.height
 
     pageStack.initialPage: queuePage
-//   pageStack.initialPage: albumartistsPage
+  // pageStack.initialPage: albumartistsPage
 //   pageStack.initialPage: playlistPage
 
     function showPage(page) {
         if (!page.visible) {
-            while (appWindow.pageStack.depth > 0)
-                appWindow.pageStack.pop()
-            appWindow.pageStack.push(page)
+            while (main.appWindow.pageStack.depth > 0)
+                main.appWindow.pageStack.pop()
+            main.appWindow.pageStack.push(page)
         }
     }
 
@@ -108,9 +107,9 @@ Kirigami.ApplicationWindow {
                         id: songTitle
                         Layout.fillWidth: true
                         Layout.leftMargin: Kirigami.Units.largeSpacing
-                        Layout.bottomMargin: (appWindow.narrowLayout) ?  Kirigami.Units.largeSpacing : 0
+                        Layout.bottomMargin: (main.appWindow.narrowLayout) ?  Kirigami.Units.largeSpacing : 0
                         color: Kirigami.Theme.textColor
-                        font.bold: !appWindow.narrowLayout
+                        font.bold: !main.appWindow.narrowLayout
                         elide: Text.ElideRight
                         Connections {
                             target: mpdState
@@ -121,7 +120,7 @@ Kirigami.ApplicationWindow {
                     }
                     Text {
                         id: songArtist
-                        visible: !appWindow.narrowLayout
+                        visible: !main.appWindow.narrowLayout
                         Layout.fillWidth: true
                         Layout.leftMargin: Kirigami.Units.largeSpacing
                         color: Kirigami.Theme.textColor
@@ -137,7 +136,7 @@ Kirigami.ApplicationWindow {
 
                     Text {
                         id: songAlbum
-                        visible: !appWindow.narrowLayout
+                        visible: !main.appWindow.narrowLayout
                         Layout.fillWidth: true
                         Layout.leftMargin: Kirigami.Units.largeSpacing
                         Layout.bottomMargin: Kirigami.Units.largeSpacing
@@ -207,8 +206,8 @@ Kirigami.ApplicationWindow {
                                         }
                                         PlasmaComponents.Slider {
                                             id: volumeSlider
-                                            minimumValue: 0
-                                            maximumValue: 100
+                                            from: 0
+                                            to: 100
                                             stepSize: 1
                                             onValueChanged: volumeState.set(volumeSlider.value)
                                             value: volumeState.volume

@@ -1,6 +1,6 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15 as QQC2
-import QtQuick.Layouts 1.15
+import QtQuick
+import QtQuick.Controls as QQC2
+import QtQuick.Layouts
 import "../../Mpdw.js" as Mpdw
 import "../../../scripts/formatHelpers.js" as FmH
 
@@ -32,10 +32,10 @@ RowLayout {
 
         QQC2.ToolButton {
             icon.name: modelData.icon
-            text: appWindow.narrowLayout ? "" : modelData.text
+            text: main.appWindow.narrowLayout ? "" : modelData.text
             checkable: true
             checked: modelData.page.visible
-            onClicked: appWindow.showPage(modelData.page)
+            onClicked: main.appWindow.showPage(modelData.page)
 
             QQC2.ToolTip {
                 text: FmH.tooltipWithShortcut(modelData.tooltip, modelData.shortcut)

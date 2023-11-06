@@ -16,6 +16,7 @@
         "License": "GPLv3"
     },
     "X-Plasma-API": "declarativeappletscript",
+    "X-Plasma-API-Minimum-Version": "6.0",
     "X-Plasma-MainScript": "ui/main.qml",
     "KPackageStructure": "Plasma/Applet"
 }

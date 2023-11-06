@@ -1,5 +1,5 @@
-import QtQuick 2.15
-import org.kde.kirigami 2.20 as Kirigami
+import QtQuick
+import org.kde.kirigami as Kirigami
 
 ListModel {
     id: root
@@ -26,7 +26,7 @@ ListModel {
         return
     }
 
-    onRowsInserted: {
+    onRowsInserted: function(parent, first, last) {
         for(let i = first; i <= last; i++) {
             let data = {
                 // Autoinitialize the checked property for item selection

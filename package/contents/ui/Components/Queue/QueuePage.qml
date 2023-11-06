@@ -1,7 +1,7 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.0
-import org.kde.kirigami 2.20 as Kirigami
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import org.kde.kirigami as Kirigami
 import "../../Mpdw.js" as Mpdw
 import "../../Components/Elements"
 import "../../Components/Songlist"
@@ -153,12 +153,12 @@ Kirigami.ScrollablePage {
 
             actions: [
                 Kirigami.Action {
-                    icon.name: (playingIndex === model.index && mpdState.mpdPlaying)
+                    icon.name: (songlistItem.playingIndex === model.index && mpdState.mpdPlaying)
                                ? Mpdw.icons.queuePause
                                : Mpdw.icons.queuePlay
                     text: qsTr("Play Now")
                     onTriggered: {
-                        if (playingIndex === model.index) {
+                        if (songlistItem.playingIndex === model.index) {
                             mpdState.togglePlayPause()
                         } else {
                             mpdState.playInQueue(model.pos)
@@ -168,7 +168,7 @@ Kirigami.ScrollablePage {
                 Kirigami.Action {
                     icon.name: Mpdw.icons.queueRemoveSingle
                     text: qsTr("Remove from Queue")
-                    visible: !appWindow.narrowLayout
+                    visible: !main.appWindow.narrowLayout
                     onTriggered: {
                         let index = model.index
                         songlistView.model.remove(index)
@@ -242,7 +242,7 @@ Kirigami.ScrollablePage {
     }
 
     Connections {
-        target: appWindow
+        target: main.appWindow
         function onHeightChanged() {
             followMode.showCurrent()
         }

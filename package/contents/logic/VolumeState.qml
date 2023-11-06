@@ -1,4 +1,4 @@
-import QtQuick 2.15
+import QtQuick
 
 /**
  * Decouples our internal volume state from immediatly reflecting mpd's

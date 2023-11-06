@@ -1,7 +1,7 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15 as QQC2
-import QtQuick.Layouts 1.15
-import org.kde.kirigami 2.20 as Kirigami
+import QtQuick
+import QtQuick.Controls as QQC2
+import QtQuick.Layouts
+import org.kde.kirigami as Kirigami
 import "./../../Mpdw.js" as Mpdw
 
 Item {
@@ -10,8 +10,10 @@ Item {
     property alias loadingPriority: image.loadingPriority
     property bool isSelected: false
 
-    Layout.preferredHeight: appWindow.narrowLayout ? Kirigami.Units.iconSizes.medium : Kirigami.Units.iconSizes.large
-    Layout.preferredWidth: appWindow.narrowLayout ? Kirigami.Units.iconSizes.medium : Kirigami.Units.iconSizes.large
+    Layout.preferredHeight: (main.appWindow.narrowLayout ? Kirigami.Units.iconSizes.medium : Kirigami.Units.iconSizes.large)
+        // Move picture inside the automatic Kirigami mouse hover highlight
+        + (Kirigami.Units.mediumSpacing)
+    Layout.preferredWidth: main.appWindow.narrowLayout ? Kirigami.Units.iconSizes.medium : Kirigami.Units.iconSizes.large
 
     Kirigami.Icon {
         id: coverPlaceholderIcon
@@ -36,7 +38,7 @@ Item {
             if (coverPath === null) {
                 return false
             }
-            image.source = coverPath + "-small.jpg"
+            image.source = "file://" + coverPath + "-small.jpg"
         }
 
         function onGotCover(id) {

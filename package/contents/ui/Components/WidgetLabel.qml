@@ -1,18 +1,19 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
-import QtGraphicalEffects 1.12
-import org.kde.plasma.components 2.0 as PlasmaComponents
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+// @TODO QT6
+import Qt5Compat.GraphicalEffects
+import org.kde.plasma.components as PlasmaComponents
 
 PlasmaComponents.Label {
     property int fontSize
 
-    font.pointSize: cfgFontSize
-    horizontalAlignment: cfgAlignment == 2 ? Text.AlignRight : (cfgAlignment == 1 ? Text.AlignHCenter : Text.AlignLeft)
+    font.pointSize: main.cfgFontSize
+    horizontalAlignment: main.cfgAlignment == 2 ? Text.AlignRight : (main.cfgAlignment == 1 ? Text.AlignHCenter : Text.AlignLeft)
     elide: Text.ElideRight
     Layout.fillWidth: true
 
-    layer.enabled: !cfgSolidBackground
+    layer.enabled: !main.cfgSolidBackground
     // @TODO looks to strong in light plasma theme/desktop background
     layer.effect: DropShadow {
         verticalOffset: 1

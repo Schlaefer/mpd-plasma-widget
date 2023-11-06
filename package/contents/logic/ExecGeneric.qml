@@ -1,6 +1,6 @@
-import org.kde.plasma.core 2.0 as PlasmaCore
+import org.kde.plasma.plasma5support as P5Support
 
-PlasmaCore.DataSource {
+P5Support.DataSource {
     id: root
 
     signal exited(int exitCode, int exitStatus, string stdout, string stderr, string sourceName)
@@ -26,7 +26,7 @@ PlasmaCore.DataSource {
 
     engine: "executable"
     connectedSources: []
-    onNewData: {
+    onNewData: function(sourceName, data) {
         var exitCode = data["exit code"]
         var exitStatus = data["exit status"]
         var stdout = data["stdout"]

@@ -1,9 +1,10 @@
-import QtQuick 2.15
-import QtQuick.Layouts 1.0
-import QtQuick.Controls 2.15 as QQC2
-import org.kde.kirigami 2.20 as Kirigami
-import QtGraphicalEffects 1.12
- import "../../../scripts/formatHelpers.js" as FmH
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls as QQC2
+import org.kde.kirigami as Kirigami
+// @TODO QT6
+import Qt5Compat.GraphicalEffects
+import "../../../scripts/formatHelpers.js" as FmH
 
 Item {
     id: root
@@ -49,7 +50,7 @@ Item {
         QQC2.Button{
             required property var modelData
             icon.name: modelData.icon.name
-            text: appWindow.narrowLayout ? "" : modelData.text
+            text: main.appWindow.narrowLayout ? "" : modelData.text
             onClicked: modelData.triggered()
             enabled: modelData.enabled
             flat: true

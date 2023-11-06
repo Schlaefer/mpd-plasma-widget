@@ -1,11 +1,11 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
-import org.kde.plasma.core 2.0 as PlasmaCore
-import org.kde.plasma.plasmoid 2.0
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import org.kde.plasma.core as PlasmaCore
+import org.kde.plasma.plasmoid
 import "./../logic"
 
-Item {
+PlasmoidItem {
     id: main
 
     property alias appWindow: appWindowLoader.item
@@ -25,15 +25,19 @@ Item {
 
     // Make sure a somewhat reasonable layout with text and cover image is visible
     // when the user puts the widget on the desktop for the first time.
-    Layout.minimumHeight: cfgHorizontalLayout ? 40 : 180
-    Layout.minimumWidth: cfgHorizontalLayout ? 150 : 50
+    // Layout.minimumHeight: cfgHorizontalLayout ? 40 : 180
+    // Layout.minimumWidth: cfgHorizontalLayout ? 150 : 50
+    // @TODO QT6
+    width: 300
+    height: 410
+
     Plasmoid.backgroundHints: cfgSolidBackground ? PlasmaCore.Types.StandardBackground : PlasmaCore.Types.NoBackground
 
     function toggleAppWindow() {
         if (!appWindowLoader.item) {
             appWindowLoader.setSource(
                         "Components/Application/ApplicationWindow.qml",
-                        { initialHeight: 0.95 * Plasmoid.availableScreenRect.height })
+                        { initialHeight: 0.95 * availableScreenRect.height })
         } else {
             appWindowLoader.item.visible = appWindowLoader.item.visible ? false : true
         }
@@ -51,7 +55,8 @@ Item {
 
     MpdState {
         id: mpdState
-        scriptRoot: plasmoid.file('', 'scripts/')
+        // @TODO does this need decodeURIComponent?
+        scriptRoot: Qt.resolvedUrl('../scripts').toString().replace("file://", "")
     }
 
     VolumeState {
@@ -62,6 +67,10 @@ Item {
     WidgetLayout {
         id: widgetLayout
         anchors.fill: parent
+
+        main: main
+        mpdState: mpdState
+        volumeState: volumeState
     }
 
     Connections {
@@ -98,7 +107,7 @@ Item {
         running: true
         interval: 200
         onTriggered: {
-            //  toggleAppWindow()
+           // toggleAppWindow()
         }
     }
 }

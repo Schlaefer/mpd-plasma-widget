@@ -1,7 +1,6 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.0
-import org.kde.kirigami 2.20 as Kirigami
+import QtQuick
+import QtQuick.Layouts
+import org.kde.kirigami as Kirigami
 import "../../Components/Elements"
 import "../../../scripts/formatHelpers.js" as FmH
 
@@ -22,7 +21,16 @@ Item {
     SwipeListItemGeneric {
         id: listItem
         width: root.width
-        highlightIndex: playingIndex
+        highlightIndex: root.playingIndex
+        implicitHeight: mainLayout.implicitHeight
+
+        Rectangle {
+            id: bottomDivider
+            anchors.bottom: parent.bottom
+            width: parent.width
+            height: 1
+            color:  Qt.darker(Kirigami.Theme.backgroundColor, 1.5)
+        }
 
         RowLayout {
             id: mainLayout
@@ -32,13 +40,12 @@ Item {
                 property int startIndex: -1
                 property int endIndex
 
-                visible: isSortable
+                visible: root.isSortable
 
                 Layout.preferredWidth: Kirigami.Units.iconSizes.medium
-                Layout.leftMargin: -Kirigami.Units.gridUnit / 2
 
                 listItem: listItem
-                listView: parentView
+                listView: root.parentView
                 onMoveRequested: function(oldIndex, newIndex) {
                     if (startIndex === -1) {
                         startIndex = oldIndex
@@ -47,7 +54,7 @@ Item {
                     listView.model.move(oldIndex, newIndex, 1)
                 }
                 onDropped: {
-                    parentView.userInteracted()
+                    root.parentView.userInteracted()
                     if (startIndex !== endIndex) {
                         mpdState.moveInQueue(startIndex, endIndex)
                     }
@@ -59,34 +66,41 @@ Item {
             ListCoverimage {
                 id: image
                 isSelected: model.checked
+                // move image inside kirigami 6 hover highlight bubble
+                Layout.leftMargin: root.isSortable ? 0 : Kirigami.Units.largeSpacing
             }
 
             Rectangle {
                 id: cursorMarker
                 Layout.fillHeight: true
-                width: Kirigami.Units.smallSpacing
-                opacity: carretIndex === index
-                color: playingIndex === index ? Kirigami.Theme.activeBackgroundColor : Kirigami.Theme.hoverColor
+                Layout.topMargin: Kirigami.Units.mediumSpacing
+                Layout.bottomMargin: Kirigami.Units.mediumSpacing
+                Layout.preferredWidth: Kirigami.Units.smallSpacing
+                opacity: root.carretIndex === index
+                color: Kirigami.Theme.hoverColor
             }
 
             ColumnLayout {
                 id: textArea
                 spacing: 0
-                Layout.fillHeight: true
-                Layout.fillWidth: true
+                // Layout.fillHeight: true
+                // Layout.fillWidth: true
+                Layout.topMargin: Kirigami.Units.smallSpacing
+                Layout.bottomMargin: Kirigami.Units.smallSpacing
 
                 ColumnLayout {
+                    Layout.fillHeight: true
                     spacing: 0
                     Layout.rightMargin: Kirigami.Units.smallSpacing
                     Text {
                         Layout.fillWidth: true
-                        color: (playingIndex === index) ? Kirigami.Theme.highlightedTextColor : Kirigami.Theme.textColor
-                        font.bold: !appWindow.narrowLayout
-                        text: appWindow.narrowLayout ? FmH.title(model) : model.title
+                        color: (root.playingIndex === index) ? Kirigami.Theme.highlightedTextColor : Kirigami.Theme.textColor
+                        font.bold: !main.appWindow.narrowLayout
+                        text: main.appWindow.narrowLayout ? FmH.title(model) : model.title
                         wrapMode: Text.WordWrap
                     }
                     Text {
-                        visible: !appWindow.narrowLayout
+                        visible: !main.appWindow.narrowLayout
                         Layout.fillWidth: true
                         color: (playingIndex === index) ? Kirigami.Theme.highlightedTextColor : Kirigami.Theme.disabledTextColor
                         text: FmH.artist(model)
@@ -94,7 +108,7 @@ Item {
                     }
 
                     Text {
-                        visible: !appWindow.narrowLayout
+                        visible: !main.appWindow.narrowLayout
                         Layout.fillWidth: true
                         color: (playingIndex === index) ? Kirigami.Theme.highlightedTextColor : Kirigami.Theme.disabledTextColor
                         text: FmH.queueAlbumLine(model)

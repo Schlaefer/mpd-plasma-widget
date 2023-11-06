@@ -1,13 +1,14 @@
-import QtQuick 2.15
-import org.kde.kirigami 2.20 as Kirigami
+import QtQuick
+import org.kde.kirigami as Kirigami
 
 
 Kirigami.SwipeListItem {
     property int highlightIndex: -1
     property int carretIndex: -1
 
-    width: root.width ? root.width : implicitWidth
+    width: width ? width : implicitWidth
 
+    /* @TODO Removed in plasma 6? Remove?
     backgroundColor:
         (highlightIndex !== index)
         ? Kirigami.Theme.backgroundColor
@@ -17,4 +18,5 @@ Kirigami.SwipeListItem {
         (highlightIndex !== index)
         ? Kirigami.Theme.alternateBackgroundColor
         : Kirigami.Theme.highlightColor
+    */
 }

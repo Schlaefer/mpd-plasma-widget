@@ -1,12 +1,11 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
-import QtGraphicalEffects 1.12
-import org.kde.plasma.components 2.0 as PlasmaComponents
-import org.kde.kirigami 2.20 as Kirigami
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import org.kde.plasma.components as PlasmaComponents
+import org.kde.kirigami as Kirigami
 import "./Mpdw.js" as Mpdw
 import "./Components"
-import "./Components/Queue"
+import "../logic"
 import "../scripts/formatHelpers.js" as FormatHelpers
 
 Item {
@@ -14,18 +13,22 @@ Item {
 
     anchors.fill: parent
 
+    property var main
+    property MpdState mpdState
+    property VolumeState volumeState
+
     GridLayout {
-        columns: cfgHorizontalLayout ? 3 : 1
-        rows: cfgHorizontalLayout ? 1 : 3
+        columns: root.main.cfgHorizontalLayout ? 3 : 1
+        rows: root.main.cfgHorizontalLayout ? 1 : 3
         anchors.fill: parent
 
         // Cover Image
         WidgetCoverImage {
             id: coverImageContainer
 
-            coverRadius: cfgCornerRadius
-            shadowColor: cfgShadowColor
-            shadowSpread: cfgShadowSpread
+            coverRadius: root.main.cfgCornerRadius
+            shadowColor: root.main.cfgShadowColor
+            shadowSpread: root.main.cfgShadowSpread
 
             onHeightChanged: sourceSizeTimer.restart()
             onWidthChanged: sourceSizeTimer.restart()
@@ -35,8 +38,8 @@ Item {
                 id: sourceSizeTimer
                 interval: 1000
                 onTriggered: {
-                    coverImageContainer.sourceSize.height = height
-                    coverImageContainer.sourceSize.width = height
+                    coverImageContainer.sourceSize.height = root.height
+                    coverImageContainer.sourceSize.width = root.height
                 }
             }
 
@@ -44,28 +47,28 @@ Item {
                 sourceSizeTimer.start()
             }
 
-            Layout.minimumWidth: cfgHorizontalLayout ? parent.height : parent.width
+            Layout.minimumWidth: root.main.cfgHorizontalLayout ? parent.height : parent.width
         }
 
         // Volume Slider
         PlasmaComponents.Slider {
             id: volumeSlider
 
-            Layout.fillHeight: cfgHorizontalLayout
-            Layout.fillWidth: !cfgHorizontalLayout
-            Layout.leftMargin: !cfgHorizontalLayout ? Kirigami.Units.largeSpacing : 0
-            Layout.rightMargin: !cfgHorizontalLayout ? Kirigami.Units.largeSpacing : 0
+            Layout.fillHeight: root.main.cfgHorizontalLayout
+            Layout.fillWidth: !root.main.cfgHorizontalLayout
+            Layout.leftMargin: !root.main.cfgHorizontalLayout ? Kirigami.Units.largeSpacing : 0
+            Layout.rightMargin: !root.main.cfgHorizontalLayout ? Kirigami.Units.largeSpacing : 0
 
             // Orientation bugged? Hide on horizontal layout for now
             // See: https://bugs.kde.org/show_bug.cgi?id=474611
             // Layout.maximumWidth: cfgHorizontalLayout ? 15 : -1
             // orientation: cfgHorizontalLayout ? Qt.Vertical : Qt.Horizontal
-            visible: !cfgHorizontalLayout
-            minimumValue: 0
-            maximumValue: 100
+            visible: !root.main.cfgHorizontalLayout
+            from: 0
+            to: 100
             stepSize: 1
-            onValueChanged: volumeState.set(volumeSlider.value)
-            value: volumeState.volume
+            onValueChanged: root.volumeState.set(volumeSlider.value)
+            value: root.volumeState.volume
         }
 
         // Title
@@ -79,9 +82,9 @@ Item {
                     id: songTitle
                     font.weight: Font.Bold
                     Connections {
-                        target: mpdState
+                        target: root.mpdState
                         function onMpdInfoChanged() {
-                            if (mpdState.mpdQueue.length === 0) {
+                            if (root.mpdState.mpdQueue.length === 0) {
                                 songTitle.text = qsTr("Queue is empty")
                                 return
                             }
@@ -93,9 +96,9 @@ Item {
                 WidgetLabel {
                     id: songArtist
                     Connections {
-                        target: mpdState
+                        target: root.mpdState
                         function onMpdInfoChanged() {
-                            songArtist.text = FormatHelpers.artist(mpdState.mpdInfo)
+                            songArtist.text = FormatHelpers.artist(root.mpdState.mpdInfo)
                         }
                     }
                 }
@@ -103,19 +106,18 @@ Item {
                 WidgetLabel {
                     id: songAlbum
                     Connections {
-                        target: mpdState
+                        target: root.mpdState
 
                         function onMpdInfoChanged() {
-                            songAlbum.text = FormatHelpers.album(mpdState.mpdInfo)
+                            songAlbum.text = FormatHelpers.album(root.mpdState.mpdInfo)
                         }
                     }
                 }
 
                 MouseArea {
-                    width: parent.width
-                    height: parent.height
+                    anchors.fill: parent
                     onClicked: {
-                        main.toggleAppWindow()
+                        root.main.toggleAppWindow()
                     }
                 }
             }
@@ -132,10 +134,10 @@ Item {
 
                     Connections {
                         function onAppLastErrorChanged() {
-                            notification.text = main.appLastError
+                            notification.text = root.main.appLastError
                         }
 
-                        target: main
+                        target: root.main
                     }
                 }
 

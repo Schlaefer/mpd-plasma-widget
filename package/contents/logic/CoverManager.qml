@@ -1,5 +1,5 @@
-import QtQuick 2.15 as QQ2
-import org.kde.plasma.core 2.0 as PlasmaCore
+import QtQuick as QQ2
+import org.kde.plasma.core as PlasmaCore
 import "coverHelpers.js" as CoverHelpers
 
 QQ2.Item {
@@ -32,7 +32,7 @@ QQ2.Item {
             if (covers[title] === null) {
                 return null
             } else {
-                return encodeURIComponent(covers[title].path)
+                return _encodeURIComponent(covers[title].path)
             }
         }
 
@@ -42,7 +42,7 @@ QQ2.Item {
     }
 
     function getLocalCovers() {
-        let cmd = 'find ' + cfgCacheRoot + ' -name "' + coverManager.filePrefix + '*-large.jpg"'
+        let cmd = 'find ' + main.cfgCacheRoot + ' -name "' + coverManager.filePrefix + '*-large.jpg"'
         executable.exec(cmd, function (exitCode, stdout) {
             let lines = stdout.split("\n")
             lines.forEach(function (line) {
@@ -77,14 +77,14 @@ QQ2.Item {
     }
 
     function idFromCoverPath(path) {
-        let id = path.replace(cfgCacheRoot + '/' + filePrefix, '')
+        let id = path.replace(main.cfgCacheRoot + '/' + filePrefix, '')
         id = decodeURIComponent(id)
         return id
     }
 
     function markFetched(success) {
         let id = getId(currentlyFetching)
-        let coverPath = cfgCacheRoot + '/' + getCoverFileName(currentlyFetching)
+        let coverPath = main.cfgCacheRoot + '/' + getCoverFileName(currentlyFetching)
 
         let item = null
         if (success) {
@@ -101,8 +101,15 @@ QQ2.Item {
     }
 
     function clearCache() {
-        let cmd = "rm " + cfgCacheRoot + "/" + filePrefix + "*"
+        let cmd = "rm " + main.cfgCacheRoot + "/" + filePrefix + "*"
         executable.exec(cmd, function () { coverManager.reset() })
+    }
+
+    /**
+     * URI encode string except for path separators
+     */
+    function _encodeURIComponent(uri) {
+        return uri.split('/').map(encodeURIComponent).join('/')
     }
 
     // Rotate cover cache
@@ -113,7 +120,7 @@ QQ2.Item {
         repeat: true
         triggeredOnStart: true
         onTriggered: {
-            let cmd = 'find "' + cfgCacheRoot + '" -type f -name "' + filePrefix + '*" -mtime +' + cfgCacheForDays + ' -exec rm "{}" \\;'
+            let cmd = 'find "' + main.cfgCacheRoot + '" -type f -name "' + filePrefix + '*" -mtime +' + main.cfgCacheForDays + ' -exec rm "{}" \\;'
             executable.exec(cmd, function () { coverManager.reset() })
         }
     }
@@ -141,7 +148,7 @@ QQ2.Item {
             watchdog = 120
             fetching = true
             currentlyFetching = itemToFetch
-            mpdState.getCover(itemToFetch.file, getCoverFileName(itemToFetch), cfgCacheRoot, filePrefix)
+            mpdState.getCover(itemToFetch.file, getCoverFileName(itemToFetch), main.cfgCacheRoot, filePrefix)
         }
     }
 

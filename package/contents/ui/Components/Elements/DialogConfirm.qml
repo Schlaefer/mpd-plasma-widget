@@ -1,6 +1,6 @@
-import QtQuick 2.15
-import org.kde.kirigami 2.20 as Kirigami
-import org.kde.plasma.components 2.0 as PlasmaComponents
+import QtQuick
+import org.kde.kirigami as Kirigami
+import org.kde.plasma.components as PlasmaComponents
 import "../../Mpdw.js" as Mpdw
 
 Kirigami.PromptDialog {
@@ -19,7 +19,7 @@ Kirigami.PromptDialog {
     customFooterActions: [
         Kirigami.Action {
             id: actionButton
-            iconName: Mpdw.icons.dialogOk
+            icon.name: Mpdw.icons.dialogOk
             onTriggered: {
                 if (onConfirmed) {
                     onConfirmed()
@@ -28,7 +28,7 @@ Kirigami.PromptDialog {
         },
         Kirigami.Action {
             text: qsTr("Cancel")
-            iconName: Mpdw.icons.dialogCancel
+            icon.name: Mpdw.icons.dialogCancel
             onTriggered: {
                 root.close()
             }

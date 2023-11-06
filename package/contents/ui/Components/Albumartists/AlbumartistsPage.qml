@@ -1,8 +1,8 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15 as QQC2
-import QtQuick.Layouts 1.15
-import org.kde.kirigami 2.20 as Kirigami
-import org.kde.plasma.components 2.0 as PlasmaComponents
+import QtQuick
+import QtQuick.Controls as QQC2
+import QtQuick.Layouts
+import org.kde.kirigami as Kirigami
+import org.kde.plasma.components as PlasmaComponents
 import "../../Mpdw.js" as Mpdw
 import "../../Components/Elements"
 
@@ -70,10 +70,12 @@ Kirigami.ScrollablePage {
     ListViewGeneric {
         id: listView
 
-        model: ListModel { id: model }
+        model: ListModel { }
 
         delegate: SwipeListItemGeneric {
             id: listItemPlaylist
+
+            required property string albumartist
 
             width: ListView.view ? ListView.view.width : implicitWidth
 
@@ -95,19 +97,19 @@ Kirigami.ScrollablePage {
                         return
                     }
 
-                    shownAlbumartist = model.albumartist
+                    shownAlbumartist = listItemPlaylist.albumartist
                     let properties = {
                         "depth": root.depth + 1,
-                        "songs": mpdState.library.getSongsOfAartist(model.albumartist),
-                        "title": model.albumartist,
+                        "songs": mpdState.library.getSongsOfAartist(listItemPlaylist.albumartist),
+                        "title": listItemPlaylist.albumartist,
                     }
-                    appWindow.pageStack.push(Qt.resolvedUrl("AlbumartistSongsPage.qml"), properties)
+                    main.appWindow.pageStack.push(Qt.resolvedUrl("AlbumartistSongsPage.qml"), properties)
                 }
 
                 Loader {
                     id: artistContextMenuLoader
                     property var getSongs: function () {
-                        return mpdState.library.getSongsOfAartist(model.albumartist)
+                        return mpdState.library.getSongsOfAartist(listItemPlaylist.albumartist)
                     }
                 }
 
@@ -115,24 +117,30 @@ Kirigami.ScrollablePage {
                     id: mainLayout
                     // Layout.fillWidth: true
                     anchors.fill: parent
+
                     QQC2.Label {
-                        Layout.fillHeight: true
                         Layout.fillWidth: true
-                        text: model.albumartist
+                        text: listItemPlaylist.albumartist
                         wrapMode: Text.Wrap
+                        Layout.alignment: Qt.AlignVCenter
                     }
 
                     GridLayout {
-                        columns: appWindow.narrowLayout ? 4 : 6
-                        rows: appWindow.narrowLayout ? 1 : -1
+                        columns: main.appWindow.narrowLayout ? 4 : 6
+                        rows: main.appWindow.narrowLayout ? 1 : -1
 
                         Layout.alignment: Qt.AlignRight
+
                         Repeater {
                             id: images
                             model: ListModel {}
                             delegate: ListCoverimage {
                                 id: image
                                 loadingPriority: 200
+
+                                // Move picture inside the automatic Kirigami
+                                // mouse hover highlight
+                                Layout.rightMargin: Kirigami.Units.smallSpacing
 
                                 QQC2.ToolTip {
                                     text: model.album
@@ -179,7 +187,7 @@ Kirigami.ScrollablePage {
                         }
 
                         Component.onCompleted: {
-                            let songs = mpdState.library.getASongsByAartistPerAlbum(model.albumartist)
+                            let songs = mpdState.library.getASongsByAartistPerAlbum(listItemPlaylist.albumartist)
                             songs.forEach(function (song) {
                                 images.model.append(song)
                             })
