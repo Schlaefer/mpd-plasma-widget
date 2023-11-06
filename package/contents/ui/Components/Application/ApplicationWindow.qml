@@ -112,10 +112,10 @@ Kirigami.ApplicationWindow {
                         font.bold: !appWindow.narrowLayout
                         elide: Text.ElideRight
                         Connections {
+                            target: mpdState
                             function onMpdInfoChanged() {
                                 songTitle.text = FormatHelpers.title(mpdState.mpdInfo)
                             }
-                            target: mpdState
                         }
                     }
                     Text {
@@ -127,10 +127,10 @@ Kirigami.ApplicationWindow {
                         elide: Text.ElideRight
 
                         Connections {
+                            target: mpdState
                             function onMpdInfoChanged() {
                                 songArtist.text = FormatHelpers.artist(mpdState.mpdInfo)
                             }
-                            target: mpdState
                         }
                     }
 
@@ -144,10 +144,10 @@ Kirigami.ApplicationWindow {
                         elide: Text.ElideRight
 
                         Connections {
+                            target: mpdState
                             function onMpdInfoChanged() {
                                 songAlbum.text = FormatHelpers.album(mpdState.mpdInfo)
                             }
-                            target: mpdState
                         }
                     }
 

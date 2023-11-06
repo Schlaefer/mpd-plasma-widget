@@ -50,7 +50,7 @@ Kirigami.ScrollablePage {
                     icon.name: Mpdw.icons.queueAppend
                     text: qsTr("Append")
                     onTriggered: {
-                        mpdState.addPlaylistToQueue(model.title)
+                        mpdState.loadPlaylist(model.title)
                     }
                 },
                 Kirigami.Action {
@@ -91,18 +91,19 @@ Kirigami.ScrollablePage {
 
         delegate: delegateComponentPlaylists
 
-        Connections {
-            function onMpdPlaylistsChanged() {
-                playlistList.model.clear()
-                let playlists = mpdState.mpdPlaylists
-                for (let i in playlists) {
-                    playlistList.model.append({
-                                                  "title": playlists[i]
-                                              })
-                }
+        function populateModel() {
+            model.clear()
+            let playlists = mpdState.mpdPlaylists
+            for (let i in playlists) {
+                model.append({ "title": playlists[i] })
             }
+        }
 
+        Component.onCompleted: { mpdState.getPlaylists() }
+
+        Connections {
             target: mpdState
+            function onMpdPlaylistsChanged() { playlistList.populateModel() }
         }
 
         model: ListModel {}

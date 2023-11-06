@@ -79,49 +79,35 @@ Item {
                     id: songTitle
                     font.weight: Font.Bold
                     Connections {
+                        target: mpdState
                         function onMpdInfoChanged() {
+                            if (mpdState.mpdQueue.length === 0) {
+                                songTitle.text = qsTr("Queue is empty")
+                                return
+                            }
                             songTitle.text = FormatHelpers.title(mpdState.mpdInfo)
                         }
-                        function onMpdQueueChanged() {
-                            if (mpdState.countQueue() === 0) {
-                                songTitle.text = ""
-                            }
-                        }
-                        target: mpdState
                     }
                 }
 
                 WidgetLabel {
                     id: songArtist
                     Connections {
+                        target: mpdState
                         function onMpdInfoChanged() {
                             songArtist.text = FormatHelpers.artist(mpdState.mpdInfo)
                         }
-                        function onMpdQueueChanged() {
-                            songArtist.font.italic = false
-                            if (mpdState.countQueue() === 0) {
-                                songArtist.font.italic = true
-                                songArtist.text = qsTr("Queue is empty")
-                                return
-                            }
-
-                        }
-                        target: mpdState
                     }
                 }
 
                 WidgetLabel {
                     id: songAlbum
                     Connections {
+                        target: mpdState
+
                         function onMpdInfoChanged() {
                             songAlbum.text = FormatHelpers.album(mpdState.mpdInfo)
                         }
-                        function onMpdQueueChanged() {
-                            if (mpdState.countQueue() === 0) {
-                                songAlbum.text = ""
-                            }
-                        }
-                        target: mpdState
                     }
                 }
 
@@ -142,6 +128,7 @@ Item {
 
                     visible: text.length > 0
                     font.italic: true
+                    // @TODO Error message elides instead of wraps
 
                     Connections {
                         function onAppLastErrorChanged() {

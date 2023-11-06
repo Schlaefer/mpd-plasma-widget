@@ -113,7 +113,7 @@ Kirigami.ScrollablePage {
                     shortcut: "Del"
                     enabled: numberSelected
                     onTriggered: {
-                        let positions = songlistView.getSelectedPositionsMpdBased()
+                        let positions = songlistView.getSelected()
                         songlistView.removeSelection()
                         songlistView.updateMpdPositions()
                         mpdState.removeFromQueue(positions)
@@ -132,6 +132,14 @@ Kirigami.ScrollablePage {
                     }
                 }
             ]
+
+            Connections {
+                target: songlistView
+                function onSelectedChanged() {
+                    // @TODO
+                    songlistView.headerItem.numberSelected = songlistView.selected.length
+                }
+            }
         }
 
         function showCurrentItemInList() {
@@ -139,21 +147,19 @@ Kirigami.ScrollablePage {
                 return
             }
 
-            let index = mpdState.mpdInfo.position - 1
-            songlistView.currentIndex = index
-            centerInView(index)
-        }
+            if (!mpdState.mpdInfo) {
+                return
+            }
 
-        onSelectedChanged: {
-            // @TODO
-            songlistView.headerItem.numberSelected = selected.length
+            songlistView.currentIndex = mpdState.mpdInfo.pos
+            centerInView(songlistView.currentIndex)
         }
 
         Kirigami.PlaceholderMessage {
             anchors.centerIn: parent
             width: parent.width - (Kirigami.Units.largeSpacing * 4)
             text: qsTr("Queue is empty")
-            visible: !mpdState.countQueue()
+            visible: mpdState.mpdQueue.length === 0
         }
 
         delegate: SonglistItem {
@@ -162,7 +168,7 @@ Kirigami.ScrollablePage {
             coverLoadingPriority: 50
             isSortable: true
             parentView: songlistView
-            playingIndex: mpdState.mpdInfo.position ? mpdState.mpdInfo.position - 1 : -1
+            playingIndex: mpdState.mpdInfo ? mpdState.mpdInfo.pos : -1
             carretIndex: songlistView.currentIndex
 
             actions: [
@@ -175,7 +181,7 @@ Kirigami.ScrollablePage {
                         if (playingIndex === model.index) {
                             mpdState.toggle()
                         } else {
-                            mpdState.playInQueue(model.position)
+                            mpdState.playInQueue(model.pos)
                         }
                     }
                 },
@@ -187,7 +193,7 @@ Kirigami.ScrollablePage {
                         let index = model.index
                         songlistView.model.remove(index)
                         songlistView.updateMpdPositions()
-                        mpdState.removeFromQueue([index + 1])
+                        mpdState.removeFromQueue([index])
                     }
                 }
             ]
@@ -268,10 +274,6 @@ Kirigami.ScrollablePage {
             if (followCurrentSong.checked)  {
                 songlistView.showCurrentItemInList()
             }
-        }
-
-        function onPlayedPlaylist(playlist) {
-            queueDialogReplacePl.selectPlaylist(playlist)
         }
     }
 

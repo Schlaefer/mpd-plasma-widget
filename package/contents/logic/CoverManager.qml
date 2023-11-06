@@ -20,7 +20,6 @@ QQ2.Item {
         afterReset()
     }
 
-
     /**
      * @return {mixed}
      *  - string: Path to cover image
@@ -142,7 +141,6 @@ QQ2.Item {
             watchdog = 120
             fetching = true
             currentlyFetching = itemToFetch
-            // @TODO Execute here instead of mpdstate?
             mpdState.getCover(itemToFetch.file, getCoverFileName(itemToFetch), cfgCacheRoot, filePrefix)
         }
     }

@@ -9,9 +9,9 @@ Kirigami.FormLayout {
     id: page
 
     property alias cfg_cfgMpdHost: cfgMpdHost.text
+    property alias cfg_cfgMpdPort: cfgMpdPort.text
     property alias cfg_cfgCacheRoot: cfgCacheRoot.cleanPath
     property alias cfg_cfgCacheForDays: cfgCacheForDays.value
-    property int cfg_foo: 1
 
     Item {
         Kirigami.FormData.label: i18n("MPD Connection")
@@ -23,6 +23,14 @@ Kirigami.FormLayout {
 
         Kirigami.FormData.label: i18n("MPD Server Address:")
         placeholderText: i18n("192.168.y.x")
+        Layout.preferredWidth: 200
+    }
+
+    TextField {
+        id: cfgMpdPort
+
+        Kirigami.FormData.label: i18n("MPD Server Port:")
+        placeholderText: i18n("6600")
         Layout.preferredWidth: 200
     }
 

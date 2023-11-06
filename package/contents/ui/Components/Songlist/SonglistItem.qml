@@ -80,7 +80,7 @@ Item {
                     onDropped: {
                         parentView.userInteracted()
                         if (startIndex !== endIndex) {
-                            mpdState.moveInQueue(startIndex + 1, endIndex + 1)
+                            mpdState.moveInQueue(startIndex, endIndex)
                         }
 
                         startIndex = -1

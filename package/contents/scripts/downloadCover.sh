@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
 
+# @SOMEDAY rewrite in python
+
 # Script args:
 # 1: mpd host address
 # 2: mpd file path
 # 3: Path to cover directory
-# 4: Prefix for cover file name
+# 4: mpd port
 # 5: filename
 
 # Check if imagemagick is installed
@@ -46,17 +48,19 @@ fi
 
 if [ ! -f "${coverPath}" ]; then
     touch "${lockfile}"
-    mpc --host=${1} readpicture "${2}" >"${coverPath}" 2>&1
-
-    # @SOMEDAY find a more efficient solution
-    if grep -q volume "${coverPath}"; then
-        echo "No data"
-    else
+    # mpc --host=${1} readpicture "${2}" >"${coverPath}" 2>&1
+    scriptDir="$(dirname "$(readlink -f "$0")")"
+    python3 "${scriptDir}/mpdPlasmaWidgetExec.py" --host ${1} --port ${4} --cmd readpicture "${2}" "${coverPath}"
+    # We don't check the return value of the "request image"-cmd. After requesting the
+    # cover it is either available for processing or not.
+    if [ -f "${coverPath}" ]; then
         convert "${coverPath}" -resize 1500x\> "${coverPath}-large.jpg"
         convert "${coverPath}" -resize 64x64 "${coverPath}-small.jpg"
+        rm "${coverPath}"
+    else
+        echo "No data"
     fi
 
-    rm "${coverPath}"
     rm "${lockfile}"
 fi
 

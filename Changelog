@@ -1,5 +1,9 @@
 # Next
 
+Python 3 (3.6+) is required now. Mpc was dropped as a requirement. Make sure python 3 is installed on your system!
+
+- Switches backend from mpc to python-mpd2
+
 # 5.6.0
 
 - Adds page-up/down key functionality in list views

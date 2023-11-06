@@ -12,23 +12,27 @@ QQC2.ToolButton {
         text: modelData.tooltip + " (" + modelData.shortcut.toUpperCase() + ")"
     }
 
+    function update() {
+        // This catches us getting our own cmd replied, so don't act on it.
+        let localState = mpdState[modelData.mpdOption]
+        if (root.checked === localState) {
+            return
+        }
+        root.checked = mpdState[modelData.mpdOption]
+    }
+
     onCheckedChanged: {
-        let localState = mpdState.mpdOptions[modelData.mpdOption] === "on"
+        let localState = mpdState[modelData.mpdOption]
         if (root.checked === localState) {
             return
         }
         modelData.onTriggered()
     }
 
-    Connections {
-        function onMpdOptionsChanged() {
-            // This catches us getting our own cmd replied, so don't act on it.
-            let localState = mpdState.mpdOptions[modelData.mpdOption] === "on"
-            if (root.checked === localState) {
-                return
-            }
-            root.checked = mpdState.mpdOptions[modelData.mpdOption] === "on"
-        }
-        target: mpdState
+    Component.onCompleted: {
+        let option = modelData.mpdOption
+        let connection = option.charAt(0).toUpperCase() + option.slice(1);
+        mpdState["on" + connection + "Changed"].connect(update)
+        update()
     }
 }

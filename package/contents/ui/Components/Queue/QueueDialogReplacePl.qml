@@ -24,8 +24,7 @@ Kirigami.PromptDialog {
             id: actionButton
             iconName: Mpdw.icons.dialogOk
             onTriggered: {
-                mpdState.removePlaylist(listCombo.currentText)
-                mpdState.saveQueueAsPlaylist(listCombo.currentText)
+                mpdState.replacePlaylistWithQueue(listCombo.currentText)
                 root.close()
             }
         },
@@ -41,18 +40,25 @@ Kirigami.PromptDialog {
     QQC2.ComboBox {
         id: listCombo
         model: ListModel {}
-        Connections {
-            function onMpdPlaylistsChanged() {
-                listCombo.model.clear()
-                let playlists = mpdState.mpdPlaylists
-                for (let i in playlists) {
-                    listCombo.model.append({
-                                               "title": playlists[i]
-                                           })
-                }
-            }
 
+        function populateModel() {
+            listCombo.model.clear()
+            let playlists = mpdState.mpdPlaylists
+            for (let i in playlists) {
+                listCombo.model.append({ "title": playlists[i] })
+            }
+        }
+
+        Component.onCompleted: { populateModel() }
+
+        Connections {
             target: mpdState
+            function onMpdPlaylistsChanged() {
+                listCombo.populateModel()
+            }
+            function onPlayedPlaylist(playlist) {
+                queueDialogReplacePl.selectPlaylist(playlist)
+            }
         }
     }
 }

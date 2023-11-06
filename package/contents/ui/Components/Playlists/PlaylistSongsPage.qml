@@ -23,14 +23,13 @@ Kirigami.ScrollablePage {
         }
 
         Connections {
+            target: mpdState
             function onGotPlaylist(playlistData) {
                 listView.model.clear()
                 for (let i in playlistData) {
                     listView.model.append(playlistData[i])
                 }
             }
-
-            target: mpdState
         }
     }
 }

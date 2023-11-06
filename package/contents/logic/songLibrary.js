@@ -63,9 +63,9 @@ class SongLibrary {
             if (aAlbum > bAlbum) return 1
             if (aAlbum < bAlbum) return -1
 
-            if (a.tracknumber !== "" && b.tracknumber !== "") {
-                let aTrack = a.tracknumber !== "" ? parseInt(a.tracknumber) : 0
-                let bTrack = b.tracknumber !== "" ? parseInt(b.tracknumber) : 0
+            if (a.track !== "" && b.track !== "") {
+                let aTrack = a.track !== "" ? parseInt(a.track) : 0
+                let bTrack = b.track !== "" ? parseInt(b.track) : 0
 
                 if (aTrack > bTrack) return 1
                 if (aTrack < bTrack) return -1

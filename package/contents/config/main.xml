@@ -9,6 +9,10 @@
             <default>192.168.1.250</default>
         </entry>
 
+        <entry name="cfgMpdPort" type="String">
+            <default>6600</default>
+        </entry>
+
         <entry name="cfgAlignment" type="Int">
             <default>0</default>
         </entry>

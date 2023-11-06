@@ -19,19 +19,19 @@ Kirigami.PromptDialog {
             iconName: Mpdw.icons.dialogOk
             enabled: !newPlaylistTitle.playlistTitleExists && newPlaylistTitle.text
             onTriggered: {
-                mpdState.onSaveQueueAsPlaylist.connect(afterSave)
+                mpdState.savedQueueAsPlaylist.connect(afterSave)
                 mpdState.saveQueueAsPlaylist(newPlaylistTitle.text)
             }
 
             function afterSave(success) {
                 if (success) {
                     newPlaylistErrorMsg.visible = false
-                    showPassiveNotification(qsTr('Saved'), 1000)
+                    showPassiveNotification(qsTr('Saved'), 2000)
                     root.close()
                 } else {
                     newPlaylistErrorMsg.visible = true
                 }
-                mpdState.onSaveQueueAsPlaylist.disconnect(afterSave)
+                mpdState.savedQueueAsPlaylist.disconnect(afterSave)
             }
         },
         Kirigami.Action {
@@ -60,10 +60,11 @@ Kirigami.PromptDialog {
             }
 
             Connections {
+                target: mpdState
+
                 function onMpdPlaylistsChanged() {
                     newPlaylistTitle.updatePlaylistTitleExists()
                 }
-                target: mpdState
             }
 
             Connections {

@@ -18,20 +18,16 @@ Item {
     property string cfgCacheForDays: Plasmoid.configuration.cfgCacheForDays
     property string cfgCacheRoot: Plasmoid.configuration.cfgCacheRoot // without trailing slash
     property string cfgMpdHost: Plasmoid.configuration.cfgMpdHost
+    property string cfgMpdPort: Plasmoid.configuration.cfgMpdPort
     property string cfgShadowColor: Plasmoid.configuration.cfgShadowColor
 
     property string appLastError: ""
-
-    Plasmoid.backgroundHints: cfgSolidBackground ? PlasmaCore.Types.StandardBackground : PlasmaCore.Types.NoBackground
 
     // Make sure a somewhat reasonable layout with text and cover image is visible
     // when the user puts the widget on the desktop for the first time.
     Layout.minimumHeight: cfgHorizontalLayout ? 40 : 180
     Layout.minimumWidth: cfgHorizontalLayout ? 150 : 50
-
-    Component.onCompleted: {
-    //    toggleAppWindow()
-    }
+    Plasmoid.backgroundHints: cfgSolidBackground ? PlasmaCore.Types.StandardBackground : PlasmaCore.Types.NoBackground
 
     function toggleAppWindow() {
         if (!appWindowLoader.item) {
@@ -44,10 +40,9 @@ Item {
         appWindowUnloader.restart()
     }
 
-    Connections {
-        function onCfgMpdHostChanged() {
-            mpdState.connect()
-        }
+    function unloadAppWindow() {
+        appWindowLoader.source = ""
+        mpdState.library = undefined
     }
 
     CoverManager {
@@ -65,10 +60,23 @@ Item {
 
     // Widget shown on desktop
     WidgetLayout {
-        // @TODO currently used to access volmeslider
         id: widgetLayout
         anchors.fill: parent
     }
+
+    Connections {
+        function onCfgMpdHostChanged() {
+            mpdState.connect()
+        }
+    }
+
+    Connections {
+        target: coverManager
+        function onAfterReset() {
+            unloadAppWindow()
+        }
+    }
+
 
     Loader {
         id: appWindowLoader
@@ -82,8 +90,15 @@ Item {
                 start()
                 return
             }
-            appWindowLoader.source = ""
-            mpdState.library = undefined
+            main.unloadAppWindow()
+        }
+    }
+
+    Timer {
+        running: true
+        interval: 200
+        onTriggered: {
+            // toggleAppWindow()
         }
     }
 }

@@ -85,6 +85,10 @@ Item {
         fillMode: Image.PreserveAspectFit
 
         function updateCover() {
+            if (!mpdState.mpdInfo) {
+                return
+            }
+
             let cover = coverManager.getCover(mpdState.mpdInfo, 1)
             if (typeof (cover) === "undefined") {
                 coverManager.gotCover.connect(updateCover)
@@ -103,16 +107,25 @@ Item {
         }
 
         Connections {
+            target: mpdState
+
             function onMpdInfoChanged() {
                 coverImage.updateCover()
             }
 
             function onMpdQueueChanged() {
-                if (mpdState.countQueue() === 0) {
+                if (mpdState.mpdQueue.length === 0) {
                     coverImage.source = ""
                 }
             }
-            target: mpdState
+        }
+
+        Connections {
+            target: coverManager
+            function onAfterReset() {
+                coverImage.source = ""
+                coverImage.updateCover()
+            }
         }
     }
 

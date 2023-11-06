@@ -22,7 +22,6 @@ ListViewGeneric {
       *
       * Mostly for performance so we don't have to constantly query all models
       */
-    // @TODO do we really need it if we keep click without deselect?
     property var selected: []
 
     /**
@@ -152,10 +151,6 @@ ListViewGeneric {
         return selected;
     }
 
-    function getSelectedPositionsMpdBased() {
-        return getSelected().map(function(position) { return position + 1 })
-    }
-
     function removeSelection() {
         let positions = getSelected()
 
@@ -271,7 +266,7 @@ ListViewGeneric {
 
     Keys.onReturnPressed: {
         let position = model.get(root.currentIndex).position
-        mpdState.playInQueue(position)
+        mpdState.playInQueue(position - 1)
         userInteracted()
         event.accepted = true
     }
