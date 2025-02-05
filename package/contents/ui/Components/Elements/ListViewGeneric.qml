@@ -6,7 +6,7 @@ ListView {
     // Scroll without animation when active item changes
     highlightMoveDuration: 0
 
-    Keys.onPressed: {
+    Keys.onPressed: (event) => {
         if (event.key === Qt.Key_PageUp) {
             let xPos = root.contentX
             let yPos = root.contentY

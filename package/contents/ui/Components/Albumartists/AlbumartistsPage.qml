@@ -48,13 +48,13 @@ Kirigami.ScrollablePage {
 
                     // Don't double navigate in search field (left, right) and
                     // list view (up, down) at the same time.
-                    Keys.onUpPressed: { event.accepted = true }
-                    Keys.onDownPressed: { event.accepted = true }
-                    Keys.onTabPressed: { listView.forceActiveFocus() }
+                    Keys.onUpPressed: (event) => { event.accepted = true }
+                    Keys.onDownPressed: (event) => { event.accepted = true }
+                    Keys.onTabPressed: (event) => { listView.forceActiveFocus() }
 
                     // Disable default Ctrl+F behavior
                     focusSequence: undefined
-                    Keys.onEscapePressed: {
+                    Keys.onEscapePressed: (event) => {
                         if (searchField.text.length > 0) {
                             searchField.text = ""
                         } else {

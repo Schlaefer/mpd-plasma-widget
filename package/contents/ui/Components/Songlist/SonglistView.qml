@@ -201,15 +201,15 @@ ListViewGeneric {
         return files
     }
 
-    Keys.onPressed: {
-        if (event.key === Qt.Key_A) {
-            if (event.modifiers & Qt.ControlModifier) {
+    Keys.onPressed: (event) => {
+        if (event.key == Qt.Key_A) {
+            // if (event.modifiers & Qt.ControlModifier) {
                 root.selectAll()
 
                 event.accepted = true
                 userInteracted()
-            }
-        } else if (event.key === Qt.Key_B) {
+            // }
+        } else if (event.key == Qt.Key_B) {
             let state = !(event.modifiers & Qt.ShiftModifier)
             root.selectNeighborsByAlbum(model.get(root.currentIndex), root.currentIndex, state)
 
@@ -219,7 +219,7 @@ ListViewGeneric {
     }
 
 
-    Keys.onUpPressed: {
+    Keys.onUpPressed: (event) => {
         if (root.currentIndex > 0) {
             if (event.modifiers & Qt.ShiftModifier) {
                 root.select(root.currentIndex)
@@ -236,7 +236,7 @@ ListViewGeneric {
         event.accepted = true
     }
 
-    Keys.onDownPressed: {
+    Keys.onDownPressed: (event) => {
         if (root.currentIndex < root.count - 1) {
             if (event.modifiers & Qt.ShiftModifier) {
                 root.select(root.currentIndex)
@@ -253,7 +253,7 @@ ListViewGeneric {
         event.accepted = true
     }
 
-    Keys.onSpacePressed: {
+    Keys.onSpacePressed: (event) => {
         if (selectEndOfListDebounceTimer.running) {
             selectEndOfListDebounceTimer.restart()
             return
@@ -271,6 +271,7 @@ ListViewGeneric {
         event.accepted = true
     }
 
+    Keys.onReturnPressed: (event) => {
     Keys.onReturnPressed: {
         let position = model.get(root.currentIndex).position
         mpdState.playInQueue(position - 1)
