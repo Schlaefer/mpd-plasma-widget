@@ -10,7 +10,7 @@
 # 5: filename
 
 # Check if imagemagick is installed
-if ! command -v convert &> /dev/null
+if ! command -v magick &> /dev/null
 then
     echo "No data"
     exit 0
@@ -54,8 +54,8 @@ if [ ! -f "${coverPath}" ]; then
     # We don't check the return value of the "request image"-cmd. After requesting the
     # cover it is either available for processing or not.
     if [ -f "${coverPath}" ]; then
-        convert "${coverPath}" -resize 1500x\> "${coverPath}-large.jpg"
-        convert "${coverPath}" -resize 64x64 "${coverPath}-small.jpg"
+        magick "${coverPath}" -resize 1500x\> "${coverPath}-large.jpg"
+        magick "${coverPath}" -resize 64x64 "${coverPath}-small.jpg"
         rm "${coverPath}"
     else
         echo "No data"
