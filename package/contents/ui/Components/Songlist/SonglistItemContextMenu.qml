@@ -48,7 +48,7 @@ QQC2.Menu {
         }
     }
     QQC2.Action {
-        text: parentView.actionDeselect.text
+        text: parentView.actionDeselect.buttonText
         icon.name: parentView.actionDeselect.icon.name
         shortcut: parentView.actionDeselect.shortcut
         onTriggered: parentView.actionDeselect.onTriggered()

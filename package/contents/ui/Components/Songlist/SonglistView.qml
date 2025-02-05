@@ -332,7 +332,10 @@ ListViewGeneric {
 
     Kirigami.Action {
         id: actionDeselect
-        text: main.appWindow.narrowLayout ? "" : qsTr("Deselect")
+
+        readonly property string buttonText: qsTr("Deselect")
+
+        text: main.appWindow.narrowLayout ? "" : buttonText
         tooltip: qsTr("Deselect All")
         icon.name: Mpdw.icons.selectNone
         shortcut: "Shift+D"
