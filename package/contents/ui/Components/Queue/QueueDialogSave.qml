@@ -1,5 +1,5 @@
 import QtQuick
-import QtQuick.Controls as QQC2
+import org.kde.plasma.components as PlasmaComponents
 import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
 import org.kde.plasma.components as PlasmaComponents
@@ -44,7 +44,7 @@ Kirigami.PromptDialog {
     ]
 
     ColumnLayout {
-        QQC2.TextField {
+        PlasmaComponents.TextField {
             id: newPlaylistTitle
             Layout.fillWidth: true
             property bool playlistTitleExists

@@ -1,6 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Controls as QQC2
+import org.kde.plasma.components as PlasmaComponents
 import org.kde.kirigami as Kirigami
 // @TODO QT6
 import Qt5Compat.GraphicalEffects
@@ -47,14 +47,14 @@ Item {
     Component {
         id: btnCmpt
 
-        QQC2.Button{
+        PlasmaComponents.Button{
             required property var modelData
             icon.name: modelData.icon.name
             text: main.appWindow.narrowLayout ? "" : modelData.text
             onClicked: modelData.triggered()
             enabled: modelData.enabled
             flat: true
-            QQC2.ToolTip {
+            PlasmaComponents.ToolTip {
                 text: FmH.tooltipWithShortcut(modelData.tooltip, modelData.shortcut)
             }
         }

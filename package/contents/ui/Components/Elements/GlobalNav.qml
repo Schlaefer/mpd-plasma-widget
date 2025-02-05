@@ -1,5 +1,5 @@
 import QtQuick
-import QtQuick.Controls as QQC2
+import org.kde.plasma.components as PlasmaComponents
 import QtQuick.Layouts
 import "../../Mpdw.js" as Mpdw
 import "../../../scripts/formatHelpers.js" as FmH
@@ -30,14 +30,14 @@ RowLayout {
             }
         ]
 
-        QQC2.ToolButton {
+        PlasmaComponents.ToolButton {
             icon.name: modelData.icon
             text: main.appWindow.narrowLayout ? "" : modelData.text
             checkable: true
             checked: modelData.page.visible
             onClicked: main.appWindow.showPage(modelData.page)
 
-            QQC2.ToolTip {
+            PlasmaComponents.ToolTip {
                 text: FmH.tooltipWithShortcut(modelData.tooltip, modelData.shortcut)
             }
         }

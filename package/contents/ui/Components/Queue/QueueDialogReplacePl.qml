@@ -1,6 +1,4 @@
 import QtQuick
-import QtQuick.Controls as QQC2
-import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
 import org.kde.plasma.components as PlasmaComponents
 import "../../Mpdw.js" as Mpdw
@@ -37,9 +35,10 @@ Kirigami.PromptDialog {
         }
     ]
 
-    QQC2.ComboBox {
+    PlasmaComponents.ComboBox {
         id: listCombo
         model: ListModel {}
+        implicitWidth: parent.width
 
         function populateModel() {
             listCombo.model.clear()

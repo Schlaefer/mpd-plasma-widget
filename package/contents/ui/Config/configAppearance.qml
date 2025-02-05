@@ -1,7 +1,6 @@
 import QtQuick
-import QtQuick.Controls
-import QtQuick.Dialogs
 import QtQuick.Layouts
+import org.kde.plasma.components as PlasmaComponents
 import org.kde.kirigami as Kirigami
 import org.kde.kquickcontrols as KQControls
 
@@ -21,13 +20,13 @@ Kirigami.FormLayout {
         Kirigami.FormData.isSection: true
     }
 
-    CheckBox {
+    PlasmaComponents.CheckBox {
         id: cfgHorizontalLayout
 
         Kirigami.FormData.label: i18n("Horizontal Layout:")
     }
 
-    CheckBox {
+    PlasmaComponents.CheckBox {
         id: cfgSolidBackground
 
         Kirigami.FormData.label: i18n("Solid Background:")
@@ -38,7 +37,7 @@ Kirigami.FormLayout {
         Kirigami.FormData.isSection: true
     }
 
-    GroupBox {
+    PlasmaComponents.GroupBox {
         Kirigami.FormData.label: i18n("Text Alignment:")
 
         RowLayout {
@@ -53,7 +52,7 @@ Kirigami.FormLayout {
                     cfgAlignmentRight.checked = true
             }
 
-            RadioButton {
+            PlasmaComponents.RadioButton {
                 id: cfgAlignmentLeft
 
                 text: i18n("Left")
@@ -64,7 +63,7 @@ Kirigami.FormLayout {
                 }
             }
 
-            RadioButton {
+            PlasmaComponents.RadioButton {
                 id: cfgAlignmentCenter
 
                 text: i18n("Center")
@@ -74,7 +73,7 @@ Kirigami.FormLayout {
                 }
             }
 
-            RadioButton {
+            PlasmaComponents.RadioButton {
                 id: cfgAlignmentRight
 
                 text: i18n("Right")
@@ -86,7 +85,7 @@ Kirigami.FormLayout {
         }
     }
 
-    SpinBox {
+    PlasmaComponents.SpinBox {
         id: cfgFontSize
 
         to: 1000
@@ -98,7 +97,7 @@ Kirigami.FormLayout {
         Kirigami.FormData.isSection: true
     }
 
-    SpinBox {
+    PlasmaComponents.SpinBox {
         id: cfgCornerRadius
 
         to: 10000
@@ -107,7 +106,7 @@ Kirigami.FormLayout {
 
     RowLayout {
         Kirigami.FormData.label: i18n("Shadow Size and Color:")
-        SpinBox {
+        PlasmaComponents.SpinBox {
             id: cfgShadowSpread
         }
 

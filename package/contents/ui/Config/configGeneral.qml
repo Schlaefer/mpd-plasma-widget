@@ -1,5 +1,5 @@
 import QtQuick
-import QtQuick.Controls
+import org.kde.plasma.components as PlasmaComponents
 import QtQuick.Dialogs
 import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
@@ -18,7 +18,7 @@ Kirigami.FormLayout {
         Kirigami.FormData.isSection: true
     }
 
-    TextField {
+    PlasmaComponents.TextField {
         id: cfgMpdHost
 
         Kirigami.FormData.label: i18n("MPD Server Address:")
@@ -26,7 +26,7 @@ Kirigami.FormLayout {
         Layout.preferredWidth: 200
     }
 
-    TextField {
+    PlasmaComponents.TextField {
         id: cfgMpdPort
 
         Kirigami.FormData.label: i18n("MPD Server Port:")
@@ -42,7 +42,7 @@ Kirigami.FormLayout {
     RowLayout {
         Kirigami.FormData.label: i18n("Path to Cover Folder:")
 
-        TextField {
+        PlasmaComponents.TextField {
             id: cfgCacheRootText
 
             text: cfgCacheRoot.cleanPath
@@ -50,7 +50,7 @@ Kirigami.FormLayout {
             Layout.preferredWidth: 200
         }
 
-        Button {
+        PlasmaComponents.Button {
             text: i18n("Select Folder")
             onClicked: cfgCacheRoot.open()
         }
@@ -68,7 +68,7 @@ Kirigami.FormLayout {
         }
     }
 
-    SpinBox {
+    PlasmaComponents.SpinBox {
         id: cfgCacheForDays
 
         Kirigami.FormData.label: i18n("Cache Covers for Days:")

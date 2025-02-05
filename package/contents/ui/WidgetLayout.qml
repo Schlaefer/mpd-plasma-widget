@@ -1,5 +1,4 @@
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Layouts
 import org.kde.plasma.components as PlasmaComponents
 import org.kde.kirigami as Kirigami
@@ -141,7 +140,7 @@ Item {
                     }
                 }
 
-                ToolButton {
+                PlasmaComponents.ToolButton {
                     icon.name: Mpdw.icons.dialogClose
                     icon.height: Kirigami.Units.iconSizes.small
                     icon.width: Kirigami.Units.iconSizes.small

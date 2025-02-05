@@ -1,15 +1,15 @@
 import QtQuick 2.15
-import QtQuick.Controls 2.15 as QQC2
+import org.kde.plasma.components as PlasmaComponents
 import "../../../scripts/formatHelpers.js" as FmH
 
-QQC2.ToolButton {
+PlasmaComponents.ToolButton {
     id: root
 
     checkable: true
     icon.name: modelData.icon.name
     visible: !main.appWindow.narrowLayout || checked
 
-    QQC2.ToolTip {
+    PlasmaComponents.ToolTip {
         text: FmH.tooltipWithShortcut(modelData.tooltip, modelData.shortcut)
     }
 
