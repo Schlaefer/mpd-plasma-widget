@@ -9,6 +9,9 @@ Kirigami.PromptDialog {
     standardButtons: Kirigami.Dialog.NoButton
     showCloseButton: false
 
+    dialogType: Kirigami.PromptDialog.None
+    iconName: ""
+
     function selectPlaylist(playlist) {
         let found = listCombo.find(playlist)
         if (found !== -1) {

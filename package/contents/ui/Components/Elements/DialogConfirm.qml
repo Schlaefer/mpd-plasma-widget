@@ -16,6 +16,9 @@ Kirigami.PromptDialog {
     standardButtons: Kirigami.Dialog.NoButton
     showCloseButton: false
 
+    dialogType: Kirigami.PromptDialog.None
+    iconName: ""
+
     customFooterActions: [
         Kirigami.Action {
             id: actionButton
