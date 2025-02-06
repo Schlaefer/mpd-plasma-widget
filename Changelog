@@ -1,5 +1,7 @@
 # Next
 
+- Fixes word wrapping for long titles
+- Fixes song context menu target not spanning whole row
 - Removes undesired, automatic mnemonics from nav and volume buttons
 
 # 6.0.1
