@@ -162,7 +162,7 @@ Kirigami.ApplicationWindow {
                                 ToolTip { text: qsTr("Starts and pauses playback") + " (P)" }
                             }
 
-                            ToolButton {
+                            PlasmaComponents.ToolButton {
                                 id: volmBtn
                                 icon.name: volumeState.volume > 75
                                     ? Mpdw.icons.volumeHigh
@@ -172,6 +172,7 @@ Kirigami.ApplicationWindow {
                                         ? Mpdw.icons.volumeLow
                                         : Mpdw.icons.volumeMuted
                                 text: volumeState.volume
+                                Kirigami.MnemonicData.enabled: false
                                 ToolTip {text: qsTr("Volume (+/=/-/Scroll Wheel)")}
                                 Shortcut {
                                     sequences: ["+", "="]

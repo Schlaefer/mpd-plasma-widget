@@ -1,7 +1,16 @@
 # Next
 
+- Removes undesired, automatic mnemonics from nav and volume buttons
+
+# 6.0.1
+
+- Fixes version string in metadata
+
+# 6.0.0
+
 Python 3 (3.6+) is required now. Mpc was dropped as a requirement. Make sure python3 is available on your system!
 
+- Update for plasma 6
 - Changes backend from mpc to python-mpd2 (requires python 3.6+)
 - Adds "Don't make me scroll over the same library over and over" shuffle button
 - Fixes Ctrl+F not reliably jumping to search

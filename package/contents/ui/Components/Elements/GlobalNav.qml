@@ -1,5 +1,6 @@
 import QtQuick
 import org.kde.plasma.components as PlasmaComponents
+import org.kde.kirigami as Kirigami
 import QtQuick.Layouts
 import "../../Mpdw.js" as Mpdw
 import "../../../scripts/formatHelpers.js" as FmH
@@ -36,6 +37,7 @@ RowLayout {
             checkable: true
             checked: modelData.page.visible
             onClicked: main.appWindow.showPage(modelData.page)
+            Kirigami.MnemonicData.enabled: false
 
             PlasmaComponents.ToolTip {
                 text: FmH.tooltipWithShortcut(modelData.tooltip, modelData.shortcut)

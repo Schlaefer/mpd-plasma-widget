@@ -31,6 +31,7 @@ Kirigami.ScrollablePage {
                         Kirigami.Action {
                             id: queueMenu
                             text: qsTr("Queue")
+                            Kirigami.MnemonicData.enabled: false
                             Kirigami.Action {
                                 icon.name: Mpdw.icons.queueSaveNew
                                 text: qsTr("Save as New Playlist…")
