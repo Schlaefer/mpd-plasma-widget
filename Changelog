@@ -1,5 +1,7 @@
 # Next
 
+# 6.0.2
+
 - Adds background highlight to currently playing queue-item
 - Changes "Select All" shortcut to "A"
 - Fixes word wrapping for long titles
