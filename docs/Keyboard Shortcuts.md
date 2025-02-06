@@ -22,7 +22,7 @@
 
 | Shortcut      | Action                     |
 | ------------- | -------------------------- |
-| Ctrl+A        | Select All                 |
+| A             | Select All                 |
 | Shift+D       | Deselect All               |
 | Q             | Play All/Selection         |
 | W             | Append All/Selection       |

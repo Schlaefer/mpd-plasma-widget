@@ -218,7 +218,6 @@ ListViewGeneric {
         }
     }
 
-
     Keys.onUpPressed: (event) => {
         if (root.currentIndex > 0) {
             if (event.modifiers & Qt.ShiftModifier) {

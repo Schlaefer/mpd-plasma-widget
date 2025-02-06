@@ -1,6 +1,7 @@
 # Next
 
 - Adds background highlight to currently playing queue-item
+- Changes "Select All" shortcut to "A"
 - Fixes word wrapping for long titles
 - Fixes song context menu target not spanning whole row
 - Removes undesired, automatic mnemonics from nav and volume buttons
