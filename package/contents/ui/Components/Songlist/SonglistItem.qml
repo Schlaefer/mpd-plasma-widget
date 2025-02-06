@@ -25,6 +25,14 @@ Item {
         implicitHeight: mainLayout.implicitHeight
 
         Rectangle {
+            id: currentlyPlayingBackgroundHighlight
+            anchors.fill: parent
+            color: Kirigami.Theme.highlightColor
+            visible: root.playingIndex === index
+            opacity: 0.35
+        }
+
+        Rectangle {
             id: bottomDivider
             anchors.bottom: parent.bottom
             width: parent.width
@@ -91,8 +99,9 @@ Item {
                 spacing: 0
                 Layout.rightMargin: Kirigami.Units.mediumSpacing
                 Text {
+                    id: titleText
                     Layout.fillWidth: true
-                    color: (root.playingIndex === index) ? Kirigami.Theme.activeTextColor : Kirigami.Theme.textColor
+                    color: Kirigami.Theme.textColor
                     font.bold: !main.appWindow.narrowLayout
                     text: main.appWindow.narrowLayout ? FmH.title(model) : model.title
                     wrapMode: Text.WordWrap
@@ -100,7 +109,7 @@ Item {
                 Text {
                     visible: !main.appWindow.narrowLayout
                     Layout.fillWidth: true
-                    color: (playingIndex === index) ? Kirigami.Theme.activeTextColor : Kirigami.Theme.disabledTextColor
+                    color: titleText.color
                     text: FmH.artist(model)
                     wrapMode: Text.WordWrap
                 }
@@ -108,7 +117,7 @@ Item {
                 Text {
                     visible: !main.appWindow.narrowLayout
                     Layout.fillWidth: true
-                    color: (playingIndex === index) ? Kirigami.Theme.activeTextColor : Kirigami.Theme.disabledTextColor
+                    color: titleText.color
                     text: FmH.queueAlbumLine(model)
                     wrapMode: Text.WordWrap
                 }
