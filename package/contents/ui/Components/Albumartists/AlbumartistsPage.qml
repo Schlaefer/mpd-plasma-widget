@@ -37,7 +37,7 @@ Kirigami.ScrollablePage {
             }
             RowLayout {
                 Layout.alignment: Qt.AlignRight
-                Layout.rightMargin: Kirigami.Units.gritUnit
+                Layout.rightMargin: Kirigami.Units.smallSpacing
                 Kirigami.SearchField {
                     id: searchField
                     // Per default the text field is stuck at 200 width and cut off at
@@ -200,6 +200,7 @@ Kirigami.ScrollablePage {
 
     Component {
         id: contextMenuComponent
+        // PlasmaComponent.Menu creates wierd transparency and border?
         QQC2.Menu {
             id: contextMenu
             QQC2.MenuItem {
