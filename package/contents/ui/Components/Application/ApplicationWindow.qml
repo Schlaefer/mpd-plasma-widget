@@ -16,6 +16,7 @@ Kirigami.ApplicationWindow {
     id: root
 
     required property MpdState mpdState
+    required property VolumeState volumeState
 
     property bool narrowLayout: root.width < 520
     property int windowPreMinimizeSize: -1
@@ -167,23 +168,23 @@ Kirigami.ApplicationWindow {
 
                             PlasmaComponents.ToolButton {
                                 id: volmBtn
-                                icon.name: volumeState.volume > 75
+                                icon.name: root.volumeState.volume > 75
                                     ? Mpdw.icons.volumeHigh
-                                    : volumeState.volume > 25
+                                    : root.volumeState.volume > 25
                                         ? Mpdw.icons.volumeMedium
-                                        : volumeState.volume > 0
+                                        : root.volumeState.volume > 0
                                         ? Mpdw.icons.volumeLow
                                         : Mpdw.icons.volumeMuted
-                                text: volumeState.volume
+                                text: root.volumeState.volume
                                 Kirigami.MnemonicData.enabled: false
                                 ToolTip {text: qsTr("Volume (+/=/-/Scroll Wheel)")}
                                 Shortcut {
                                     sequences: ["+", "="]
-                                    onActivated: volumeState.change(2)
+                                    onActivated: root.volumeState.change(2)
                                 }
                                 Shortcut {
                                     sequence: "-"
-                                    onActivated: volumeState.change(-2)
+                                    onActivated: root.volumeState.change(-2)
                                 }
                                 MouseArea {
                                     anchors.fill: parent
@@ -191,7 +192,7 @@ Kirigami.ApplicationWindow {
                                         volmSlider.visible = volmSlider.visible? false : true
                                     }
                                     onWheel: function (wheel) {
-                                        volumeState.wheel(wheel.angleDelta.y)
+                                        root.volumeState.wheel(wheel.angleDelta.y)
                                     }
                                 }
 
@@ -213,8 +214,8 @@ Kirigami.ApplicationWindow {
                                             from: 0
                                             to: 100
                                             stepSize: 1
-                                            onValueChanged: volumeState.set(volumeSlider.value)
-                                            value: volumeState.volume
+                                            onValueChanged: root.volumeState.set(volumeSlider.value)
+                                            value: root.volumeState.volume
                                         }
                                         Kirigami.Icon {
                                             Layout.preferredWidth: Kirigami.Units.iconSizes.small

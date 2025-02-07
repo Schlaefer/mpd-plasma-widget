@@ -39,7 +39,8 @@ PlasmoidItem {
                         "Components/Application/ApplicationWindow.qml",
                         {
                             initialHeight: 0.95 * availableScreenRect.height,
-                            mpdState: mpdState
+                            mpdState: mpdState,
+                            volumeState: volumeState
                         })
         } else {
             appWindowLoader.item.visible = appWindowLoader.item.visible ? false : true
