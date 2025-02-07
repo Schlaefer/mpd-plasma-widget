@@ -10,9 +10,12 @@ import "./../../Components/Application"
 import "./../../Components/Queue"
 import "./../../Components/Playlists"
 import "../../../scripts/formatHelpers.js" as FormatHelpers
+import "../../../logic"
 
 Kirigami.ApplicationWindow {
     id: root
+
+    required property MpdState mpdState
 
     property bool narrowLayout: root.width < 520
     property int windowPreMinimizeSize: -1
@@ -25,8 +28,8 @@ Kirigami.ApplicationWindow {
     minimumHeight: footer.height
 
     pageStack.initialPage: queuePage
-  // pageStack.initialPage: albumartistsPage
-//   pageStack.initialPage: playlistPage
+    // pageStack.initialPage: albumartistsPage
+    // pageStack.initialPage: playlistPage
 
     function showPage(page) {
         if (!page.visible) {
@@ -112,9 +115,9 @@ Kirigami.ApplicationWindow {
                         font.bold: !main.appWindow.narrowLayout
                         elide: Text.ElideRight
                         Connections {
-                            target: mpdState
+                            target: root.mpdState
                             function onMpdInfoChanged() {
-                                songTitle.text = FormatHelpers.title(mpdState.mpdInfo)
+                                songTitle.text = FormatHelpers.title(root.mpdState.mpdInfo)
                             }
                         }
                     }
@@ -127,9 +130,9 @@ Kirigami.ApplicationWindow {
                         elide: Text.ElideRight
 
                         Connections {
-                            target: mpdState
+                            target: root.mpdState
                             function onMpdInfoChanged() {
-                                songArtist.text = FormatHelpers.artist(mpdState.mpdInfo)
+                                songArtist.text = FormatHelpers.artist(root.mpdState.mpdInfo)
                             }
                         }
                     }
@@ -144,9 +147,9 @@ Kirigami.ApplicationWindow {
                         elide: Text.ElideRight
 
                         Connections {
-                            target: mpdState
+                            target: root.mpdState
                             function onMpdInfoChanged() {
-                                songAlbum.text = FormatHelpers.album(mpdState.mpdInfo)
+                                songAlbum.text = FormatHelpers.album(root.mpdState.mpdInfo)
                             }
                         }
                     }
@@ -157,7 +160,7 @@ Kirigami.ApplicationWindow {
                             Layout.leftMargin: Kirigami.Units.largeSpacing
                             ToolButton {
                                 id: ppBtn
-                                icon.name: mpdState.mpdPlaying ? Mpdw.icons.queuePause : Mpdw.icons.queuePlay
+                                icon.name: root.mpdState.mpdPlaying ? Mpdw.icons.queuePause : Mpdw.icons.queuePlay
                                 onClicked: mpdTogglePlayPauseAct.onTriggered()
                                 ToolTip { text: qsTr("Starts and pauses playback") + " (P)" }
                             }
@@ -258,7 +261,7 @@ Kirigami.ApplicationWindow {
     Kirigami.Action {
         id: mpdTogglePlayPauseAct
         shortcut: "p"
-        onTriggered: { mpdState.togglePlayPause() }
+        onTriggered: { root.mpdState.togglePlayPause() }
     }
 
     Kirigami.Action {
@@ -268,7 +271,7 @@ Kirigami.ApplicationWindow {
         icon.name: Mpdw.icons.queueRepeat
         shortcut: "R"
         tooltip: "Toggle MPD's Repeat mode"
-        onTriggered: mpdState.toggleOption("repeat")
+        onTriggered: root.mpdState.toggleOption("repeat")
     }
 
     Kirigami.Action {
@@ -278,7 +281,7 @@ Kirigami.ApplicationWindow {
         icon.name: Mpdw.icons.queueRandom
         shortcut: "X"
         tooltip: "Toggle MPD's Random mode"
-        onTriggered: mpdState.toggleOption("random")
+        onTriggered: root.mpdState.toggleOption("random")
     }
     Kirigami.Action {
         id: mpdToggleConsumeAct
@@ -287,7 +290,7 @@ Kirigami.ApplicationWindow {
         icon.name: Mpdw.icons.queueConsume
         shortcut: "C"
         tooltip: "Toggle MPD's Consume mode"
-        onTriggered: mpdState.toggleOption("consume")
+        onTriggered: root.mpdState.toggleOption("consume")
     }
 
     Kirigami.Action {
