@@ -82,8 +82,10 @@ Kirigami.PromptDialog {
             Timer {
                 id: waitForAnimationToFinish
                 running: false
+                // Wait for popup sliding in to finish
                 interval: Kirigami.Units.longDuration
                 onTriggered: {
+                    // Set cursor into textfield for quick type-ahead
                     newPlaylistTitle.forceActiveFocus()
                 }
             }

@@ -125,7 +125,6 @@ Item {
         }
 
         MouseArea {
-            // Place below SwipeListItem buttons and drag handler
             anchors.fill: mainLayout
             anchors.leftMargin: dragHandle.visible ? dragHandle.width : 0
             acceptedButtons: Qt.LeftButton | Qt.RightButton
@@ -139,7 +138,6 @@ Item {
                     } else {
                         parentView.selectToggle(index)
                     }
-                    parent.forceActiveFocus()
                     parentView.currentIndex = index
                 }
                 if (mouse.button === Qt.RightButton) {

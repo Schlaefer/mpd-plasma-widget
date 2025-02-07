@@ -297,7 +297,6 @@ ListViewGeneric {
             Kirigami.Action {
                 text: qsTr("Play")
                 shortcut: "Q"
-                enabled: root.activeFocus
                 tooltip: qsTr("Replace Queue and Start Playing")
                 icon.name: Mpdw.icons.queuePlay
                 onTriggered: {
@@ -307,7 +306,6 @@ ListViewGeneric {
             Kirigami.Action {
                 text: qsTr("Append")
                 shortcut: "W"
-                enabled: root.activeFocus
                 icon.name: Mpdw.icons.queueAppend
                 tooltip: qsTr("Append to End of Queue")
                 onTriggered: {
@@ -318,7 +316,6 @@ ListViewGeneric {
             Kirigami.Action {
                 text: qsTr("Insert")
                 shortcut: "E"
-                enabled: root.activeFocus
                 tooltip: qsTr("Insert After Current Song")
                 icon.name: Mpdw.icons.queueInsert
                 onTriggered: {
