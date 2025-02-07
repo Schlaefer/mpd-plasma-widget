@@ -309,7 +309,12 @@ ListViewGeneric {
                 icon.name: Mpdw.icons.queueAppend
                 tooltip: qsTr("Append to End of Queue")
                 onTriggered: {
-                    mpdState.addSongsToQueue(getSelectedFilesOrAll())
+                    let songs = getSelectedFilesOrAll()
+                    let callback = () => {
+                        showPassiveNotification(qsTr("%n appended", "", songs.length), 2000)
+                    }
+
+                    mpdState.addSongsToQueue(songs, "append", callback)
                 }
 
             },
@@ -319,7 +324,11 @@ ListViewGeneric {
                 tooltip: qsTr("Insert After Current Song")
                 icon.name: Mpdw.icons.queueInsert
                 onTriggered: {
-                    mpdState.addSongsToQueue(getSelectedFilesOrAll(), "insert")
+                    let songs = getSelectedFilesOrAll()
+                    let callback = () => {
+                        showPassiveNotification(qsTr("%n inserted", "", songs.length), 2000)
+                    }
+                    mpdState.addSongsToQueue(songs, "insert", callback)
                 }
             }
         ]

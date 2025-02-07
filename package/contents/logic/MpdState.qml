@@ -255,12 +255,13 @@ Item {
     /**
       * Add songs to the queue
       *
-      * @param {array} array of mpd file IDs
-      * @param {string} insertion mode
+      * @param {array} items - array of mpd file IDs
+      * @param {string} mode - insertion mode
       * - "append" at end of queue
       * - "insert" after currently playing track
+      * @param {requestCallback} callback - callback after execution
       */
-    function addSongsToQueue(items, mode = "append") {
+    function addSongsToQueue(items, mode = "append", callback) {
         if (!Array.isArray(items)) {
             throw new Error("Invalid argument: items must be an array")
         }
@@ -272,7 +273,7 @@ Item {
             if (mode === "insert") { args = args.concat([position++]) }
             executable.execCmd("add", args)
         })
-        executable.execList()
+        executable.execList(callback)
     }
 
     function clearQueue() {
