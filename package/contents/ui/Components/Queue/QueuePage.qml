@@ -120,7 +120,7 @@ Kirigami.ScrollablePage {
                     onTriggered: {
                         let positions = songlistView.getSelected()
                         songlistView.removeSelection()
-                        songlistView.updateMpdPositions()
+                        songlistView.updateSelectPositions()
                         mpdState.removeFromQueue(positions)
                     }
                 }
@@ -173,7 +173,7 @@ Kirigami.ScrollablePage {
                     onTriggered: {
                         let index = model.index
                         songlistView.model.remove(index)
-                        songlistView.updateMpdPositions()
+                        songlistView.updateSelectPositions()
                         mpdState.removeFromQueue([index])
                     }
                 }

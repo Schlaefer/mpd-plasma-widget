@@ -164,14 +164,12 @@ ListViewGeneric {
         }
     }
 
-    // @TODO rename; listen to model?
-    function updateMpdPositions(from) {
+    function updateSelectPositions(from) {
         selected = []
         for (var i = 0; i < model.count; i++) {
             if (model.get(i).checked) {
                 selected.push(i)
             }
-            model.set(i, {"pos": i+""})
         }
     }
 

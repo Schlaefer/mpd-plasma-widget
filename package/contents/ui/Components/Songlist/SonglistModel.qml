@@ -1,29 +1,20 @@
 import QtQuick
-import org.kde.kirigami as Kirigami
 
 ListModel {
     id: root
 
-
     /**
-      * Keep the "position" on our end in sync with MPD expeded result
+      * Keep the "position" on our end in sync with MPD's item position
       *
       * @param {int} start position 0-based
       * @param {int} end position 0-based
       */
-    // @TODO double still
     function updateMpdPositions(from = 0, to) {
-        to = to || count - 1
-        if (from === to) { return }
+        to = to || root.count - 1
 
-        let start = to < from ? to : from
-        let end = to > from ? to : from
-
-        for (let i = start; i <= end; i++) {
-            root.set(i, {"pos": i+1+""})
+        for (let i = from; i <= to; i++) {
+            root.set(i, {"pos": i+""})
         }
-
-        return
     }
 
     onRowsInserted: function(parent, first, last) {
@@ -47,12 +38,26 @@ ListModel {
         }
     }
 
+    onRowsRemoved: function(parent, first, last) {
+        // Only pass start, all positions from there on out changed on a row-remove.
+        root.updateMpdPositions(first)
+    }
+
     /**
      * Called when a row is moved
      *
      * @param {int} row - The moved rows are inserted *before* that index!
      */
     onRowsMoved: function(parent, start, end, destination, row) {
-        root.updateMpdPositions(start, row - 1)
+        // moved upwards → reverse order
+        if (row < start) {
+            let tmp = start
+            start = row
+            row = tmp
+        }
+
+        // Pass start and end because we only need to update positions that
+        // are within the effected range
+        root.updateMpdPositions(start, row)
     }
 }
