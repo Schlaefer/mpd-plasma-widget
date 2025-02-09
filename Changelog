@@ -1,8 +1,10 @@
 # Next
 
+# 6.0.3
+
 - Adds little confirmation popup when adding items to the queue
 - Fixes queue item removal and reordering
-
+- Some more Qt 6 transition 
 
 # 6.0.2
 
