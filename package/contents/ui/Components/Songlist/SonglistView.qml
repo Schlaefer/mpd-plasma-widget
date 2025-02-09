@@ -171,8 +171,7 @@ ListViewGeneric {
             if (model.get(i).checked) {
                 selected.push(i)
             }
-            // @TODO still
-            model.set(i, {"position": i+1+""})
+            model.set(i, {"pos": i+""})
         }
     }
 

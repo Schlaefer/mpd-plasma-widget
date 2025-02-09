@@ -20,7 +20,7 @@ ListModel {
         let end = to > from ? to : from
 
         for (let i = start; i <= end; i++) {
-            root.model.set(i, {"position": i+1+""})
+            root.set(i, {"pos": i+1+""})
         }
 
         return
@@ -47,7 +47,12 @@ ListModel {
         }
     }
 
-    onRowsMoved: {
-        updateMpdPositions(start, row - 1)
+    /**
+     * Called when a row is moved
+     *
+     * @param {int} row - The moved rows are inserted *before* that index!
+     */
+    onRowsMoved: function(parent, start, end, destination, row) {
+        root.updateMpdPositions(start, row - 1)
     }
 }
