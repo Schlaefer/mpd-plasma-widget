@@ -308,7 +308,7 @@ ListViewGeneric {
                 onTriggered: {
                     let songs = getSelectedFilesOrAll()
                     let callback = () => {
-                        showPassiveNotification(qsTr("%n appended", "", songs.length), 2000)
+                        showPassiveNotification(qsTr("%n appended", "", songs.length),  Kirigami.Units.humanMoment)
                     }
 
                     mpdState.addSongsToQueue(songs, "append", callback)
@@ -323,7 +323,7 @@ ListViewGeneric {
                 onTriggered: {
                     let songs = getSelectedFilesOrAll()
                     let callback = () => {
-                        showPassiveNotification(qsTr("%n inserted", "", songs.length), 2000)
+                        showPassiveNotification(qsTr("%n inserted", "", songs.length),  Kirigami.Units.humanMoment)
                     }
                     mpdState.addSongsToQueue(songs, "insert", callback)
                 }

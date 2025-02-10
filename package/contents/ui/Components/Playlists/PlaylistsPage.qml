@@ -53,7 +53,14 @@ Kirigami.ScrollablePage {
                     icon.name: Mpdw.icons.queueAppend
                     text: qsTr("Append")
                     onTriggered: {
-                        mpdState.loadPlaylist(listItemPlaylist.title)
+                        let playlistTitle = listItemPlaylist.title
+                        let callback = () => {
+                            showPassiveNotification(
+                                qsTr("Added playlist %1").arg(playlistTitle),
+                                Kirigami.Units.humanMoment
+                            )
+                        }
+                        mpdState.loadPlaylist(playlistTitle, callback)
                     }
                 },
                 Kirigami.Action {

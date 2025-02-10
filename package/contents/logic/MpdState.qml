@@ -288,8 +288,14 @@ Item {
         executable.execList()
     }
 
-    function loadPlaylist(playlist) {
-        executable.execCmd("load", [playlist])
+    /**
+      * Appends a playlist to the queue
+      *
+      * @param {string} playlist - mpd playlist title
+      * @param {requestCallback} callback - callback after execution
+      */
+    function loadPlaylist(playlist, callback) {
+        executable.execCmd("load", [playlist], callback)
     }
 
     function playPlaylist(playlist) {

@@ -217,7 +217,11 @@ Kirigami.ScrollablePage {
                 icon.name: Mpdw.icons.queueAppend
                 onTriggered: {
                     let songs = getSongs()
-                    mpdState.addSongsToQueue(songs.map(song => song.file))
+                    let callback = function() {
+                        showPassiveNotification(qsTr("%n appended", "", songs.length),  Kirigami.Units.humanMoment)
+                    }
+
+                    mpdState.addSongsToQueue(songs.map(song => song.file), "append", callback)
                 }
             }
             QQC2.MenuItem {
@@ -225,7 +229,10 @@ Kirigami.ScrollablePage {
                 icon.name:Mpdw.icons.queueInsert
                 onTriggered: {
                     let songs = getSongs()
-                    mpdState.addSongsToQueue(songs.map(song => song.file), "insert")
+                    let callback = function() {
+                        showPassiveNotification(qsTr("%n inserted", "", songs.length),  Kirigami.Units.humanMoment)
+                    }
+                    mpdState.addSongsToQueue(songs.map(song => song.file), "insert", callback)
                 }
             }
         }
