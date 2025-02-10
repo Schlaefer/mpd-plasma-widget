@@ -1,5 +1,7 @@
 # Next
 
+# 6.0.4
+
 - Code refactoring for better maintainability
 - Adds some confirmation popups on Artists and Playlists page 
 - Improves error message display
