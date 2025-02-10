@@ -77,6 +77,7 @@ Item {
             Layout.rightMargin: Kirigami.Units.largeSpacing
 
             ColumnLayout {
+                opacity: notification.text ? 0 : 1
                 WidgetLabel {
                     id: songTitle
                     font.weight: Font.Bold
@@ -126,10 +127,11 @@ Item {
                 visible: !!notification.text
                 WidgetLabel {
                     id: notification
+                    Layout.fillWidth: true
 
                     visible: text.length > 0
                     font.italic: true
-                    // @TODO Error message elides instead of wraps
+                    wrapMode: Text.Wrap
 
                     Connections {
                         function onAppLastErrorChanged() {

@@ -624,7 +624,7 @@ Item {
         } else if (fmtMsg.match(/Errno [-9|101]/)) {
             fmtMsg = qsTr("No network connection")
         } else if (fmtMsg.includes("no python in")) {
-            fmtMsg = qsTr("'python' wasn't found. - Please install it on your system. It should be available in your system's package manager.")
+            fmtMsg = qsTr("'python3' wasn't found. - Please install it on your system. It should be available in your system's package manager.")
         }
 
         return fmtMsg
