@@ -118,9 +118,8 @@ Kirigami.ScrollablePage {
                     shortcut: "Del"
                     enabled: numberSelected
                     onTriggered: {
-                        let positions = songlistView.getSelected()
-                        songlistView.removeSelection()
-                        songlistView.updateSelectPositions()
+                        let positions = songlistView.model.getSelected()
+                        songlistView.model.selectedRemove()
                         mpdState.removeFromQueue(positions)
                     }
                 }
@@ -128,10 +127,10 @@ Kirigami.ScrollablePage {
             rightActions: [songlistView.actionDeselect]
 
             Connections {
-                target: songlistView
+                target: songlistView.model
                 function onSelectedChanged() {
                     // @TODO
-                    songlistView.headerItem.numberSelected = songlistView.selected.length
+                    songlistView.headerItem.numberSelected = songlistView.model.selected.length
                 }
             }
         }
@@ -173,7 +172,6 @@ Kirigami.ScrollablePage {
                     onTriggered: {
                         let index = model.index
                         songlistView.model.remove(index)
-                        songlistView.updateSelectPositions()
                         mpdState.removeFromQueue([index])
                     }
                 }
@@ -213,7 +211,7 @@ Kirigami.ScrollablePage {
                         continue
                     } else {
                         // Clear out selection (cache) of the item
-                        songlistView.select(i, false)
+                        songlistView.model.select(i, false)
                         // console.log('Removing our song.')
                         songlistView.model.remove(i)
                     }

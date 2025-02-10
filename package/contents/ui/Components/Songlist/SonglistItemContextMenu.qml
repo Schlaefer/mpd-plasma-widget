@@ -11,14 +11,14 @@ QQC2.Menu {
         icon.name: Mpdw.icons.selectAlbum
         shortcut: "B"
         onTriggered: {
-            parentView.selectNeighborsByAlbum(model, index)
+            parentView.model.selectNeighborsByAlbum(model, index)
         }
     }
     QQC2.Action {
         text: qsTr('Select Album-Artist')
         icon.name: Mpdw.icons.selectArtist
         onTriggered: {
-            parentView.selectNeighborsByAartist(model, index)
+            parentView.model.selectNeighborsByAartist(model, index)
         }
     }
     QQC2.MenuSeparator {}
@@ -26,7 +26,7 @@ QQC2.Menu {
         text: qsTr('Select Above')
         icon.name: Mpdw.icons.selectAbove
         onTriggered: {
-            parentView.selectAbove(index)
+            parentView.model.selectAbove(index)
         }
         enabled: index > 0
     }
@@ -34,9 +34,9 @@ QQC2.Menu {
         text: qsTr('Select Below')
         icon.name: Mpdw.icons.selectBelow
         onTriggered: {
-            parentView.selectBelow(index)
+            parentView.model.selectBelow(index)
         }
-        enabled: index < parentView.count - 1
+        enabled: index < parentView.model.count - 1
     }
     QQC2.MenuSeparator {}
     QQC2.Action {
@@ -44,7 +44,7 @@ QQC2.Menu {
         icon.name: Mpdw.icons.selectAll
         shortcut: "ctrl+a"
         onTriggered: {
-            parentView.selectAll(true)
+            parentView.model.selectAll(true)
         }
     }
     QQC2.Action {

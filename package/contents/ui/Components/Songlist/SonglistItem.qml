@@ -129,16 +129,16 @@ Item {
             anchors.leftMargin: dragHandle.visible ? dragHandle.width : 0
             acceptedButtons: Qt.LeftButton | Qt.RightButton
             onClicked: function (mouse) {
-                parentView.userInteracted()
+                root.parentView.userInteracted()
                 if (mouse.button === Qt.LeftButton) {
                     if (mouse.modifiers & Qt.ShiftModifier) {
-                        parentView.selectTo(index)
+                        root.parentView.model.selectTo(index)
                     } else if (mouse.modifiers & Qt.ControlModifier) {
-                        parentView.selectToggle(index)
+                        root.parentView.model.selectToggle(index)
                     } else {
-                        parentView.selectToggle(index)
+                        root.parentView.model.selectToggle(index)
                     }
-                    parentView.currentIndex = index
+                    root.parentView.currentIndex = index
                 }
                 if (mouse.button === Qt.RightButton) {
                     menuLoader.source = "SonglistItemContextMenu.qml"

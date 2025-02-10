@@ -1,5 +1,8 @@
 import QtQuick
 
+/**
+  * Augments ListModel with MPD specific features
+  */
 ListModel {
     id: root
 
@@ -9,7 +12,7 @@ ListModel {
       * @param {int} start position 0-based
       * @param {int} end position 0-based
       */
-    function updateMpdPositions(from = 0, to) {
+    function _updateMpdPositions(from = 0, to) {
         to = to || root.count - 1
 
         for (let i = from; i <= to; i++) {
@@ -20,9 +23,7 @@ ListModel {
     onRowsInserted: function(parent, first, last) {
         for(let i = first; i <= last; i++) {
             let data = {
-                // Autoinitialize the checked property for item selection
-                "checked": false,
-                // MPD can giv us a song but has no information about it except
+                // MPD can give us a song but has no information about it except
                 // "file". This can happen if a file is listed in loaded
                 // playlist but the actual file is missing on disk.
                 "orphaned": false,
@@ -40,7 +41,7 @@ ListModel {
 
     onRowsRemoved: function(parent, first, last) {
         // Only pass start, all positions from there on out changed on a row-remove.
-        root.updateMpdPositions(first)
+        root._updateMpdPositions(first)
     }
 
     /**
@@ -58,6 +59,6 @@ ListModel {
 
         // Pass start and end because we only need to update positions that
         // are within the effected range
-        root.updateMpdPositions(start, row)
+        root._updateMpdPositions(start, row)
     }
 }
