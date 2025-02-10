@@ -18,21 +18,21 @@
 | R        | Repeat      |
 | C        | Consume     |
 
-# Songlist
+# Songlists
 
-| Shortcut      | Action                     |
-| ------------- | -------------------------- |
-| A             | Select All                 |
-| Shift+D       | Deselect All               |
-| Q             | Play All/Selection         |
-| W             | Append All/Selection       |
-| E             | Insert All/Selection       |
-| B/Shift+B     | Select/Deselect by Album   |
-| Space         | Toggle selection downwards |
-| Page Up       | Scroll Page Up             |
-| Page Down     | Scroll Page Down           |
-| Up/Down       | Move Cursor Up/Down        |
-| Shift+Up/Down | Select Upwards/Downwards   |
+| Shortcut      | Action                                    |
+| ------------- | ----------------------------------------- |
+| A/Shift+A     | Select/Deselect All                       |
+| B/Shift+B     | Select/Deselect neighbors by Album        |
+| V/Shift+V     | Select/Deselect neighbors by Album-Artist |
+| Q             | Play All/Selection                        |
+| W             | Append All/Selection                      |
+| E             | Insert All/Selection                      |
+| Space         | Toggle selection downwards                |
+| Page Up       | Scroll Page Up                            |
+| Page Down     | Scroll Page Down                          |
+| Up/Down       | Move Cursor Up/Down                       |
+| Shift+Up/Down | Select Upwards/Downwards                  |
 
 # Queue
 

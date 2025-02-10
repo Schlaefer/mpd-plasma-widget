@@ -1,5 +1,7 @@
 # Next
 
+- Keyboard shortcut changes for selecting items: A for select all, B for selecting neighboring songs from the same albums, V for neighboring songs from the same album-artist. Shift+A/B/V deselects in the same modes.
+
 # 6.0.4
 
 - Code refactoring for better maintainability

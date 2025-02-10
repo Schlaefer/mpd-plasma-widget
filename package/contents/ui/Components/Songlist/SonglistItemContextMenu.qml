@@ -17,6 +17,7 @@ QQC2.Menu {
     QQC2.Action {
         text: qsTr('Select Album-Artist')
         icon.name: Mpdw.icons.selectArtist
+        shortcut: "V"
         onTriggered: {
             parentView.model.selectNeighborsByAartist(model, index)
         }
@@ -42,7 +43,7 @@ QQC2.Menu {
     QQC2.Action {
         text: qsTr("Select All")
         icon.name: Mpdw.icons.selectAll
-        shortcut: "ctrl+a"
+        shortcut: "A"
         onTriggered: {
             parentView.model.selectAll(true)
         }

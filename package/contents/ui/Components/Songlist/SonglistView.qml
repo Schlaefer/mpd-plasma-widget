@@ -28,6 +28,12 @@ ListViewGeneric {
 
             userInteracted()
             event.accepted = true
+        } else if (event.key == Qt.Key_V) {
+            let state = !(event.modifiers & Qt.ShiftModifier)
+            root.model.selectNeighborsByAartist(model.get(root.currentIndex), root.currentIndex, state)
+
+            userInteracted()
+            event.accepted = true
         }
     }
 
@@ -156,7 +162,7 @@ ListViewGeneric {
         text: main.appWindow.narrowLayout ? "" : buttonText
         tooltip: qsTr("Deselect All")
         icon.name: Mpdw.icons.selectNone
-        shortcut: "Shift+D"
+        shortcut: "Shift+A"
         enabled: root.activeFocus
         onTriggered: root.model.deselectAll()
     }
