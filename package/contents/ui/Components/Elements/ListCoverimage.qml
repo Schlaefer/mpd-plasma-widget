@@ -9,10 +9,10 @@ Item {
     property alias loadingPriority: image.loadingPriority
     property bool isSelected: false
 
-    Layout.preferredHeight: (main.appWindow.narrowLayout ? Kirigami.Units.iconSizes.medium : Kirigami.Units.iconSizes.large)
+    Layout.preferredHeight: (win.narrowLayout ? Kirigami.Units.iconSizes.medium : Kirigami.Units.iconSizes.large)
         // Move picture inside the automatic Kirigami mouse hover highlight
         + (Kirigami.Units.mediumSpacing)
-    Layout.preferredWidth: main.appWindow.narrowLayout ? Kirigami.Units.iconSizes.medium : Kirigami.Units.iconSizes.large
+    Layout.preferredWidth: win.narrowLayout ? Kirigami.Units.iconSizes.medium : Kirigami.Units.iconSizes.large
 
     Kirigami.Icon {
         id: coverPlaceholderIcon

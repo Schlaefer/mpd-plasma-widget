@@ -81,7 +81,7 @@ Kirigami.ScrollablePage {
                                 text: qsTr("Show Current Song")
                                 shortcut: "L"
                                 onTriggered: {
-                                    if (!queuePage.visible) { appWindow.showPage(queuePage) }
+                                    if (!queuePage.visible) { app.showPage(queuePage) }
                                     followMode.autoMode = true
                                     followMode.showCurrent()
                                 }
@@ -168,7 +168,7 @@ Kirigami.ScrollablePage {
                 Kirigami.Action {
                     icon.name: Mpdw.icons.queueRemoveSingle
                     text: qsTr("Remove from Queue")
-                    visible: !main.appWindow.narrowLayout
+                    visible: !win.narrowLayout
                     onTriggered: {
                         let index = model.index
                         songlistView.model.remove(index)
@@ -241,7 +241,7 @@ Kirigami.ScrollablePage {
     }
 
     Connections {
-        target: main.appWindow
+        target: win
         function onHeightChanged() {
             followMode.showCurrent()
         }

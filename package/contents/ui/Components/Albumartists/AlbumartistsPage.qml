@@ -103,7 +103,7 @@ Kirigami.ScrollablePage {
                         "songs": mpdState.library.getSongsOfAartist(listItemPlaylist.albumartist),
                         "title": listItemPlaylist.albumartist,
                     }
-                    main.appWindow.pageStack.push(Qt.resolvedUrl("AlbumartistSongsPage.qml"), properties)
+                    app.pageStack.push(Qt.resolvedUrl("AlbumartistSongsPage.qml"), properties)
                 }
 
                 Loader {
@@ -126,8 +126,8 @@ Kirigami.ScrollablePage {
                     }
 
                     GridLayout {
-                        columns: main.appWindow.narrowLayout ? 4 : 6
-                        rows: main.appWindow.narrowLayout ? 1 : -1
+                        columns: win.narrowLayout ? 4 : 6
+                        rows: win.narrowLayout ? 1 : -1
 
                         Layout.alignment: Qt.AlignRight
 
@@ -163,7 +163,7 @@ Kirigami.ScrollablePage {
                                                 // @i18n
                                                 "title": model.album + " - " + model.albumartist,
                                             }
-                                            appWindow.pageStack.push(Qt.resolvedUrl("AlbumartistSongsPage.qml"),
+                                            root.pageStack.push(Qt.resolvedUrl("AlbumartistSongsPage.qml"),
                                                                      properties)
                                         } else if (mouse.button == Qt.RightButton) {
                                             if (!contextMenuLoader.item) {

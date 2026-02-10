@@ -50,7 +50,7 @@ Item {
         PlasmaComponents.Button{
             required property var modelData
             icon.name: modelData.icon.name
-            text: main.appWindow.narrowLayout ? "" : modelData.text
+            text: win.narrowLayout ? "" : modelData.text
             onClicked: modelData.triggered()
             enabled: modelData.enabled
             flat: true

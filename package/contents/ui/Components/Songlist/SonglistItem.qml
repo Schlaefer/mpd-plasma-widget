@@ -102,12 +102,12 @@ Item {
                     id: titleText
                     Layout.fillWidth: true
                     color: Kirigami.Theme.textColor
-                    font.bold: !main.appWindow.narrowLayout
-                    text: main.appWindow.narrowLayout ? FmH.title(model) : model.title
+                    font.bold: !win.narrowLayout
+                    text: win.narrowLayout ? FmH.title(model) : model.title
                     wrapMode: Text.WordWrap
                 }
                 Text {
-                    visible: !main.appWindow.narrowLayout
+                    visible: !win.narrowLayout
                     Layout.fillWidth: true
                     color: titleText.color
                     text: FmH.artist(model)
@@ -115,7 +115,7 @@ Item {
                 }
 
                 Text {
-                    visible: !main.appWindow.narrowLayout
+                    visible: !win.narrowLayout
                     Layout.fillWidth: true
                     color: titleText.color
                     text: FmH.queueAlbumLine(model)

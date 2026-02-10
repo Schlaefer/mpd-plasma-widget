@@ -159,7 +159,7 @@ ListViewGeneric {
 
         readonly property string buttonText: qsTr("Deselect")
 
-        text: main.appWindow.narrowLayout ? "" : buttonText
+        text: win.narrowLayout ? "" : buttonText
         tooltip: qsTr("Deselect All")
         icon.name: Mpdw.icons.selectNone
         shortcut: "Shift+A"

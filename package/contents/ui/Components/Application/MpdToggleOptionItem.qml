@@ -7,7 +7,7 @@ PlasmaComponents.ToolButton {
 
     checkable: true
     icon.name: modelData.icon.name
-    visible: !main.appWindow.narrowLayout || checked
+    visible: !win.narrowLayout || checked
 
     PlasmaComponents.ToolTip {
         text: FmH.tooltipWithShortcut(modelData.tooltip, modelData.shortcut)

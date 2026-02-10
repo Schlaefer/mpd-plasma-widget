@@ -1,6 +1,4 @@
 import QtQuick
-import QtQuick.Controls
-import QtQuick.Layouts
 import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.plasmoid
 import "./../logic"
@@ -8,7 +6,6 @@ import "./../logic"
 PlasmoidItem {
     id: main
 
-    property alias appWindow: appWindowLoader.item
     property bool cfgHorizontalLayout: Plasmoid.configuration.cfgHorizontalLayout
     property bool cfgSolidBackground: Plasmoid.configuration.cfgSolidBackground
     property int cfgCornerRadius: Plasmoid.configuration.cfgCornerRadius
@@ -21,6 +18,7 @@ PlasmoidItem {
     property string cfgMpdPort: Plasmoid.configuration.cfgMpdPort
     property string cfgShadowColor: Plasmoid.configuration.cfgShadowColor
 
+    property var _appWindow: null
     property string appLastError: ""
 
     // Make sure a somewhat reasonable layout with text and cover image is visible
@@ -34,16 +32,17 @@ PlasmoidItem {
     Plasmoid.backgroundHints: cfgSolidBackground ? PlasmaCore.Types.StandardBackground : PlasmaCore.Types.NoBackground
 
     function toggleAppWindow() {
-        if (!appWindowLoader.item) {
-            appWindowLoader.setSource(
-                        "Components/Application/ApplicationWindow.qml",
-                        {
-                            initialHeight: 0.95 * availableScreenRect.height,
-                            mpdState: mpdState,
-                            volumeState: volumeState
-                        })
+        if (!_appWindow) {
+            var component = Qt.createComponent("Components/Application/ApplicationWindow.qml")
+
+            main._appWindow = component.createObject(null, {
+                initialHeight: availableScreenRect.height,
+                mpdState: mpdState,
+                volumeState: volumeState
+            })
+            main._appWindow.visible = true
         } else {
-            appWindowLoader.item.visible = appWindowLoader.item.visible ? false : true
+            main._appWindow.visible = !main._appWindow.visible
         }
         appWindowUnloader.restart()
     }

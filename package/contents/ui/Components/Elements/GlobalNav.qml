@@ -33,10 +33,10 @@ RowLayout {
 
         PlasmaComponents.ToolButton {
             icon.name: modelData.icon
-            text: main.appWindow.narrowLayout ? "" : modelData.text
+            text: win.narrowLayout ? "" : modelData.text
             checkable: true
             checked: modelData.page.visible
-            onClicked: main.appWindow.showPage(modelData.page)
+            onClicked: win.app.showPage(modelData.page)
             Kirigami.MnemonicData.enabled: false
 
             PlasmaComponents.ToolTip {
