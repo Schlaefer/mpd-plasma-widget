@@ -44,12 +44,12 @@ PlasmoidItem {
         } else {
             main._appWindow.visible = !main._appWindow.visible
         }
-        appWindowUnloader.restart()
     }
 
     function unloadAppWindow() {
-        appWindowLoader.source = ""
-        mpdState.library = undefined
+        _appWindow.destroy()
+        _appWindow = null
+        mpdState.library = null
     }
 
     CoverManager {
@@ -89,16 +89,24 @@ PlasmoidItem {
         }
     }
 
+    Connections {
+        id: appWindowConnections
+        target: main._appWindow
 
-    Loader {
-        id: appWindowLoader
+        function onVisibleChanged() {
+            if (main._appWindow && main._appWindow.visible) {
+                appWindowUnloader.stop()
+            } else {
+                appWindowUnloader.start()
+            }
+        }
     }
 
     Timer {
         id: appWindowUnloader
         interval: 120000
         onTriggered: {
-            if (appWindowLoader.item.visible) {
+            if (main._appWindow.visible) {
                 start()
                 return
             }
