@@ -7,36 +7,14 @@ import "../../../scripts/formatHelpers.js" as FmH
 
 RowLayout {
     Repeater {
-        model: [
-            {
-                icon: Mpdw.icons.placeQueue,
-                page: queuePage,
-                shortcut: queuePage.globalShortcut,
-                text: qsTr("Queue"),
-                tooltip: qsTr("Show Queue")
-            },
-            {
-                icon: Mpdw.icons.placeArtist,
-                page: albumartistsPage,
-                shortcut: albumartistsPage.globalShortcut,
-                text: qsTr("Artists"),
-                tooltip: qsTr("Show Artists")
-            },
-            {
-                icon: Mpdw.icons.placePlaylist,
-                page: playlistPage,
-                shortcut: playlistPage.globalShortcut,
-                text: qsTr("Playlists"),
-                tooltip: qsTr("Show Playlists"),
-            }
-        ]
+        model: win.app.pages
 
         PlasmaComponents.ToolButton {
             icon.name: modelData.icon
             text: win.narrowLayout ? "" : modelData.text
             checkable: true
-            checked: modelData.page.visible
-            onClicked: win.app.showPage(modelData.page)
+            checked: win.app.currentPage === modelData.name
+            onClicked: win.app.showPage(modelData.name)
             Kirigami.MnemonicData.enabled: false
 
             PlasmaComponents.ToolTip {

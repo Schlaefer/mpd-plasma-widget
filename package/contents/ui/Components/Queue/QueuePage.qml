@@ -11,7 +11,7 @@ import "../../../scripts/formatHelpers.js" as FmH
 Kirigami.ScrollablePage {
     id: queuePage
 
-    readonly property string globalShortcut: "1"
+    property alias followMode: followMode
 
     Layout.fillWidth: true
     title: qsTr("Queue")
@@ -76,15 +76,10 @@ Kirigami.ScrollablePage {
                                 separator: true
                             }
                             Kirigami.Action {
-                                id: showCurrentSongAction
-                                icon.name: Mpdw.icons.queueShowCurrent
-                                text: qsTr("Show Current Song")
-                                shortcut: "L"
-                                onTriggered: {
-                                    if (!queuePage.visible) { app.showPage(queuePage) }
-                                    followMode.autoMode = true
-                                    followMode.showCurrent()
-                                }
+                                icon.name: showCurrentSongAction.icon.name
+                                text: showCurrentSongAction.text
+                                shortcut: showCurrentSongAction.shortcut
+                                onTriggered: showCurrentSongAction.trigger()
                             }
                             Kirigami.Action {
                                 separator: true

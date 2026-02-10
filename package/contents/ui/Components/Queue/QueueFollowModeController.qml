@@ -24,8 +24,8 @@ Item {
         }
 
         _ourScrolling = true
-        songlistView.currentIndex = currentPosition
-        songlistView.positionViewAtIndex(currentPosition, ListView.Center)
+        root.listView.currentIndex = currentPosition
+        root.listView.positionViewAtIndex(currentPosition, ListView.Center)
         // I'm not sure if setting this here and now is an async problem.
         // Seems to work though.
         _ourScrolling = false
@@ -41,7 +41,7 @@ Item {
     }
 
     Connections {
-        target: listView
+        target: root.listView
 
         // Scrolling is considered user interaction
         function onContentYChanged() {

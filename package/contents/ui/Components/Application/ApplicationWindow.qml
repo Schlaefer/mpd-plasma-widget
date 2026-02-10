@@ -49,38 +49,115 @@ PlasmaCore.Window {
         property alias windowPreMinimizeSize: win.windowPreMinimizeSize
         property alias initialHeight: win.initialHeight
 
-        pageStack.initialPage: queuePage
-        // pageStack.initialPage: albumartistsPage
-        // pageStack.initialPage: playlistPage
 
-        function showPage(page) {
-            if (!page.visible) {
-                while (app.pageStack.depth > 0)
-                    app.pageStack.pop()
-                app.pageStack.push(page)
+        /**
+          * Global properties for pages
+          */
+        readonly property var pages: [
+            {
+                name: "queue",
+                icon: Mpdw.icons.placeQueue,
+                shortcut: "1",
+                text: qsTr("Queue"),
+                tooltip: qsTr("Show Queue"),
+                component: queuePageComponent
+            },
+            {
+                name: "albumartists",
+                icon: Mpdw.icons.placeArtist,
+                shortcut: "2",
+                text: qsTr("Artists"),
+                tooltip: qsTr("Show Artists"),
+                component: albumartistsPageComponent
+            },
+            {
+                name: "playlist",
+                icon: Mpdw.icons.placePlaylist,
+                shortcut: "3",
+                text: qsTr("Playlists"),
+                tooltip: qsTr("Show Playlists"),
+                component: playlistPageComponent
             }
+        ]
+
+        /**
+         * Current page according to pages.name
+         */
+        property string currentPage: "queue"
+
+        // @S/M Get from page cache instead
+        pageStack.initialPage: pages.find(p => p.name === currentPage).component
+
+        /**
+         * Cache for page components
+         */
+        property var pageCache: ({})
+
+        function showPage(name) {
+            if (currentPage === name) {
+                return
+            }
+
+            currentPage = name
+
+            while (app.pageStack.depth > 0) {
+                app.pageStack.pop()
+            }
+
+            app.pageStack.push(getPage(name))
         }
 
-        QueuePage {
-            id: queuePage
+        /**
+         * Get page from component cache
+         *
+         * @param {string} name Human readable page name
+         */
+        function getPage(name) {
+            if (!pageCache[name]) {
+                const entry = pages.find(p => p.name === name)
+                pageCache[name] = entry.component.createObject(app)
+            }
+            return pageCache[name]
         }
 
-        PlaylistsPage {
-            id: playlistPage
+        Component {
+            id: queuePageComponent
+            QueuePage { }
         }
 
-        AlbumartistsPage {
-            id: albumartistsPage
+        Component {
+            id: playlistPageComponent
+            PlaylistsPage { }
+        }
+
+        Component {
+            id: albumartistsPageComponent
+            AlbumartistsPage { }
         }
 
         Repeater {
-            model: [queuePage, albumartistsPage, playlistPage]
+            model: win.app.pages
+            // Anchor shortcut to an item in the scene since the delegates are created
+            // dynamically.
             Item {
                 Shortcut {
-                    sequence: modelData.globalShortcut
-                    onActivated: app.showPage(modelData)
+                    sequence: modelData.shortcut
+                    onActivated: function() {
+                        win.app.showPage(modelData.name)
+                    }
                 }
             }
+        }
+
+        Component.onCompleted: {
+            // We set a component for pageStack.initialPage to initialize the page but
+            // don't use it. Instead after the view is ready we create our own cached
+            // page instance and swap it in immediatly. That ensures we are working
+            // only with the same, single instance when requesting the initial page
+            // (usually "queue"). Otherwise two instances starting to flow around with
+            // different states.
+            const page = getPage(currentPage)
+            pageStack.replace(page)
         }
 
         footer: ToolBar {
@@ -268,9 +345,9 @@ PlasmaCore.Window {
         Kirigami.Action {
             shortcut: StandardKey.Find
             onTriggered: {
-                if (!albumartistsPage.visible) { app.showPage(albumartistsPage) }
+                app.showPage("albumartists")
                 while (app.pageStack.depth > 1) { app.pageStack.pop() } // Exit subviews
-                albumartistsPage.viewState = "startSearch"
+                app.getPage("albumartists").viewState = "startSearch"
             }
         }
 
@@ -307,6 +384,19 @@ PlasmaCore.Window {
             shortcut: "C"
             tooltip: "Toggle MPD's Consume mode"
             onTriggered: app.mpdState.toggleOption("consume")
+        }
+
+        Kirigami.Action {
+            id: showCurrentSongAction
+            shortcut: "L"
+            text: qsTr("Show Current Song")
+            icon.name: Mpdw.icons.queueShowCurrent
+            onTriggered: {
+                app.showPage('queue')
+                let page = app.getPage('queue')
+                page.followMode.autoMode = true
+                page.followMode.showCurrent()
+            }
         }
 
         Kirigami.Action {

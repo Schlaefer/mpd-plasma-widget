@@ -11,7 +11,6 @@ Kirigami.ScrollablePage {
     id: root
 
     property int depth: 1
-    readonly property string globalShortcut: "3"
 
     visible: false
     title: qsTr("Playlists")

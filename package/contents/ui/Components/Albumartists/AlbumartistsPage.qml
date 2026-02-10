@@ -11,7 +11,6 @@ Kirigami.ScrollablePage {
 
     property int depth: 1
     property string shownAlbumartist
-    readonly property string globalShortcut: "2"
 
     property alias searchField: searchField
     property alias viewState: controller.viewState
