@@ -212,7 +212,12 @@ Item {
             if (exitCode !== 0) {
                 return
             }
-            library = new SongLibrary.SongLibrary(JSON.parse(stdout))
+            if (stdout) {
+                stdout = JSON.parse(stdout)
+            } else {
+                stdout = []
+            }
+            library = new SongLibrary.SongLibrary(stdout)
         })
     }
 
