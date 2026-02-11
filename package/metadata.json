@@ -11,7 +11,7 @@
         "Icon": "org.kde.plasma.mediacontroller",
         "Id": "com.siezi.plasma.mpdWidget",
         "Name": "MPD Plasma Widget",
-        "Version": "6.1.0",
+        "Version": "6.1.1",
         "Website": "https://github.com/Schlaefer/mpd-plasma-widget",
         "License": "GPLv3"
     },
