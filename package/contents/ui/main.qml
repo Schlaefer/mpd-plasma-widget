@@ -35,6 +35,11 @@ PlasmoidItem {
         if (!_appWindow) {
             var component = Qt.createComponent("Components/Application/ApplicationWindow.qml")
 
+            if (component.status === Component.Error) {
+                console.error(component.errorString());
+                return;
+            }
+
             main._appWindow = component.createObject(null, {
                 initialHeight: availableScreenRect.height,
                 mpdState: mpdState,
