@@ -54,7 +54,7 @@ PlasmoidItem {
     function unloadAppWindow() {
         _appWindow.destroy()
         _appWindow = null
-        mpdState.library = null
+        mpdState.clearLibrary()
     }
 
     CoverManager {

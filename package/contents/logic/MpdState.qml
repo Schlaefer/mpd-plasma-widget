@@ -202,12 +202,21 @@ Item {
     }
 
     /**
+      * Clear the song library
+      */
+    function clearLibrary() {
+        library = null
+    }
+
+    /**
      * Download whole song library
      */
     function getLibrary() {
         if (!mpdConnectionAvailable) {
             libraryRequested = true
+            return
         }
+
         executable.execCmd("listallinfo", [], function (exitCode, stdout) {
             if (exitCode !== 0) {
                 return
@@ -218,6 +227,7 @@ Item {
                 stdout = []
             }
             library = new SongLibrary.SongLibrary(stdout)
+            libraryRequested = false
         })
     }
 
