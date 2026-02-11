@@ -1,5 +1,6 @@
 # Next
 
+- Fixes clicking on album icon in Artist view broken (6.1.0 regression)
 - Fixes hitting enter on keyboard navigated file plays wrong song in queue
 
 # 6.1.0

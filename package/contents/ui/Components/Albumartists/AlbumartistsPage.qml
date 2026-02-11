@@ -162,7 +162,7 @@ Kirigami.ScrollablePage {
                                                 // @i18n
                                                 "title": model.album + " - " + model.albumartist,
                                             }
-                                            root.pageStack.push(Qt.resolvedUrl("AlbumartistSongsPage.qml"),
+                                            app.pageStack.push(Qt.resolvedUrl("AlbumartistSongsPage.qml"),
                                                                      properties)
                                         } else if (mouse.button == Qt.RightButton) {
                                             if (!contextMenuLoader.item) {
