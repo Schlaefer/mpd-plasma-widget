@@ -60,7 +60,7 @@ PlasmaCore.Window {
                 shortcut: "1",
                 text: qsTr("Queue"),
                 tooltip: qsTr("Show Queue"),
-                component: queuePageComponent
+                component: () => queuePageComponent
             },
             {
                 name: "albumartists",
@@ -68,7 +68,7 @@ PlasmaCore.Window {
                 shortcut: "2",
                 text: qsTr("Artists"),
                 tooltip: qsTr("Show Artists"),
-                component: albumartistsPageComponent
+                component: () => albumartistsPageComponent
             },
             {
                 name: "playlist",
@@ -76,7 +76,7 @@ PlasmaCore.Window {
                 shortcut: "3",
                 text: qsTr("Playlists"),
                 tooltip: qsTr("Show Playlists"),
-                component: playlistPageComponent
+                component: () => playlistPageComponent
             }
         ]
 
@@ -85,7 +85,10 @@ PlasmaCore.Window {
          */
         property string currentPage: "queue"
 
-        pageStack.initialPage: pages.find(p => p.name === currentPage).component
+        /**
+         * Set initial page from page cache
+         */
+        pageStack.initialPage: getPage(currentPage)
 
         /**
          * Cache for page components
@@ -109,12 +112,12 @@ PlasmaCore.Window {
         /**
          * Get page from component cache
          *
-         * @param {string} name Human readable page name
+         * @param {string} name Human readable page.name
          */
         function getPage(name) {
             if (!pageCache[name]) {
                 const entry = pages.find(p => p.name === name)
-                pageCache[name] = entry.component.createObject(app)
+                pageCache[name] = entry.component().createObject(app)
             }
             return pageCache[name]
         }
@@ -146,17 +149,6 @@ PlasmaCore.Window {
                     }
                 }
             }
-        }
-
-        Component.onCompleted: {
-            // We set a component for pageStack.initialPage to initialize the page but
-            // don't use it. Instead after the view is ready we create our own cached
-            // page instance and swap it in immediatly. That ensures we are working
-            // only with the same, single instance when requesting the initial page
-            // (usually "queue"). Otherwise two instances starting to flow around with
-            // different states.
-            const page = getPage(currentPage)
-            pageStack.replace(page)
         }
 
         footer: ToolBar {
