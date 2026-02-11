@@ -73,7 +73,7 @@ class SongLibrary {
                 }
 
                 for (let i = 0; i < this._albums[aartist][album].length; i++) {
-                    if (this._albums[aartist][album][i].title.toLowerCase().indexOf(searchText) !== -1) {
+                    if (this._albums[aartist][album][i].title && this._albums[aartist][album][i].title.toLowerCase().indexOf(searchText) !== -1) {
                         foundSongs.push(this._albums[aartist][album][i])
                     } else if (this._albums[aartist][album][i].genre && this._albums[aartist][album][i].genre.toLowerCase().indexOf(searchText) !== -1)  {
                         foundSongs.push(this._albums[aartist][album][i])

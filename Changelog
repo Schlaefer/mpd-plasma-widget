@@ -1,5 +1,7 @@
 # Next
 
+- Fixes library breaking if song has no title-tag
+
 # 6.1.1
 
 - Fixes clicking on album icon in Artist view broken (6.1.0 regression)
