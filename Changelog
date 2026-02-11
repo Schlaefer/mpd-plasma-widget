@@ -1,5 +1,7 @@
 # Next
 
+# 6.1.0
+
 - Compatibility update for plasma 6.6
 - Significant performance improvements in the manager for large libraries
 - Fix uneven list layout
