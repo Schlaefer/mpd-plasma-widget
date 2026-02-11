@@ -66,6 +66,7 @@ Kirigami.ScrollablePage {
                     icon.name: Mpdw.icons.playlistDelete
                     text: qsTr("Remove Playlist…")
                     onTriggered: {
+                        deleteConfirmationDialog.itemTitle = listItemPlaylist.title
                         deleteConfirmationDialog.open()
                     }
                 }
@@ -78,20 +79,20 @@ Kirigami.ScrollablePage {
                     text: listItemPlaylist.title
                     wrapMode: Text.Wrap
                 }
-                DialogConfirm {
-                    id: deleteConfirmationDialog
-                    icon: Mpdw.icons.playlistDelete
-                    title: qsTr("Delete Playlist")
-                    label: qsTr("The following playlist will be deleted")
-                    buttonText: qsTr("Delete Playlist")
-                    itemTitle: listItemPlaylist.title
-
-                    onConfirmed: function () {
-                        mpdState.removePlaylist(listItemPlaylist.title)
-                        deleteConfirmationDialog.close()
-                    }
-                }
             }
+        }
+    }
+
+    DialogConfirm {
+        id: deleteConfirmationDialog
+        icon: Mpdw.icons.playlistDelete
+        title: qsTr("Delete Playlist")
+        label: qsTr("The following playlist will be deleted")
+        buttonText: qsTr("Delete Playlist")
+
+        onConfirmed: function () {
+            mpdState.removePlaylist(itemTitle)
+            deleteConfirmationDialog.close()
         }
     }
 

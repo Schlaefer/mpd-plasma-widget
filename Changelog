@@ -1,5 +1,6 @@
 # Next
 
+- Fixes layout on deleting playlists
 - Fixes library breaking if song has no title-tag
 
 # 6.1.1
