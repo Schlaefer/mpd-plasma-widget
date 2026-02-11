@@ -85,7 +85,6 @@ PlasmaCore.Window {
          */
         property string currentPage: "queue"
 
-        // @S/M Get from page cache instead
         pageStack.initialPage: pages.find(p => p.name === currentPage).component
 
         /**
@@ -126,13 +125,13 @@ PlasmaCore.Window {
         }
 
         Component {
-            id: playlistPageComponent
-            PlaylistsPage { }
+            id: albumartistsPageComponent
+            AlbumartistsPage { }
         }
 
         Component {
-            id: albumartistsPageComponent
-            AlbumartistsPage { }
+            id: playlistPageComponent
+            PlaylistsPage { }
         }
 
         Repeater {

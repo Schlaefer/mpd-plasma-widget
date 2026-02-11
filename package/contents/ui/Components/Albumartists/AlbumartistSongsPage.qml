@@ -7,6 +7,8 @@ Kirigami.ScrollablePage {
 
     property alias songs: listView.songs
 
+    header: SonglistNav { }
+
     SonglistView {
         id: listView
 
