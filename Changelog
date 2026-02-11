@@ -2,6 +2,7 @@
 
 - Compatibility update for plasma 6.6
 - Significant performance improvements in the manager for large libraries
+- Fix uneven list layout
 - Keyboard shortcut changes for selecting items: A for select all, B for selecting neighboring songs from the same albums, V for neighboring songs from the same album-artist. Shift+A/B/V deselects in the same modes. 
 - Better handling of empty libraries
 

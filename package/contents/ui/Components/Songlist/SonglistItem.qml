@@ -22,6 +22,8 @@ Item {
         id: listItem
         width: root.width
         highlightIndex: root.playingIndex
+        topPadding: 0
+        bottomPadding: 0
         implicitHeight: mainLayout.implicitHeight
 
         Rectangle {
@@ -38,6 +40,8 @@ Item {
             width: parent.width
             height: 1
             color:  Qt.darker(Kirigami.Theme.backgroundColor, 1.3)
+            // Draw bellow mouse hover highlight.
+            z: -1
         }
 
         RowLayout {
