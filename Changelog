@@ -1,5 +1,7 @@
 # Next
 
+- Fixes hitting enter on keyboard navigated file plays wrong song in queue
+
 # 6.1.0
 
 - Compatibility update for plasma 6.6

@@ -91,7 +91,7 @@ ListViewGeneric {
 
     Keys.onReturnPressed: (event) => {
         let position = model.get(root.currentIndex).pos
-        mpdState.playInQueue(position - 1)
+        mpdState.playInQueue(position)
         userInteracted()
         event.accepted = true
     }
