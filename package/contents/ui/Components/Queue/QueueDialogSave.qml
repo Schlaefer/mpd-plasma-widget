@@ -29,7 +29,7 @@ Kirigami.PromptDialog {
             function afterSave(success) {
                 if (success) {
                     newPlaylistErrorMsg.visible = false
-                    showPassiveNotification(qsTr('Saved'),  Kirigami.Units.humanMoment)
+                    app.showPassiveNotification(qsTr('Saved'),  Kirigami.Units.humanMoment)
                     root.close()
                 } else {
                     newPlaylistErrorMsg.visible = true

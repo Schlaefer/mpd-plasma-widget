@@ -2,6 +2,7 @@
 
 - Fixes layout on deleting playlists
 - Fixes library breaking if song has no title-tag
+- Fixes saving queue as playlist dialog issues (6.1.0 regression)
 
 # 6.1.1
 
