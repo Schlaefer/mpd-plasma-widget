@@ -233,6 +233,10 @@ Kirigami.ScrollablePage {
         // window opening. Make it ask properly for the already available data from
         // mpdState in both places. Required for Loader those pages anyway.
         mpdState.update()
+
+        // Get playlists for queue save and replace dialogs.
+        // @SOMEDAY Move into dialogs and request only on dialog opening.
+        mpdState.getPlaylists()
     }
 
     Connections {
