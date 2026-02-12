@@ -54,8 +54,10 @@ if [ ! -f "${coverPath}" ]; then
     # We don't check the return value of the "request image"-cmd. After requesting the
     # cover it is either available for processing or not.
     if [ -f "${coverPath}" ]; then
-        magick "${coverPath}" -resize 1500x\> "${coverPath}-large.jpg"
-        magick "${coverPath}" -resize 64x64 "${coverPath}-small.jpg"
+        # Escape % in URL encoded path, so it wont get substituted by imagemagick
+        magicPath="${coverPath//%/%%}"
+        magick "${coverPath}" -resize 1500x\> "${magicPath}-large.jpg"
+        magick "${coverPath}" -resize 64x64 "${magicPath}-small.jpg"
         rm "${coverPath}"
     else
         echo "No data"
