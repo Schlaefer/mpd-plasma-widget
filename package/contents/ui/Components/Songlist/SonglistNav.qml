@@ -1,5 +1,7 @@
+import QtQuick
 import QtQuick.Controls as QQC2
 import QtQuick.Layouts
+import "../../Mpdw.js" as Mpdw
 
 QQC2.ToolBar {
     RowLayout {
@@ -7,7 +9,7 @@ QQC2.ToolBar {
 
          QQC2.ToolButton {
              id: backButton
-             icon.name: "go-previous"
+             icon.name: Mpdw.icons.navBack
              onClicked: app.pageStack.pop()
          }
 

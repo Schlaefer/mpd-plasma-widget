@@ -43,4 +43,6 @@ const icons = {
     appConfigAppearance: "preferences-desktop-color",
     clearCache: "emblem-warning",
     mpdUpdate: "view-refresh",
+
+    navBack: "go-previous",
 }
