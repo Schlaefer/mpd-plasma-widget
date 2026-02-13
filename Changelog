@@ -1,5 +1,9 @@
 # Next
 
+# 6.2.1
+
+- Pling timed out during package upload resulting causing trouble. Just bump a new version to hopefully fix it.
+
 # 6.2.0
 
 - Adds configuration option for layout breaking point in manager
