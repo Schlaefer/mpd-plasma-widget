@@ -12,7 +12,7 @@ cd ..
 # Get git tag
 TAG=$(git describe --tags --abbrev=0)
 TAG_DASHED=${TAG//./-}
-BASENAME="plasma-mpd-widget${TAG}"
+BASENAME="plasma-mpd-widget${TAG_DASHED}"
 ZIP_NAME="${BASENAME}.zip"
 PLASMOID_NAME="${BASENAME}.plasmoid"
 
