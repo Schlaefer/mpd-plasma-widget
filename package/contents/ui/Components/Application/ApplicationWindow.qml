@@ -21,7 +21,8 @@ PlasmaCore.Window {
     required property MpdState mpdState
     required property VolumeState volumeState
 
-    property bool narrowLayout: app.width < 520
+    property int narrowBreakPoint: 520
+    property bool narrowLayout: app.width < narrowBreakPoint
     property int windowPreMinimizeSize: -1
     property int initialHeight: -1
 

@@ -1,5 +1,9 @@
 # Next
 
+# 6.2.0
+
+- Adds configuration option for layout breaking point in manager
+
 # 6.1.2
 
 - Fixes layout on deleting playlists
