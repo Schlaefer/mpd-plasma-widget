@@ -35,12 +35,12 @@ Kirigami.FormLayout {
     }
 
     Item {
-        Kirigami.FormData.label: i18n("Local Covers")
+        Kirigami.FormData.label: i18n("Local Cover Cache")
         Kirigami.FormData.isSection: true
     }
 
     RowLayout {
-        Kirigami.FormData.label: i18n("Path to Cover Folder:")
+        Kirigami.FormData.label: i18n("Path to Cover Cache Folder:")
 
         PlasmaComponents.TextField {
             id: cfgCacheRootText
