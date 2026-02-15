@@ -9,6 +9,8 @@ import "./../Mpdw.js" as Mpdw
 Item {
     id: coverImageContainer
 
+    signal sourceChanged(string source)
+
     property alias sourceSize: coverImage.sourceSize
 
     property int coverRadius: 0
@@ -105,6 +107,10 @@ Item {
             // album will always trigger.
             coverImage.source = ""
             coverImage.source = "file://" + cover + "-large.jpg"
+        }
+
+        onSourceChanged: {
+            coverImageContainer.sourceChanged(coverImage.source)
         }
 
         Connections {
