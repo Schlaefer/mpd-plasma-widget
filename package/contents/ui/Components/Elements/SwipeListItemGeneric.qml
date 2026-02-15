@@ -8,15 +8,7 @@ Kirigami.SwipeListItem {
 
     width: width ? width : implicitWidth
 
-    /* @TODO Removed in plasma 6? Remove?
-    backgroundColor:
-        (highlightIndex !== index)
-        ? Kirigami.Theme.backgroundColor
-        : Kirigami.Theme.highlightColor
-    alternatingBackground: true
-    alternateBackgroundColor:
-        (highlightIndex !== index)
-        ? Kirigami.Theme.alternateBackgroundColor
-        : Kirigami.Theme.highlightColor
-    */
+    // Kirigami.Theme.inherit: false
+    // Kirigami.Theme.useAlternateBackgroundColor: true
+
 }
