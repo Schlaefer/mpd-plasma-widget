@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Effects
 import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
 import org.kde.plasma.components as PlasmaComponents
@@ -152,7 +153,56 @@ PlasmaCore.Window {
             }
         }
 
+
         footer: ToolBar {
+            // === Toolbar background ===
+            background: Item {
+                // === Fallback default background if no cover-image ===
+                Rectangle {
+                   anchors.fill: parent
+                   color: Kirigami.Theme.backgroundColor
+                }
+
+                // === Blured cover-image background ===
+                Image {
+                    id: toolboxBackgroundImage
+                    anchors.fill: parent
+                    anchors.centerIn: parent
+                    visible: false
+                    fillMode: Image.PreserveAspectCrop
+                }
+
+                MultiEffect {
+                    id: blurEffect
+                    anchors.fill: parent
+                    source: toolboxBackgroundImage
+                    autoPaddingEnabled: false
+                    blurEnabled: true
+                    blur: 0.8
+                    blurMax: 64
+                    visible: toolboxBackgroundImage.source
+                }
+
+                // Improve test and icon legibility
+                Rectangle {
+                    anchors.fill: parent
+                    visible: blurEffect.visible
+                    color: Qt.rgba(
+                        Kirigami.Theme.backgroundColor.r,
+                        Kirigami.Theme.backgroundColor.g,
+                        Kirigami.Theme.backgroundColor.b,
+                        0.7
+                    )
+                }
+
+                Connections {
+                    target: coverImage
+                    function onSourceChanged(source) {
+                        toolboxBackgroundImage.source = source
+                    }
+                }
+            }
+
             RowLayout {
                 anchors.fill: parent
                 RowLayout {
