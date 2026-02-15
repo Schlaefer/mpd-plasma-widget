@@ -2,8 +2,6 @@ import QtQuick
 import QtQuick.Layouts
 import org.kde.plasma.components as PlasmaComponents
 import org.kde.kirigami as Kirigami
-// @TODO QT6
-import Qt5Compat.GraphicalEffects
 import "../../../scripts/formatHelpers.js" as FmH
 
 Item {
