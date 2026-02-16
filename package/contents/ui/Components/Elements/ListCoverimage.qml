@@ -27,7 +27,10 @@ Item {
 
         property int loadingPriority: 100
 
+        asynchronous: true
+        cache: true
         mipmap: true
+
         fillMode: Image.PreserveAspectFit
 
         sourceSize.height: Kirigami.Units.iconSizes.large
