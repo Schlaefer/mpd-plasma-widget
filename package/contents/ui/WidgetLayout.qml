@@ -25,6 +25,7 @@ Item {
         WidgetCoverImage {
             id: coverImageContainer
 
+            applyEffects: true
             coverRadius: root.main.cfgCornerRadius
             shadowColor: root.main.cfgShadowColor
             shadowSpread: root.main.cfgShadowSpread

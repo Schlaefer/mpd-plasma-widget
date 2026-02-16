@@ -13,6 +13,7 @@ Item {
 
     property alias sourceSize: coverImage.sourceSize
 
+    property bool applyEffects: false
     property int coverRadius: 0
     property int shadowSpread: 0
     property string shadowColor
@@ -136,6 +137,8 @@ Item {
         }
     }
 
+    // === Cover Effects ===
+    // Create rounded corner mask
     Item {
         id: mask
         anchors.fill: coverImage
@@ -143,24 +146,26 @@ Item {
 
         Rectangle {
             color: "white"
-            radius: coverRadius
+            radius: coverImageContainer.coverRadius
             anchors.centerIn: parent
             width: coverImage.paintedWidth
             height: coverImage.paintedHeight
         }
     }
 
+    // Apply mask and drop-shadow
     OpacityMask {
         anchors.fill: coverImage
         source: coverImage
         maskSource: mask
 
-        layer.enabled: shadowSpread > 0 && !!coverImage.source.toString()
+        layer.enabled: coverImageContainer.applyEffects && coverImageContainer.shadowSpread > 0
+                       && !!coverImage.source.toString()
         layer.effect: DropShadow {
             verticalOffset: 0
             horizontalOffset: 0
-            color: shadowColor
-            radius: shadowSpread
+            color: coverImageContainer.shadowColor
+            radius: coverImageContainer.shadowSpread
             samples: 17
         }
     }
