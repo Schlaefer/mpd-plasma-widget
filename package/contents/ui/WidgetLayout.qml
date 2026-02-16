@@ -76,42 +76,52 @@ Item {
             Layout.leftMargin: Kirigami.Units.largeSpacing
             Layout.rightMargin: Kirigami.Units.largeSpacing
 
-            ColumnLayout {
-                opacity: notification.text ? 0 : 1
-                WidgetLabel {
-                    id: songTitle
-                    font.weight: Font.Bold
-                    Connections {
-                        target: root.mpdState
-                        function onMpdInfoChanged() {
-                            if (root.mpdState.mpdQueue.length === 0) {
-                                songTitle.text = qsTr("Queue is empty")
-                                return
+            // Wrapper to attach MouseArea
+            Item {
+                Layout.fillWidth: true
+                implicitHeight: innerLayout.implicitHeight
+
+                ColumnLayout {
+                    id: innerLayout 
+                    opacity: notification.text ? 0 : 1
+                    anchors.fill: parent
+                    
+                    WidgetLabel {
+                        id: songTitle
+                        font.weight: Font.Bold
+                        Connections {
+                            target: root.mpdState
+                            function onMpdInfoChanged() {
+                                if (root.mpdState.mpdQueue.length === 0) {
+                                    songTitle.text = qsTr("Queue is empty")
+                                    return
+                                }
+                                songTitle.text = FormatHelpers.title(mpdState.mpdInfo)
                             }
-                            songTitle.text = FormatHelpers.title(mpdState.mpdInfo)
                         }
                     }
-                }
 
-                WidgetLabel {
-                    id: songArtist
-                    Connections {
-                        target: root.mpdState
-                        function onMpdInfoChanged() {
-                            songArtist.text = FormatHelpers.artist(root.mpdState.mpdInfo)
+                    WidgetLabel {
+                        id: songArtist
+                        Connections {
+                            target: root.mpdState
+                            function onMpdInfoChanged() {
+                                songArtist.text = FormatHelpers.artist(root.mpdState.mpdInfo)
+                            }
                         }
                     }
-                }
 
-                WidgetLabel {
-                    id: songAlbum
-                    Connections {
-                        target: root.mpdState
+                    WidgetLabel {
+                        id: songAlbum
+                        Connections {
+                            target: root.mpdState
 
-                        function onMpdInfoChanged() {
-                            songAlbum.text = FormatHelpers.album(root.mpdState.mpdInfo)
+                            function onMpdInfoChanged() {
+                                songAlbum.text = FormatHelpers.album(root.mpdState.mpdInfo)
+                            }
                         }
                     }
+
                 }
 
                 MouseArea {
