@@ -247,6 +247,7 @@ PlasmaCore.Window {
                             color: Kirigami.Theme.textColor
                             font.bold: !win.narrowLayout
                             elide: Text.ElideRight
+                            textFormat: Text.PlainText
                             Connections {
                                 target: app.mpdState
                                 function onMpdInfoChanged() {
@@ -261,6 +262,7 @@ PlasmaCore.Window {
                             Layout.leftMargin: Kirigami.Units.largeSpacing
                             color: Kirigami.Theme.textColor
                             elide: Text.ElideRight
+                            textFormat: Text.PlainText
 
                             Connections {
                                 target: app.mpdState
@@ -278,6 +280,7 @@ PlasmaCore.Window {
                             Layout.bottomMargin: Kirigami.Units.largeSpacing
                             color: Kirigami.Theme.textColor
                             elide: Text.ElideRight
+                            textFormat: Text.PlainText
 
                             Connections {
                                 target: app.mpdState
