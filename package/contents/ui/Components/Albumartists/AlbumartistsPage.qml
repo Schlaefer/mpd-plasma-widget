@@ -217,7 +217,7 @@ Kirigami.ScrollablePage {
                 onTriggered: {
                     let songs = getSongs()
                     let callback = function() {
-                        showPassiveNotification(qsTr("%n appended", "", songs.length),  Kirigami.Units.humanMoment)
+                        app.showPassiveNotification(qsTr("%n appended", "", songs.length),  Kirigami.Units.humanMoment)
                     }
 
                     mpdState.addSongsToQueue(songs.map(song => song.file), "append", callback)
@@ -229,7 +229,7 @@ Kirigami.ScrollablePage {
                 onTriggered: {
                     let songs = getSongs()
                     let callback = function() {
-                        showPassiveNotification(qsTr("%n inserted", "", songs.length),  Kirigami.Units.humanMoment)
+                        app.showPassiveNotification(qsTr("%n inserted", "", songs.length),  Kirigami.Units.humanMoment)
                     }
                     mpdState.addSongsToQueue(songs.map(song => song.file), "insert", callback)
                 }
