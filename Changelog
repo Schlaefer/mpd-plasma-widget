@@ -1,8 +1,10 @@
 # Next
 
-# 6.3.1
+# 6.3.2
 
-- Minor code cleanup
+- Fixes notification popup in playlist-view
+- Updates text background shadow for plasma 6.6
+- Minor code improvements
 
 # 6.3.1
 
