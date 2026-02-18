@@ -8,7 +8,7 @@ PlasmoidItem {
 
     property bool cfgHorizontalLayout: Plasmoid.configuration.cfgHorizontalLayout
     property bool cfgSolidBackground: Plasmoid.configuration.cfgSolidBackground
-    property int cfgnarrowBreakPoint: Plasmoid.configuration.cfgnarrowBreakPoint
+    property int cfgNarrowBreakPoint: Plasmoid.configuration.cfgNarrowBreakPoint
     property int cfgCornerRadius: Plasmoid.configuration.cfgCornerRadius
     property int cfgFontSize: Plasmoid.configuration.cfgFontSize
     property int cfgShadowSpread: Plasmoid.configuration.cfgShadowSpread
@@ -44,7 +44,7 @@ PlasmoidItem {
             main._appWindow = component.createObject(null, {
                 initialHeight: availableScreenRect.height,
                 mpdState: mpdState,
-                narrowBreakPoint: cfgnarrowBreakPoint,
+                narrowBreakPoint: cfgNarrowBreakPoint,
                 volumeState: volumeState
             })
             main._appWindow.visible = true
@@ -84,6 +84,13 @@ PlasmoidItem {
         main: main
         mpdState: mpdState
         volumeState: volumeState
+    }
+
+    Connections {
+        target: win
+        function onCfgNarrowBreakPointChanged(width) {
+            _appWindow.narrowBreakPoint = cfgNarrowBreakPoint
+        }
     }
 
     Connections {

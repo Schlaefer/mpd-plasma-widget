@@ -33,7 +33,7 @@
             <default>30</default>
         </entry>
 
-        <entry name="cfgnarrowBreakPoint" type="Int">
+        <entry name="cfgNarrowBreakPoint" type="Int">
             <default>520</default>
         </entry>
 

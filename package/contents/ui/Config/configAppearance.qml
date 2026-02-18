@@ -11,7 +11,7 @@ Kirigami.FormLayout {
     property alias cfg_cfgHorizontalLayout: cfgHorizontalLayout.checked
     property alias cfg_cfgFontSize: cfgFontSize.value
     property alias cfg_cfgCornerRadius: cfgCornerRadius.value
-    property alias cfg_cfgnarrowBreakPoint: cfgnarrowBreakPoint.value
+    property alias cfg_cfgNarrowBreakPoint: cfgNarrowBreakPoint.value
     property alias cfg_cfgShadowSpread: cfgShadowSpread.value
     property alias cfg_cfgShadowColor: cfgShadowColor.color
     property alias cfg_cfgSolidBackground: cfgSolidBackground.checked
@@ -126,12 +126,12 @@ Kirigami.FormLayout {
         Kirigami.FormData.label: i18n("Narrow Layout Breakpoint:")
 
         PlasmaComponents.Slider{
-            id: cfgnarrowBreakPoint
+            id: cfgNarrowBreakPoint
             from: 0
             to: 720
             stepSize: 10
         }
 
-        PlasmaComponents.Label { text: cfgnarrowBreakPoint.value }
+        PlasmaComponents.Label { text: cfgNarrowBreakPoint.value }
     }
 }
