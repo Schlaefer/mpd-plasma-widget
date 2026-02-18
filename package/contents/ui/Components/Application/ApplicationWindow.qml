@@ -168,25 +168,23 @@ PlasmaCore.Window {
                     id: toolboxBackgroundImage
                     anchors.fill: parent
                     anchors.centerIn: parent
-                    visible: false
+                    visible: source
                     fillMode: Image.PreserveAspectCrop
-                }
 
-                MultiEffect {
-                    id: blurEffect
-                    anchors.fill: parent
-                    source: toolboxBackgroundImage
-                    autoPaddingEnabled: false
-                    blurEnabled: true
-                    blur: 0.8
-                    blurMax: 64
-                    visible: toolboxBackgroundImage.source
+                    layer.enabled: source
+                    layer.effect: MultiEffect {
+                        autoPaddingEnabled: false
+                        blurEnabled: true
+                        blur: 0.8
+                        blurMax: 128
+                        saturation: 0.5
+                    }
                 }
 
                 // Improve test and icon legibility
                 Rectangle {
                     anchors.fill: parent
-                    visible: blurEffect.visible
+                    visible: toolboxBackgroundImage.source
                     color: Qt.rgba(
                         Kirigami.Theme.backgroundColor.r,
                         Kirigami.Theme.backgroundColor.g,
