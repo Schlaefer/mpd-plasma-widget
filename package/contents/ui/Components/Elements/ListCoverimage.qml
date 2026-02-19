@@ -48,7 +48,8 @@ Item {
             if (typeof (coverManager) === "undefined") {
                 return
             }
-            let coverPath = coverManager.getCover(model)
+
+            let coverPath = coverManager.getCover(model, loadingPriority)
             if (coverPath === undefined) {
                 return false
             }

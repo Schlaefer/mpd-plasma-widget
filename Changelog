@@ -1,5 +1,7 @@
 # Next
 
+- Improves cover loading priority handling
+
 # 6.3.3
 
 - Fixes narrow layout config slider not applying immediately
