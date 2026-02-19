@@ -19,10 +19,17 @@ class FetchQueue {
         if (typeof(data) === 'undefined') {
             return
         }
-        if (this._queue[id] && this._queue[id].priority < priority) {
-            // Already exists with higher priority, don't lower it by accident
+        if (this._queue[id]) {
+            if(this._queue[id].priority > priority) {
+                // Existing item has become higher priority
+                this._debugMsg(`Increased priority ${id} from ${this._queue[id].priority} to ${priority}`)
+                this._queue[id].priority = priority
+            }
+            // Item already exists
+            this._debugMsg(`Item ${id} already exists.`)
             return
         }
+
         this._queue[id] = {
             // Looks silly. But alas sometimes if you just do a "data: data" it will
             // store the whole queue-item as empty and therefore undefined. Don't know
