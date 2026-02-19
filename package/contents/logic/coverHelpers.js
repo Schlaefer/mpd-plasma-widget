@@ -53,21 +53,14 @@ class FetchQueue {
      */
     next() {
         let keys = Object.keys(this._queue);
-        if (!keys || keys.length === 0)
+        if (!keys || keys.length === 0) {
             return false;
+        }
 
-        let nextItem
-        // let nextItem = this._queue[keys[0]]
-        keys.forEach(key => {
-            if (!nextItem) {
-                nextItem = this._queue[key]
-            }
-            else {
-                if (this._queue[key].priority < nextItem.priority) {
-                    nextItem = this._queue[key]
-                }
-            }
-        }, this)
+        const lowestKey = keys.reduce((lowest, key) => {
+            return this._queue[key].priority < this._queue[lowest].priority ? key : lowest;
+        });
+        const nextItem = this._queue[lowestKey]
 
         this._debugMsg(`next() returned ${nextItem.data.file} with priority ${nextItem.priority}`)
         return nextItem.data
