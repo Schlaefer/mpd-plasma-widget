@@ -35,6 +35,14 @@ PlasmaCore.Window {
     minimumWidth: 250
     minimumHeight: app.footer.height
 
+    // Listen to changes made in the widget config
+    Connections {
+        target: main
+        function onCfgNarrowBreakPointChanged() {
+            win.narrowBreakPoint = main.cfgNarrowBreakPoint
+        }
+    }
+
     Component.onCompleted: {
         height = (initialHeight > 800 ? 0.7 : 0.95) * initialHeight
         width = height / 1.60

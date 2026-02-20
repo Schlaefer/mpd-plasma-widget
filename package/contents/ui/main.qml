@@ -87,13 +87,6 @@ PlasmoidItem {
     }
 
     Connections {
-        target: win
-        function onCfgNarrowBreakPointChanged(width) {
-            _appWindow.narrowBreakPoint = cfgNarrowBreakPoint
-        }
-    }
-
-    Connections {
         function onCfgMpdHostChanged() {
             mpdState.connect()
         }
