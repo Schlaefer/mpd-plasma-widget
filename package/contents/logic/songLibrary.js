@@ -54,29 +54,41 @@ class SongLibrary {
 
         let foundSongs = []
 
-        searchText = searchText.toLowerCase()
+        const search = searchText.toLowerCase()
+        const albumsByArtist = this._albums;
 
-        onAartistMatches:
-        for (let aartist in this._albums) {
-            if (aartist.toLowerCase().indexOf(searchText) !== -1) {
-                for (let album in this._albums[aartist]) {
-                    foundSongs = foundSongs.concat(this._albums[aartist][album])
+        for (const aartist in this._albums) {
+            const aartistLower = aartist.toLowerCase()
+            const aartistAlbums = albumsByArtist[aartist]; 
+
+            if (aartistLower.includes(search)) {
+                for (const album in aartistAlbums) {
+                    foundSongs.push(...aartistAlbums[album])
                 }
-                continue onAartistMatches
+                continue
             }
 
-            onAlbumMatches:
-            for (let album in this._albums[aartist]) {
-                if (album.toLowerCase().indexOf(searchText) !== -1) {
-                    foundSongs = foundSongs.concat(this._albums[aartist][album])
-                    continue onAlbumMatches
-                }
+            for (const album in aartistAlbums) {
+               const albumLower = album.toLowerCase(); 
+               const songs = aartistAlbums[album];
 
-                for (let i = 0; i < this._albums[aartist][album].length; i++) {
-                    if (this._albums[aartist][album][i].title && this._albums[aartist][album][i].title.toLowerCase().indexOf(searchText) !== -1) {
-                        foundSongs.push(this._albums[aartist][album][i])
-                    } else if (this._albums[aartist][album][i].genre && this._albums[aartist][album][i].genre.toLowerCase().indexOf(searchText) !== -1)  {
-                        foundSongs.push(this._albums[aartist][album][i])
+                if (albumLower.includes(search)) {
+                    foundSongs.push(...songs)
+                    continue
+                }
+                for (let i = 0; i < songs.length; i++) {
+                    const song = songs[i]
+
+                    const title = song.title
+                    if (title && title.toLowerCase().includes(search)) {
+                        foundSongs.push(song);
+                        continue
+                    }
+
+                    const genre = song.genre
+                    if (genre && genre.toLowerCase().includes(search)) {
+                        foundSongs.push(song);
+                        continue
                     }
                 }
             }
