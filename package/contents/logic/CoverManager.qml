@@ -8,11 +8,12 @@ QQ2.Item {
     signal gotCover(string id)
     signal afterReset
 
+
     property bool fetching: false
     property var currentlyFetching
-    property string filePrefix: "mpdcover-"
     property var covers: ({})
     property var fetchQueue: new CoverHelpers.FetchQueue()
+    readonly property string filePrefix: "mpdcover-"
 
     function reset() {
         covers = {}
@@ -101,6 +102,10 @@ QQ2.Item {
     }
 
     function clearCache() {
+        if (!main.cfgCacheRoot || !filePrefix) {
+            return
+        }
+
         let cmd = "rm " + main.cfgCacheRoot + "/" + filePrefix + "*"
         executable.exec(cmd, function () { coverManager.reset() })
     }
