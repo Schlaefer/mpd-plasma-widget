@@ -4,6 +4,7 @@
 - Includes composer tag in library search
 - Fixes missing button tooltips in Queue and Playlists
 - Improves cover loading priority handling
+- Fixes Deselect All button flickering in and out on window focus change
 - Minor search performance improvements
 
 # 6.3.3

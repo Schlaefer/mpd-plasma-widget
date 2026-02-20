@@ -162,8 +162,9 @@ ListViewGeneric {
         text: win.narrowLayout ? "" : buttonText
         tooltip: qsTr("Deselect All")
         icon.name: Mpdw.icons.selectNone
-        shortcut: "Shift+A"
-        enabled: root.activeFocus
+        // Both queue and album pages can have the button at the same time. Only act
+        // on the view visisble to the user.
+        shortcut: root.activeFocus ? "Shift+A" : undefined
         onTriggered: root.model.deselectAll()
     }
 
