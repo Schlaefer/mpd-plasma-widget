@@ -111,7 +111,7 @@ Kirigami.ScrollablePage {
                     tooltip: qsTr("Remove Selected Songs")
                     icon.name: Mpdw.icons.queueRemoveSelected
                     shortcut: "Del"
-                    enabled: numberSelected
+                    enabled: songlistView.model.selected.length
                     onTriggered: {
                         let positions = songlistView.model.getSelected()
                         songlistView.model.selectedRemove()
@@ -120,14 +120,6 @@ Kirigami.ScrollablePage {
                 }
             ]
             rightActions: [songlistView.actionDeselect]
-
-            Connections {
-                target: songlistView.model
-                function onSelectedChanged() {
-                    // @TODO
-                    songlistView.headerItem.numberSelected = songlistView.model.selected.length
-                }
-            }
         }
 
         Kirigami.PlaceholderMessage {

@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-// @TODO QT6
 import Qt5Compat.GraphicalEffects
 import org.kde.kirigami as Kirigami
 import "./../Mpdw.js" as Mpdw

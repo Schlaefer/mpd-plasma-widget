@@ -2,7 +2,6 @@ import QtQuick
 import QtQuick.Layouts
 import org.kde.plasma.core as PlasmaCore
 import org.kde.kirigami as Kirigami
-// @TODO QT6
 import Qt5Compat.GraphicalEffects
 import org.kde.plasma.components as PlasmaComponents
 
@@ -18,7 +17,8 @@ PlasmaComponents.Label {
     Layout.fillWidth: true
 
     layer.enabled: !main.cfgSolidBackground
-    // @TODO looks to strong in light plasma theme/desktop background
+    // @SOMEDAY Probably needs a user font color setting to work on all desktop
+    // backgrounds.
     layer.effect: DropShadow {
         verticalOffset: 1
         horizontalOffset: 0

@@ -9,7 +9,6 @@ Item {
 
     property list<Kirigami.Action> leftActions
     property list<Kirigami.Action> rightActions
-    property int numberSelected: 0
 
     z: 10
     width: parent.width

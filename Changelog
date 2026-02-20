@@ -6,6 +6,7 @@
 - Improves cover loading priority handling
 - Fixes Deselect All button flickering in and out on window focus change
 - Minor search performance improvements
+- Minor code refactoring
 
 # 6.3.3
 
