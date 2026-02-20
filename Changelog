@@ -1,8 +1,9 @@
 # Next
 
+- Clicking on text of current song in application-footer jumps to current song in queue (equivalent shortcut L)
+- Includes composer tag in library search
 - Improves cover loading priority handling
 - Minor search performance improvements
-- Includes composer tag in library search
 
 # 6.3.3
 

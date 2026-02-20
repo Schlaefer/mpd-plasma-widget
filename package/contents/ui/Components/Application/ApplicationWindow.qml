@@ -239,53 +239,72 @@ PlasmaCore.Window {
                         Layout.minimumWidth: 50
                         Layout.minimumHeight: 50
                         Layout.fillWidth: true
-                        Text {
-                            id: songTitle
+
+                        Item {
                             Layout.fillWidth: true
-                            Layout.leftMargin: Kirigami.Units.largeSpacing
-                            Layout.bottomMargin: (win.narrowLayout) ?  Kirigami.Units.largeSpacing : 0
-                            color: Kirigami.Theme.textColor
-                            font.bold: !win.narrowLayout
-                            elide: Text.ElideRight
-                            textFormat: Text.PlainText
-                            Connections {
-                                target: app.mpdState
-                                function onMpdInfoChanged() {
-                                    songTitle.text = FormatHelpers.title(app.mpdState.mpdInfo)
-                                }
+                            implicitWidth: innerLayout.implicitWidth
+                            implicitHeight: innerLayout.implicitHeight
+
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: showCurrentSongAction.trigger()
                             }
-                        }
-                        Text {
-                            id: songArtist
-                            visible: !win.narrowLayout
-                            Layout.fillWidth: true
-                            Layout.leftMargin: Kirigami.Units.largeSpacing
-                            color: Kirigami.Theme.textColor
-                            elide: Text.ElideRight
-                            textFormat: Text.PlainText
 
-                            Connections {
-                                target: app.mpdState
-                                function onMpdInfoChanged() {
-                                    songArtist.text = FormatHelpers.artist(app.mpdState.mpdInfo)
+                            ColumnLayout {
+                                id: innerLayout
+                                anchors.fill: parent
+
+                                Text {
+                                    id: songTitle
+                                    Layout.fillWidth: true
+                                    Layout.leftMargin: Kirigami.Units.largeSpacing
+                                    Layout.bottomMargin: (win.narrowLayout) ?  Kirigami.Units.largeSpacing : 0
+                                    color: Kirigami.Theme.textColor
+                                    font.bold: !win.narrowLayout
+                                    elide: Text.ElideRight
+                                    textFormat: Text.PlainText
+
+                                    Connections {
+                                        target: app.mpdState
+                                        function onMpdInfoChanged() {
+                                            songTitle.text = FormatHelpers.title(app.mpdState.mpdInfo)
+                                        }
+                                    }
                                 }
-                            }
-                        }
 
-                        Text {
-                            id: songAlbum
-                            visible: !win.narrowLayout
-                            Layout.fillWidth: true
-                            Layout.leftMargin: Kirigami.Units.largeSpacing
-                            Layout.bottomMargin: Kirigami.Units.largeSpacing
-                            color: Kirigami.Theme.textColor
-                            elide: Text.ElideRight
-                            textFormat: Text.PlainText
+                                Text {
+                                    id: songArtist
+                                    visible: !win.narrowLayout
+                                    Layout.fillWidth: true
+                                    Layout.leftMargin: Kirigami.Units.largeSpacing
+                                    color: Kirigami.Theme.textColor
+                                    elide: Text.ElideRight
+                                    textFormat: Text.PlainText
 
-                            Connections {
-                                target: app.mpdState
-                                function onMpdInfoChanged() {
-                                    songAlbum.text = FormatHelpers.album(app.mpdState.mpdInfo)
+                                    Connections {
+                                        target: app.mpdState
+                                        function onMpdInfoChanged() {
+                                            songArtist.text = FormatHelpers.artist(app.mpdState.mpdInfo)
+                                        }
+                                    }
+                                }
+
+                                Text {
+                                    id: songAlbum
+                                    visible: !win.narrowLayout
+                                    Layout.fillWidth: true
+                                    Layout.leftMargin: Kirigami.Units.largeSpacing
+                                    Layout.bottomMargin: Kirigami.Units.largeSpacing
+                                    color: Kirigami.Theme.textColor
+                                    elide: Text.ElideRight
+                                    textFormat: Text.PlainText
+
+                                    Connections {
+                                        target: app.mpdState
+                                        function onMpdInfoChanged() {
+                                            songAlbum.text = FormatHelpers.album(app.mpdState.mpdInfo)
+                                        }
+                                    }
                                 }
                             }
                         }
