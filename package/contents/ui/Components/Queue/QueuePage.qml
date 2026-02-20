@@ -151,7 +151,7 @@ Kirigami.ScrollablePage {
                     icon.name: (songlistItem.playingIndex === model.index && mpdState.mpdPlaying)
                                ? Mpdw.icons.queuePause
                                : Mpdw.icons.queuePlay
-                    text: qsTr("Play Now")
+                    tooltip: qsTr("Play Now")
                     onTriggered: {
                         if (songlistItem.playingIndex === model.index) {
                             mpdState.togglePlayPause()
@@ -162,7 +162,7 @@ Kirigami.ScrollablePage {
                 },
                 Kirigami.Action {
                     icon.name: Mpdw.icons.queueRemoveSingle
-                    text: qsTr("Remove from Queue")
+                    tooltip: qsTr("Remove from Queue")
                     visible: !win.narrowLayout
                     onTriggered: {
                         let index = model.index

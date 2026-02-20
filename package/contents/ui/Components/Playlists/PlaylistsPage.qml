@@ -43,14 +43,14 @@ Kirigami.ScrollablePage {
             actions: [
                 Kirigami.Action {
                     icon.name: Mpdw.icons.queuePlay
-                    text: qsTr("Play")
+                    tooltip: qsTr("Replace Queue and Start Playing")
                     onTriggered: {
                         mpdState.playPlaylist(listItemPlaylist.title)
                     }
                 },
                 Kirigami.Action {
                     icon.name: Mpdw.icons.queueAppend
-                    text: qsTr("Append")
+                    tooltip: qsTr("Append to End of Queue")
                     onTriggered: {
                         let playlistTitle = listItemPlaylist.title
                         let callback = () => {
@@ -64,7 +64,7 @@ Kirigami.ScrollablePage {
                 },
                 Kirigami.Action {
                     icon.name: Mpdw.icons.playlistDelete
-                    text: qsTr("Remove Playlist…")
+                    tooltip: qsTr("Remove Playlist…")
                     onTriggered: {
                         deleteConfirmationDialog.itemTitle = listItemPlaylist.title
                         deleteConfirmationDialog.open()
