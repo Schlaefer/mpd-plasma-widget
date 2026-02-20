@@ -56,11 +56,13 @@ class SongLibrary {
 
         const search = searchText.toLowerCase()
         const albumsByArtist = this._albums;
+        const songFields = ['title', 'genre', 'composer']
 
         for (const aartist in this._albums) {
             const aartistLower = aartist.toLowerCase()
-            const aartistAlbums = albumsByArtist[aartist]; 
+            const aartistAlbums = albumsByArtist[aartist];
 
+            // Search in album-artist
             if (aartistLower.includes(search)) {
                 for (const album in aartistAlbums) {
                     foundSongs.push(...aartistAlbums[album])
@@ -69,32 +71,20 @@ class SongLibrary {
             }
 
             for (const album in aartistAlbums) {
-               const albumLower = album.toLowerCase(); 
-               const songs = aartistAlbums[album];
+                const albumLower = album.toLowerCase();
+                const songs = aartistAlbums[album];
 
+                // Search in album title
                 if (albumLower.includes(search)) {
                     foundSongs.push(...songs)
                     continue
                 }
+
+                // Search for specific tags in individual songs
                 for (let i = 0; i < songs.length; i++) {
                     const song = songs[i]
-
-                    const title = song.title
-                    if (title && title.toLowerCase().includes(search)) {
+                    if (songFields.some(tag => song[tag] && song[tag].toLowerCase().includes(search))) {
                         foundSongs.push(song);
-                        continue
-                    }
-
-                    const genre = song.genre
-                    if (genre && genre.toLowerCase().includes(search)) {
-                        foundSongs.push(song);
-                        continue
-                    }
-
-                    const composer = song.composer
-                    if (composer && composer.toLowerCase().includes(search)) {
-                        foundSongs.push(song);
-                        continue
                     }
                 }
             }
