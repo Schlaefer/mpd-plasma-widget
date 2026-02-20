@@ -90,6 +90,12 @@ class SongLibrary {
                         foundSongs.push(song);
                         continue
                     }
+
+                    const composer = song.composer
+                    if (composer && composer.toLowerCase().includes(search)) {
+                        foundSongs.push(song);
+                        continue
+                    }
                 }
             }
         }

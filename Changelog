@@ -2,6 +2,7 @@
 
 - Improves cover loading priority handling
 - Minor search performance improvements
+- Includes composer tag in library search
 
 # 6.3.3
 
