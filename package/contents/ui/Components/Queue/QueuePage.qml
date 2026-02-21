@@ -173,47 +173,52 @@ Kirigami.ScrollablePage {
         listView: songlistView
     }
 
+
+    function populateQueue() {
+        // Queue is empty, clear everything
+        if (mpdState.mpdQueue.length === 0) {
+            songlistView.model.clear()
+            return
+        }
+
+        var i = 0
+        for (i; i < mpdState.mpdQueue.length; i++) {
+            let mpdSong = mpdState.mpdQueue[i]
+            let ourSong = songlistView.model.get(i)
+
+            //console.log("------- Queue Refresh Item ---------")
+            //console.log(`mpd-file: ${mpdSong.file}`)
+
+            if (ourSong) {
+                // console.log(`our-file: ${ourSong.file}`)
+                if (mpdSong.file === ourSong.file) {
+                    //console.log('Keeping our song.')
+                    // As long as mpd-queue matches ours do nothing
+                    continue
+                } else {
+                    // Clear out selection (cache) of the item
+                    songlistView.model.select(i, false)
+                    // console.log('Removing our song.')
+                    songlistView.model.remove(i)
+                }
+
+            }
+            songlistView.model.insert(i, mpdSong)
+        }
+
+        // Remove all additional items in our queue not in mpd's
+        for (let k = songlistView.count - 1; k >= i; k--) {
+            songlistView.model.remove(k)
+        }
+
+        followMode.showCurrent()
+    }
+
     Connections {
         target: mpdState
 
         function onMpdQueueChanged() {
-            // Queue is empty, clear everything
-            if (mpdState.mpdQueue.length === 0) {
-                songlistView.model.clear()
-                return
-            }
-
-            var i = 0
-            for (i; i < mpdState.mpdQueue.length; i++) {
-                let mpdSong = mpdState.mpdQueue[i]
-                let ourSong = songlistView.model.get(i)
-
-                //console.log("------- Queue Refresh Item ---------")
-                //console.log(`mpd-file: ${mpdSong.file}`)
-
-                if (ourSong) {
-                    // console.log(`our-file: ${ourSong.file}`)
-                    if (mpdSong.file === ourSong.file) {
-                        //console.log('Keeping our song.')
-                        // As long as mpd-queue matches ours do nothing
-                        continue
-                    } else {
-                        // Clear out selection (cache) of the item
-                        songlistView.model.select(i, false)
-                        // console.log('Removing our song.')
-                        songlistView.model.remove(i)
-                    }
-
-                }
-                songlistView.model.insert(i, mpdSong)
-            }
-
-            // Remove all additional items in our queue not in mpd's
-            for (let k = songlistView.count - 1; k >= i; k--) {
-                songlistView.model.remove(k)
-            }
-
-            followMode.showCurrent()
+            queuePage.populateQueue()
         }
 
         function onMpdInfoChanged() {
@@ -222,10 +227,7 @@ Kirigami.ScrollablePage {
     }
 
     Component.onCompleted: {
-        // @BOGUS Initiates triggering populating Queue and Playlists on app
-        // window opening. Make it ask properly for the already available data from
-        // mpdState in both places. Required for Loader those pages anyway.
-        mpdState.update()
+        queuePage.populateQueue()
     }
 
     Connections {

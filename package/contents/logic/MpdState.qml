@@ -110,8 +110,8 @@ Item {
      * Inits update of all mpd data required by our plasmoid
      */
     function update() {
-        root.getStatus()
-        root.getQueue() // also calls getInfo()
+        root._getStatus()
+        root._getQueue() // also calls getInfo()
     }
 
     /**
@@ -120,7 +120,7 @@ Item {
       * When mpd is stopped it evalutates what is going to be played next on
       * toggling "play".
       */
-    function getInfo() {
+    function _getInfo() {
         executable.execCmd('currentsong', [], function (exitCode, stdout) {
             if (exitCode !== 0) {
                 return
@@ -147,7 +147,7 @@ Item {
         })
     }
 
-    function getQueue() {
+    function _getQueue() {
         executable.execCmd("playlistinfo", [], function (exitCode, stdout) {
             if (exitCode !== 0) {
                 return
@@ -160,11 +160,11 @@ Item {
             }
 
             // Info evaluates queue data
-            getInfo()
+            _getInfo()
         })
     }
 
-    function getStatus() {
+    function _getStatus() {
         executable.execCmd("status", [], function (exitCode, stdout) {
             if (exitCode !== 0) {
                 return
@@ -436,7 +436,7 @@ Item {
         id: statusUpdateTimer
         interval: 100
         onTriggered: {
-            root.getQueue()
+            root._getQueue()
         }
     }
 
@@ -444,8 +444,8 @@ Item {
         id: infoUpdateTimer
         interval: 100
         onTriggered: {
-            root.getStatus()
-            root.getInfo()
+            root._getStatus()
+            root._getInfo()
         }
     }
 
@@ -467,11 +467,11 @@ Item {
                 }
 
                 if (stdout.includes('"mixer"')) {
-                    root.getStatus()
+                    root._getStatus()
                 }
 
                 if (stdout.includes('"options"')) {
-                    root.getStatus()
+                    root._getStatus()
                 }
 
                 if (stdout.includes('playlist')) {

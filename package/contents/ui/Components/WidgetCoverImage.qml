@@ -113,6 +113,10 @@ Item {
             coverImageContainer.sourceChanged(coverImage.source)
         }
 
+        Component.onCompleted: {
+            coverImage.updateCover()
+        }
+
         Connections {
             target: mpdState
 

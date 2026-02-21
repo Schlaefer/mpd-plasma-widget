@@ -271,13 +271,7 @@ PlasmaCore.Window {
                                     font.bold: !win.narrowLayout
                                     elide: Text.ElideRight
                                     textFormat: Text.PlainText
-
-                                    Connections {
-                                        target: app.mpdState
-                                        function onMpdInfoChanged() {
-                                            songTitle.text = FormatHelpers.title(app.mpdState.mpdInfo)
-                                        }
-                                    }
+                                    text: FormatHelpers.title(app.mpdState.mpdInfo)
                                 }
 
                                 Text {
@@ -288,13 +282,7 @@ PlasmaCore.Window {
                                     color: Kirigami.Theme.textColor
                                     elide: Text.ElideRight
                                     textFormat: Text.PlainText
-
-                                    Connections {
-                                        target: app.mpdState
-                                        function onMpdInfoChanged() {
-                                            songArtist.text = FormatHelpers.artist(app.mpdState.mpdInfo)
-                                        }
-                                    }
+                                    text: FormatHelpers.artist(app.mpdState.mpdInfo)
                                 }
 
                                 Text {
@@ -306,13 +294,7 @@ PlasmaCore.Window {
                                     color: Kirigami.Theme.textColor
                                     elide: Text.ElideRight
                                     textFormat: Text.PlainText
-
-                                    Connections {
-                                        target: app.mpdState
-                                        function onMpdInfoChanged() {
-                                            songAlbum.text = FormatHelpers.album(app.mpdState.mpdInfo)
-                                        }
-                                    }
+                                    text: FormatHelpers.album(app.mpdState.mpdInfo)
                                 }
                             }
                         }
