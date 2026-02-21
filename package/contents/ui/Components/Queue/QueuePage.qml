@@ -43,9 +43,10 @@ Kirigami.ScrollablePage {
                             Kirigami.Action {
                                 icon.name: Mpdw.icons.queueSaveReplace
                                 text: qsTr("Replace Playlist…")
-                                 shortcut: "Ctrl+Shift+S"
+                                shortcut: "Ctrl+Shift+S"
                                 onTriggered: {
-                                    queueDialogReplacePl.open()
+                                    queueDialogReplacePlLoader.active = true
+                                    queueDialogReplacePlLoader.item.open()
                                 }
                             }
                             Kirigami.Action {
@@ -225,10 +226,6 @@ Kirigami.ScrollablePage {
         // window opening. Make it ask properly for the already available data from
         // mpdState in both places. Required for Loader those pages anyway.
         mpdState.update()
-
-        // Get playlists for queue save and replace dialogs.
-        // @SOMEDAY Move into dialogs and request only on dialog opening.
-        mpdState.getPlaylists()
     }
 
     Connections {
@@ -249,8 +246,10 @@ Kirigami.ScrollablePage {
         id: queueDialogSave
     }
 
-    // @SOMEDAY loader
-    QueueDialogReplacePl {
-        id: queueDialogReplacePl
+    Loader {
+        id: queueDialogReplacePlLoader
+        source: "QueueDialogReplacePl.qml"
+        active: false
+        anchors.fill: parent
     }
 }

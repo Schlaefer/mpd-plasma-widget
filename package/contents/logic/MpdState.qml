@@ -5,7 +5,6 @@ Item {
     id: root
 
     signal gotPlaylist(var plData)
-    signal playedPlaylist(string title)
     signal savedQueueAsPlaylist(bool success)
 
     property string scriptRoot
@@ -19,6 +18,7 @@ Item {
     property var mpdQueue: []
     property bool mpdPlaying
     property var mpdPlaylists: ({})
+    property string lastPlayedPlaylist: ""
     property var library
     property bool consume: false
     property bool repeat: false
@@ -318,8 +318,7 @@ Item {
         clearQueue()
         loadPlaylist(playlist)
         playInQueue(0)
-        playedPlaylist(playlist)
-        executable.execList()
+        executable.execList(() => root.lastPlayedPlaylist = playlist)
     }
 
     function getPlaylists() {

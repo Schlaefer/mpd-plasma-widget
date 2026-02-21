@@ -12,13 +12,6 @@ Kirigami.PromptDialog {
     dialogType: Kirigami.PromptDialog.None
     iconName: ""
 
-    function selectPlaylist(playlist) {
-        let found = listCombo.find(playlist)
-        if (found !== -1) {
-            listCombo.currentIndex = found
-        }
-    }
-
     customFooterActions: [
         Kirigami.Action {
             text: qsTr("Replace Playlist")
@@ -43,23 +36,37 @@ Kirigami.PromptDialog {
         model: ListModel {}
         implicitWidth: parent.width
 
+        function selectLastPlayedPlaylist() {
+            const lastPl = mpdState.lastPlayedPlaylist
+            if (!lastPl) {
+                return
+            }
+            const found = listCombo.find(lastPl)
+            if (found !== -1) {
+                listCombo.currentIndex = found
+            }
+        }
+
         function populateModel() {
             listCombo.model.clear()
             let playlists = mpdState.mpdPlaylists
             for (let i in playlists) {
                 listCombo.model.append({ "title": playlists[i] })
             }
+            listCombo.selectLastPlayedPlaylist()
         }
 
-        Component.onCompleted: { populateModel() }
+        Component.onCompleted: {
+            mpdState.getPlaylists()
+        }
 
         Connections {
             target: mpdState
             function onMpdPlaylistsChanged() {
                 listCombo.populateModel()
             }
-            function onPlayedPlaylist(playlist) {
-                queueDialogReplacePl.selectPlaylist(playlist)
+            function onLastPlayedPlaylistChanged() {
+                listCombo.selectLastPlayedPlaylist()
             }
         }
     }

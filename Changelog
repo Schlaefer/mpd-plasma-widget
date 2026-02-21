@@ -1,5 +1,7 @@
 # Next
 
+- Minor code refactoring
+
 # 6.4.0
 
 - Clicking on text of current song in application-footer jumps to current song in queue (equivalent shortcut L)
