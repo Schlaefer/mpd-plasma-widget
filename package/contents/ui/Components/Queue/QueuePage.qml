@@ -37,7 +37,8 @@ Kirigami.ScrollablePage {
                                 text: qsTr("Save as New Playlist…")
                                 shortcut: "Ctrl+S"
                                 onTriggered: {
-                                    queueDialogSave.open()
+                                    queueDialogSaveLoader.active = true
+                                    queueDialogSaveLoader.item.open()
                                 }
                             }
                             Kirigami.Action {
@@ -243,9 +244,11 @@ Kirigami.ScrollablePage {
         }
     }
 
-    // @SOMEDAY loader
-    QueueDialogSave {
-        id: queueDialogSave
+    Loader {
+        id: queueDialogSaveLoader
+        source: "QueueDialogSave.qml"
+        active: false
+        anchors.fill: parent
     }
 
     Loader {

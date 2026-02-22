@@ -77,7 +77,11 @@ Kirigami.PromptDialog {
                     }
                 }
                 target: root
-                }
+            }
+
+            Component.onCompleted: {
+                mpdState.getPlaylists()
+            }
 
             Timer {
                 id: waitForAnimationToFinish
