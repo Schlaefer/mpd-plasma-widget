@@ -26,6 +26,7 @@ Item {
         anchors.fill: parent
 
         property int loadingPriority: 100
+        property bool _waitingForCover: false
 
         asynchronous: true
         cache: true
@@ -43,32 +44,29 @@ Item {
             image.source = "file://" + coverPath + "-small.jpg"
         }
 
-        function onGotCover(id) {
-            // @BOGUS Why did we do that? What's happening here?
-            if (typeof (coverManager) === "undefined") {
-                return
-            }
-
-            let coverPath = coverManager.getCover(model, loadingPriority)
-            if (coverPath === undefined) {
-                return false
-            }
-            coverManager.gotCover.disconnect(onGotCover)
-            setCover(coverPath)
-        }
-
         Component.onCompleted: {
             if (model.orphaned) {
                 return
             }
 
-            let coverPath = coverManager.getCover(model, loadingPriority)
+            const coverPath = coverManager.getCover(model, loadingPriority)
             if (coverPath) {
                 setCover(coverPath)
-
-                return
             }
-            coverManager.gotCover.connect(onGotCover)
+            _waitingForCover = true
+        }
+
+        Connections {
+            enabled: image._waitingForCover
+            target: coverManager
+            function onGotCover() {
+                const coverPath = coverManager.getCover(model, image.loadingPriority)
+                if (!coverPath) {
+                    return
+                }
+                image.setCover(coverPath)
+                image._waitingForCover = false
+            }
         }
     }
 
