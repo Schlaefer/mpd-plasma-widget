@@ -66,6 +66,7 @@ Item {
     }
 
     Component.onCompleted: {
+        listView.visible = false
         win.frameSwapped.connect(onFirstDrawnFrame)
     }
 
@@ -73,6 +74,7 @@ Item {
         win.frameSwapped.disconnect(onFirstDrawnFrame)
         root.viewReady = true
         root.showCurrent()
+        listView.visible = true
     }
 
     // Debug

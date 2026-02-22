@@ -127,9 +127,9 @@ PlasmoidItem {
     // Development convenience to automatically open the app window on widget start.
     Timer {
         running: true
-        interval: 200
+        interval: 400
         onTriggered: {
-           // toggleAppWindow()
+            // toggleAppWindow()
         }
     }
 }
