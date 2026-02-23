@@ -34,9 +34,7 @@ Item {
             listView.positionViewAtIndex(0, ListView.Beginning)
             break
         case "startSearch":
-            searchField.forceActiveFocus()
-            searchField.selectAll()
-            viewState: "search"
+            searchFieldFocusTimer.start()
             break
         case "search":
             break
@@ -46,6 +44,18 @@ Item {
             filter()
             listView.positionViewAtIndex(0, ListView.Beginning)
             listView.forceActiveFocus()
+        }
+    }
+
+    // @BOGUS We wait here for starting up and immediately switching from Queue to
+    // Artists, which is still being drawn.
+    Timer {
+        id: searchFieldFocusTimer
+        interval: 1
+        onTriggered: {
+            searchField.forceActiveFocus()
+            searchField.selectAll()
+            viewState: "search"
         }
     }
 

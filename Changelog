@@ -2,6 +2,7 @@
 
 - Adds compact presentation for panels
 - Fixes no "empty queue" message on desktop widget
+- Improves Ctrl-F search behavior
 - Code refactoring and cleanup
 
 # 6.4.1
