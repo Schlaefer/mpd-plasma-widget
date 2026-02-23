@@ -1,5 +1,7 @@
 # Next
 
+# 6.5.0
+
 - Adds compact presentation for panels
 - Fixes no "empty queue" message on desktop widget
 - Improves Ctrl-F search behavior
