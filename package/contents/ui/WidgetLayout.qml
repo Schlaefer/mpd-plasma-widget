@@ -98,12 +98,20 @@ Item {
                         Connections {
                             target: root.mpdState
                             function onMpdInfoChanged() {
-                                if (root.mpdState.mpdQueue.length === 0) {
-                                    songTitle.text = qsTr("Queue is empty")
-                                    return
-                                }
-                                songTitle.text = FormatHelpers.title(mpdState.mpdInfo)
+                                songTitle.setSongTitle()
                             }
+                        }
+
+                        function setSongTitle() {
+                            if (root.mpdState.mpdQueue.length === 0) {
+                                songTitle.text = qsTr("Queue is empty")
+                                return
+                            }
+                            songTitle.text = FormatHelpers.title(mpdState.mpdInfo)
+                        }
+
+                        Component.onCompleted: {
+                            songTitle.setSongTitle()
                         }
                     }
 

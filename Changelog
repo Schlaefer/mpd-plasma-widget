@@ -1,6 +1,7 @@
 # Next
 
 - Adds compact presentation for panels
+- Fixes no "empty queue" message on desktop widget
 - Code refactoring and cleanup
 
 # 6.4.1
