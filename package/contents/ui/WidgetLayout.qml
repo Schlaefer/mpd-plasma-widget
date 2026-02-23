@@ -12,24 +12,26 @@ Item {
 
     anchors.fill: parent
 
+    required property int alignment
+    required property int fontSize
+    required property bool horizontalLayout
+    required property bool solidBackground
     property var main
     property MpdState mpdState
     property VolumeState volumeState
+    property alias cornerRadius: coverImageContainer.coverRadius
+    property alias shadowColor: coverImageContainer.shadowColor
+    property alias shadowSpread: coverImageContainer.shadowSpread
 
     GridLayout {
-        columns: root.main.cfgHorizontalLayout ? 3 : 1
-        rows: root.main.cfgHorizontalLayout ? 1 : 3
+        columns: root.horizontalLayout ? 3 : 1
+        rows: root.horizontalLayout ? 1 : 3
         anchors.fill: parent
 
         // Cover Image
         WidgetCoverImage {
             id: coverImageContainer
-
             applyEffects: true
-            coverRadius: root.main.cfgCornerRadius
-            shadowColor: root.main.cfgShadowColor
-            shadowSpread: root.main.cfgShadowSpread
-
             onHeightChanged: sourceSizeTimer.restart()
             onWidthChanged: sourceSizeTimer.restart()
 
@@ -47,23 +49,23 @@ Item {
                 sourceSizeTimer.start()
             }
 
-            Layout.minimumWidth: root.main.cfgHorizontalLayout ? parent.height : parent.width
+            Layout.minimumWidth: root.horizontalLayout ? parent.height : parent.width
         }
 
         // Volume Slider
         PlasmaComponents.Slider {
             id: volumeSlider
 
-            Layout.fillHeight: root.main.cfgHorizontalLayout
-            Layout.fillWidth: !root.main.cfgHorizontalLayout
-            Layout.leftMargin: !root.main.cfgHorizontalLayout ? Kirigami.Units.largeSpacing : 0
-            Layout.rightMargin: !root.main.cfgHorizontalLayout ? Kirigami.Units.largeSpacing : 0
+            Layout.fillHeight: root.horizontalLayout
+            Layout.fillWidth: !root.horizontalLayout
+            Layout.leftMargin: !root.horizontalLayout ? Kirigami.Units.largeSpacing : 0
+            Layout.rightMargin: !root.horizontalLayout ? Kirigami.Units.largeSpacing : 0
 
             // Orientation bugged? Hide on horizontal layout for now
             // See: https://bugs.kde.org/show_bug.cgi?id=474611
-            // Layout.maximumWidth: cfgHorizontalLayout ? 15 : -1
-            // orientation: cfgHorizontalLayout ? Qt.Vertical : Qt.Horizontal
-            visible: !root.main.cfgHorizontalLayout
+            // Layout.maximumWidth: root.horizontalLayout ? 15 : -1
+            // orientation: root.horizontalLayout ? Qt.Vertical : Qt.Horizontal
+            visible: !root.horizontalLayout
             from: 0
             to: 100
             stepSize: 1
@@ -89,7 +91,10 @@ Item {
                     
                     WidgetLabel {
                         id: songTitle
+                        alignment: root.alignment
+                        fontSize: root.fontSize
                         font.weight: Font.Bold
+                        solidBackground: root.solidBackground
                         Connections {
                             target: root.mpdState
                             function onMpdInfoChanged() {
@@ -104,6 +109,9 @@ Item {
 
                     WidgetLabel {
                         id: songArtist
+                        fontSize: root.fontSize
+                        alignment: root.alignment
+                        solidBackground: root.solidBackground
                         Connections {
                             target: root.mpdState
                             function onMpdInfoChanged() {
@@ -114,6 +122,9 @@ Item {
 
                     WidgetLabel {
                         id: songAlbum
+                        fontSize: root.fontSize
+                        alignment: root.alignment
+                        solidBackground: root.solidBackground
                         Connections {
                             target: root.mpdState
 
@@ -139,6 +150,10 @@ Item {
                 WidgetLabel {
                     id: notification
                     Layout.fillWidth: true
+
+                    fontSize: root.fontSize
+                    alignment: root.alignment
+                    solidBackground: root.solidBackground
 
                     visible: text.length > 0
                     font.italic: true

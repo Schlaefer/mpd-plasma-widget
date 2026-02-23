@@ -1,3 +1,5 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.plasmoid
@@ -12,12 +14,16 @@ PlasmoidItem {
     property int cfgCornerRadius: Plasmoid.configuration.cfgCornerRadius
     property int cfgFontSize: Plasmoid.configuration.cfgFontSize
     property int cfgShadowSpread: Plasmoid.configuration.cfgShadowSpread
-    property string cfgAlignment: Plasmoid.configuration.cfgAlignment
+    property int cfgAlignment: Plasmoid.configuration.cfgAlignment
     property string cfgCacheForDays: Plasmoid.configuration.cfgCacheForDays
     property string cfgCacheRoot: Plasmoid.configuration.cfgCacheRoot // without trailing slash
     property string cfgMpdHost: Plasmoid.configuration.cfgMpdHost
     property string cfgMpdPort: Plasmoid.configuration.cfgMpdPort
     property string cfgShadowColor: Plasmoid.configuration.cfgShadowColor
+
+    property alias coverManager: coverManagerInstance
+    property alias mpdState: mpdStateInstance
+    property alias volumeState: volumeStateInstance
 
     property var _appWindow: null
     property string appLastError: ""
@@ -37,8 +43,8 @@ PlasmoidItem {
             var component = Qt.createComponent("Components/Application/ApplicationWindow.qml")
 
             if (component.status === Component.Error) {
-                console.error(component.errorString());
-                return;
+                console.error(component.errorString())
+                return
             }
 
             main._appWindow = component.createObject(null, {
@@ -63,17 +69,19 @@ PlasmoidItem {
     }
 
     CoverManager {
-        id: coverManager
+        id: coverManagerInstance
     }
 
     MpdState {
-        id: mpdState
+        id: mpdStateInstance
         // @TODO does this need decodeURIComponent?
         scriptRoot: Qt.resolvedUrl('../scripts').toString().replace("file://", "")
     }
 
     VolumeState {
-        id: volumeState
+        id: volumeStateInstance
+    }
+
     }
 
     // Widget shown on desktop
@@ -81,9 +89,17 @@ PlasmoidItem {
         id: widgetLayout
         anchors.fill: parent
 
+        alignment: main.cfgAlignment
+        cornerRadius: main.cfgCornerRadius
+        fontSize: main.cfgFontSize
+        horizontalLayout: main.cfgHorizontalLayout
+        shadowColor: main.cfgShadowColor
+        shadowSpread: main.cfgShadowSpread
+        solidBackground: main.cfgSolidBackground
+
         main: main
-        mpdState: mpdState
-        volumeState: volumeState
+        mpdState: main.mpdState
+        volumeState: main.volumeState
     }
 
     Connections {
