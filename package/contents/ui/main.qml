@@ -4,6 +4,8 @@ import QtQuick
 import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.plasmoid
 import "./../logic"
+import "./Components/CompactPresentation"
+import "../scripts/formatHelpers.js" as FormatHelpers
 
 PlasmoidItem {
     id: main
@@ -82,10 +84,30 @@ PlasmoidItem {
         id: volumeStateInstance
     }
 
+    compactRepresentation: CompactPresentation {
+        main: main
+        mpdState: main.mpdState
+        volumeState: main.volumeState
     }
 
+    // @BOGUS What does that do?
+    Plasmoid.status: PlasmaCore.Types.PassiveStatus
+    toolTipMainText: {
+        if (!main.mpdState.mpdInfo || main.mpdState.mpdQueue.length === 0 ) {
+            return qsTr("Queue is empty")
+        }
+        const out = FormatHelpers.title(main.mpdState.mpdInfo) 
+        + "\n" + FormatHelpers.artist(main.mpdState.mpdInfo)
+        + "\n" + FormatHelpers.album(main.mpdState.mpdInfo)
+
+        return out
+    }
+    toolTipSubText: qsTr("Middle-click to play/pause.\nScroll to adjust volume")
+    toolTipTextFormat: Text.PlainText
+
+
     // Widget shown on desktop
-    WidgetLayout {
+    fullRepresentation: WidgetLayout {
         id: widgetLayout
         anchors.fill: parent
 
@@ -102,16 +124,53 @@ PlasmoidItem {
         volumeState: main.volumeState
     }
 
+    Plasmoid.contextualActions: [
+        PlasmaCore.Action {
+            text: qsTr("Open MPD Window")
+            onTriggered: main.toggleAppWindow()
+        },
+        PlasmaCore.Action {
+            isSeparator: true
+            priority: PlasmaCore.Action.LowPriority
+        },
+        PlasmaCore.Action {
+            text: qsTr("Pause")
+            icon.name: "media-playback-pause"
+            priority: PlasmaCore.Action.LowPriority
+            visible: main.mpdState.mpdPlaying
+            enabled: visible
+            onTriggered: main.mpdState.togglePlayPause()
+        },
+        PlasmaCore.Action {
+            text: qsTr("Play")
+            icon.name: "media-playback-start"
+            priority: PlasmaCore.Action.LowPriority
+            visible: !main.mpdState.mpdPlaying && main.mpdState.mpdQueue.length > 0
+            enabled: visible
+            onTriggered: main.mpdState.togglePlayPause()
+        },
+        PlasmaCore.Action {
+            text: qsTr("Next Track")
+            icon.name: Application.layoutDirection === Qt.RightToLeft ? "media-skip-backward" : "media-skip-forward"
+            priority: PlasmaCore.Action.LowPriority
+            enabled: main.mpdState.mpdQueue.length > 0
+            onTriggered: main.mpdState.playNext()
+        },
+        PlasmaCore.Action {
+            isSeparator: true
+        },
+    ]
+
     Connections {
         function onCfgMpdHostChanged() {
-            mpdState.connect()
+            main.mpdState.connect()
         }
     }
 
     Connections {
-        target: coverManager
+        target: main.coverManager
         function onAfterReset() {
-            unloadAppWindow()
+            main.unloadAppWindow()
         }
     }
 
