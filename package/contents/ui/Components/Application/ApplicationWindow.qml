@@ -36,8 +36,8 @@ PlasmaCore.Window {
     minimumHeight: app.footer.height
 
     Component.onCompleted: {
-        height = (initialHeight > 800 ? 0.7 : 0.95) * initialHeight
-        width = height / 1.60
+        height = (initialHeight > 800 ? 0.8 : 0.95) * initialHeight
+        width = height / 1.8
     }
 
     mainItem: Kirigami.ApplicationItem {
