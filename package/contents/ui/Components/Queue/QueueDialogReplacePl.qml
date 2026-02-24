@@ -22,6 +22,7 @@ Kirigami.PromptDialog {
             id: actionButton
             icon.name: Mpdw.icons.dialogOk
             onTriggered: {
+                app.showPassiveNotification(qsTr('Saved'),  Kirigami.Units.humanMoment)
                 root.mpdState.replacePlaylistWithQueue(listCombo.currentText)
                 root.close()
             }
