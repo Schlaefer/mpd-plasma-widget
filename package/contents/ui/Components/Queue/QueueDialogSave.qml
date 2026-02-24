@@ -1,13 +1,16 @@
 import QtQuick
-import org.kde.plasma.components as PlasmaComponents
 import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
 import org.kde.plasma.components as PlasmaComponents
 import "../../Mpdw.js" as Mpdw
+import "../../../logic"
 import "../Elements"
 
 Kirigami.PromptDialog {
     id: root
+
+    required property MpdState mpdState
+
     title: qsTr("Save Queue as New Playlist")
     standardButtons: Kirigami.Dialog.NoButton
     showCloseButton: false
@@ -22,8 +25,8 @@ Kirigami.PromptDialog {
             icon.name: Mpdw.icons.dialogOk
             enabled: !newPlaylistTitle.playlistTitleExists && newPlaylistTitle.text
             onTriggered: {
-                mpdState.savedQueueAsPlaylist.connect(afterSave)
-                mpdState.saveQueueAsPlaylist(newPlaylistTitle.text)
+                root.mpdState.savedQueueAsPlaylist.connect(afterSave)
+                root.mpdState.saveQueueAsPlaylist(newPlaylistTitle.text)
             }
 
             function afterSave(success) {
@@ -34,7 +37,7 @@ Kirigami.PromptDialog {
                 } else {
                     newPlaylistErrorMsg.visible = true
                 }
-                mpdState.savedQueueAsPlaylist.disconnect(afterSave)
+                root.savedQueueAsPlaylist.disconnect(afterSave)
             }
         },
         Kirigami.Action {
@@ -55,7 +58,7 @@ Kirigami.PromptDialog {
             // Doesn't work due to animation(?), we use a timer instead.
 
             function updatePlaylistTitleExists() {
-                playlistTitleExists = mpdState.mpdPlaylists.indexOf(text) !== -1
+                playlistTitleExists = root.mpdState.mpdPlaylists.indexOf(text) !== -1
             }
 
             onTextChanged: {
@@ -63,7 +66,7 @@ Kirigami.PromptDialog {
             }
 
             Connections {
-                target: mpdState
+                target: root.mpdState
 
                 function onMpdPlaylistsChanged() {
                     newPlaylistTitle.updatePlaylistTitleExists()
@@ -80,7 +83,7 @@ Kirigami.PromptDialog {
             }
 
             Component.onCompleted: {
-                mpdState.getPlaylists()
+                root.mpdState.getPlaylists()
             }
 
             Timer {

@@ -2,9 +2,13 @@ import QtQuick
 import org.kde.kirigami as Kirigami
 import org.kde.plasma.components as PlasmaComponents
 import "../../Mpdw.js" as Mpdw
+import "../../../logic"
 
 Kirigami.PromptDialog {
     id: root
+
+    required property MpdState mpdState
+
     title: qsTr("Save Queue and Replace Playlist…")
     standardButtons: Kirigami.Dialog.NoButton
     showCloseButton: false
@@ -18,7 +22,7 @@ Kirigami.PromptDialog {
             id: actionButton
             icon.name: Mpdw.icons.dialogOk
             onTriggered: {
-                mpdState.replacePlaylistWithQueue(listCombo.currentText)
+                root.mpdState.replacePlaylistWithQueue(listCombo.currentText)
                 root.close()
             }
         },
@@ -37,7 +41,7 @@ Kirigami.PromptDialog {
         implicitWidth: parent.width
 
         function selectLastPlayedPlaylist() {
-            const lastPl = mpdState.lastPlayedPlaylist
+            const lastPl = root.mpdState.lastPlayedPlaylist
             if (!lastPl) {
                 return
             }

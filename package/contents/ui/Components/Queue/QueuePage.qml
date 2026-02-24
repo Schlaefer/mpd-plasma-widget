@@ -41,8 +41,11 @@ Kirigami.ScrollablePage {
                                 text: qsTr("Save as New Playlist…")
                                 shortcut: "Ctrl+S"
                                 onTriggered: {
-                                    queueDialogSaveLoader.active = true
-                                    queueDialogSaveLoader.item.open()
+                                    queueDialogLoader.setSource("QueueDialogSave.qml", {
+                                        mpdState: root.mpdState
+                                    })
+                                    queueDialogLoader.active = true
+                                    queueDialogLoader.item.open()
                                 }
                             }
                             Kirigami.Action {
@@ -50,8 +53,11 @@ Kirigami.ScrollablePage {
                                 text: qsTr("Replace Playlist…")
                                 shortcut: "Ctrl+Shift+S"
                                 onTriggered: {
-                                    queueDialogReplacePlLoader.active = true
-                                    queueDialogReplacePlLoader.item.open()
+                                    queueDialogLoader.setSource("QueueDialogReplacePl.qml", {
+                                        mpdState: root.mpdState
+                                    })
+                                    queueDialogLoader.active = true
+                                    queueDialogLoader.item.open()
                                 }
                             }
                             Kirigami.Action {
@@ -252,15 +258,7 @@ Kirigami.ScrollablePage {
     }
 
     Loader {
-        id: queueDialogSaveLoader
-        source: "QueueDialogSave.qml"
-        active: false
-        anchors.fill: parent
-    }
-
-    Loader {
-        id: queueDialogReplacePlLoader
-        source: "QueueDialogReplacePl.qml"
+        id: queueDialogLoader
         active: false
         anchors.fill: parent
     }
