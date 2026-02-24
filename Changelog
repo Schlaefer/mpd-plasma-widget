@@ -1,6 +1,8 @@
 # Next
 
-- Minor code refactoring and cleanup
+- Show notification on saving playlist
+- Tweaks initial app window size and proportions
+- Considerable code refactoring and cleanup
 
 # 6.5.0
 
@@ -66,20 +68,20 @@
 - Compatibility update for plasma 6.6
 - Significant performance improvements in the manager for large libraries
 - Fix uneven list layout
-- Keyboard shortcut changes for selecting items: A for select all, B for selecting neighboring songs from the same albums, V for neighboring songs from the same album-artist. Shift+A/B/V deselects in the same modes. 
+- Keyboard shortcut changes for selecting items: A for select all, B for selecting neighboring songs from the same albums, V for neighboring songs from the same album-artist. Shift+A/B/V deselects in the same modes.
 - Better handling of empty libraries
 
 # 6.0.4
 
 - Code refactoring for better maintainability
-- Adds some confirmation popups on Artists and Playlists page 
+- Adds some confirmation popups on Artists and Playlists page
 - Improves error message display
 
 # 6.0.3
 
 - Adds little confirmation popup when adding items to the queue
 - Fixes queue item removal and reordering
-- Some more Qt 6 transition 
+- Some more Qt 6 transition
 
 # 6.0.2
 
@@ -102,7 +104,7 @@ Python 3 (3.6+) is required now. Mpc was dropped as a requirement. Make sure pyt
 - Adds "Don't make me scroll over the same library over and over" shuffle button
 - Fixes Ctrl+F not reliably jumping to search
 - Cleans up and changes some keyboard shortcuts
-- Queue's "Follow Mode" tries to be automagic(tm) and the mode-button was removed from the UI 
+- Queue's "Follow Mode" tries to be automagic(tm) and the mode-button was removed from the UI
 - "L" shortcut always shows the currently playing song in the Queue (and activates Follow Mode again)
 - Provides more keyboard-shortcut hints in the UI
 - Changes search to filter for the actual hits instead of the albumartist-list only
@@ -121,7 +123,7 @@ Python 3 (3.6+) is required now. Mpc was dropped as a requirement. Make sure pyt
 
 # 5.5
 
-- Fixes widget layout jumping around between empty queue and playing 
+- Fixes widget layout jumping around between empty queue and playing
 - Widget will no longer adjust its size to show full info text
 - Minor UI tweaks
 
@@ -218,7 +220,7 @@ Python 3 (3.6+) is required now. Mpc was dropped as a requirement. Make sure pyt
 - Adds selecting items in the queue (with some advanced options in the context menu)
 - Adds removing selected items from the queue
 - Fixes issues if song meta information included special characters
-- Adds cover cache clearing (currently context-menu on the widget cover). - Use it in case of emergency. But! If someone(tm) stuffed a huge png into a file or the audio-file is very big (long duration) then loading the cover for the first time may take several seconds. Give it time, that's normal. 
+- Adds cover cache clearing (currently context-menu on the widget cover). - Use it in case of emergency. But! If someone(tm) stuffed a huge png into a file or the audio-file is very big (long duration) then loading the cover for the first time may take several seconds. Give it time, that's normal.
 - Lots of code refactoring. - Some parts are trickling down into the "Yeah, that looks reasonable" bucket now. But the vast majority still falls out of the "What dis?" QML-cloud. It's a learning experience.
 
 # 3.2
@@ -227,7 +229,7 @@ Python 3 (3.6+) is required now. Mpc was dropped as a requirement. Make sure pyt
 - Minor bugfixes
 
 # 3.1
-- Fixes duplicate entries in queue not showing 
+- Fixes duplicate entries in queue not showing
 - Fixes reconnect after wakeup
 
 # 3.0
@@ -250,7 +252,7 @@ Python 3 (3.6+) is required now. Mpc was dropped as a requirement. Make sure pyt
 - Bumps version to 2.0. Hopefully that will unclog the store.kde.org update issues. Also I would consider this a solid "1.0" if we had started out with 0.x instead of 1.x before.
 
 # 1.10
-- Performance improvements, bugfixes and code cleanup. 
+- Performance improvements, bugfixes and code cleanup.
 
 # 1.9
 - Updates button icons to use plasma-icons
