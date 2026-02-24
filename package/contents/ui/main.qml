@@ -51,7 +51,8 @@ PlasmoidItem {
 
             main._appWindow = component.createObject(null, {
                 initialHeight: availableScreenRect.height,
-                mpdState: mpdState,
+                coverManager: main.coverManager,
+                mpdState: main.mpdState,
                 narrowBreakPoint: Qt.binding(() => cfgNarrowBreakPoint),
                 volumeState: volumeState
             })
@@ -119,6 +120,7 @@ PlasmoidItem {
         shadowSpread: main.cfgShadowSpread
         solidBackground: main.cfgSolidBackground
 
+        coverManager: main.coverManager
         main: main
         mpdState: main.mpdState
         volumeState: main.volumeState

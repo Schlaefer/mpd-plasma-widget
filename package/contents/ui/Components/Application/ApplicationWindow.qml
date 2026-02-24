@@ -19,6 +19,7 @@ PlasmaCore.Window {
 
     property alias app: app
 
+    required property CoverManager coverManager
     required property MpdState mpdState
     required property VolumeState volumeState
 
@@ -45,6 +46,7 @@ PlasmaCore.Window {
 
         anchors.fill: parent
 
+        property alias coverManager: win.coverManager
         property alias mpdState: win.mpdState
         property alias volumeState: win.volumeState
         property alias narrowLayout: win.narrowLayout
@@ -230,6 +232,10 @@ PlasmaCore.Window {
 
                         sourceSize.height: songinfo.height
                         sourceSize.width: songinfo.height
+
+                        coverManager: app.coverManager
+                        mpdState: app.mpdState
+                        volumeState: app.volumeState
 
                         MouseArea {
                             anchors.fill: coverImage

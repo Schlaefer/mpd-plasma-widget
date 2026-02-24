@@ -1,21 +1,26 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Qt5Compat.GraphicalEffects
 import org.kde.kirigami as Kirigami
 import "./../Mpdw.js" as Mpdw
+import "../../logic"
 
 Item {
-    id: coverImageContainer
+    id: root
 
     signal sourceChanged(string source)
 
-    property alias sourceSize: coverImage.sourceSize
-
+    required property CoverManager coverManager
+    required property MpdState mpdState
+    required property VolumeState volumeState
     property bool applyEffects: false
     property int coverRadius: 0
     property int shadowSpread: 0
     property string shadowColor
+    property alias sourceSize: coverImage.sourceSize
 
     Layout.fillHeight: true
     MouseArea {
@@ -23,7 +28,7 @@ Item {
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         onClicked: function (mouse) {
             if (mouse.button === Qt.LeftButton) {
-                mpdState.togglePlayPause()
+                root.mpdState.togglePlayPause()
             } else if (mouse.button === Qt.RightButton) {
                 if (!contextMenuLoader.item) {
                     contextMenuLoader.sourceComponent = contextMenuComponent
@@ -38,10 +43,10 @@ Item {
         }
 
         onWheel: function (wheel) {
-            volumeState.wheel(wheel.angleDelta.y)
+            root.volumeState.wheel(wheel.angleDelta.y)
         }
         onDoubleClicked: {
-            mpdState.playNext()
+            root.mpdState.playNext()
         }
 
         Loader {
@@ -56,7 +61,7 @@ Item {
                     text: qsTr("Update MPD Data")
                     icon.name: Mpdw.icons.mpdUpdate
                     onTriggered: {
-                        mpdState.forceReloadEverything()
+                        root.mpdState.forceReloadEverything()
                     }
                 }
                 MenuSeparator {}
@@ -64,7 +69,7 @@ Item {
                     text: qsTr("Clear Cover Cache")
                     icon.name: Mpdw.icons.clearCache
                     onTriggered: {
-                        coverManager.clearCache()
+                        root.coverManager.clearCache()
                     }
                 }
             }
@@ -88,16 +93,16 @@ Item {
         fillMode: Image.PreserveAspectFit
 
         function updateCover() {
-            if (!mpdState.mpdInfo) {
+            if (!root.mpdState.mpdInfo) {
                 return
             }
 
-            let cover = coverManager.getCover(mpdState.mpdInfo, 1)
+            let cover = root.coverManager.getCover(root.mpdState.mpdInfo, 1)
             if (typeof (cover) === "undefined") {
-                coverManager.gotCover.connect(updateCover)
+                root.coverManager.gotCover.connect(updateCover)
                 return
             }
-            coverManager.gotCover.disconnect(updateCover)
+            root.coverManager.gotCover.disconnect(updateCover)
             if (cover === null) {
                 coverImage.source = ""
                 return
@@ -110,7 +115,7 @@ Item {
         }
 
         onSourceChanged: {
-            coverImageContainer.sourceChanged(coverImage.source)
+            root.sourceChanged(coverImage.source)
         }
 
         Component.onCompleted: {
@@ -118,21 +123,21 @@ Item {
         }
 
         Connections {
-            target: mpdState
+            target: root.mpdState
 
             function onMpdInfoChanged() {
                 coverImage.updateCover()
             }
 
             function onMpdQueueChanged() {
-                if (mpdState.mpdQueue.length === 0) {
+                if (root.mpdState.mpdQueue.length === 0) {
                     coverImage.source = ""
                 }
             }
         }
 
         Connections {
-            target: coverManager
+            target: root.coverManager
             function onAfterReset() {
                 coverImage.source = ""
                 coverImage.updateCover()
@@ -149,7 +154,7 @@ Item {
 
         Rectangle {
             color: "white"
-            radius: coverImageContainer.coverRadius
+            radius: root.coverRadius
             anchors.centerIn: parent
             width: coverImage.paintedWidth
             height: coverImage.paintedHeight
@@ -162,13 +167,13 @@ Item {
         source: coverImage
         maskSource: mask
 
-        layer.enabled: coverImageContainer.applyEffects && coverImageContainer.shadowSpread > 0
+        layer.enabled: root.applyEffects && root.shadowSpread > 0
                        && !!coverImage.source.toString()
         layer.effect: DropShadow {
             verticalOffset: 0
             horizontalOffset: 0
-            color: coverImageContainer.shadowColor
-            radius: coverImageContainer.shadowSpread
+            color: root.shadowColor
+            radius: root.shadowSpread
             samples: 17
         }
     }

@@ -1,3 +1,5 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Layouts
 import org.kde.plasma.components as PlasmaComponents
@@ -16,9 +18,10 @@ Item {
     required property int fontSize
     required property bool horizontalLayout
     required property bool solidBackground
-    property var main
-    property MpdState mpdState
-    property VolumeState volumeState
+    required property CoverManager coverManager
+    required property var main
+    required property MpdState mpdState
+    required property VolumeState volumeState
     property alias cornerRadius: coverImageContainer.coverRadius
     property alias shadowColor: coverImageContainer.shadowColor
     property alias shadowSpread: coverImageContainer.shadowSpread
@@ -31,6 +34,9 @@ Item {
         // Cover Image
         WidgetCoverImage {
             id: coverImageContainer
+            coverManager: root.coverManager
+            mpdState: root.mpdState
+            volumeState: root.volumeState
             applyEffects: true
             onHeightChanged: sourceSizeTimer.restart()
             onWidthChanged: sourceSizeTimer.restart()
@@ -85,10 +91,10 @@ Item {
                 implicitHeight: innerLayout.implicitHeight
 
                 ColumnLayout {
-                    id: innerLayout 
+                    id: innerLayout
                     opacity: notification.text ? 0 : 1
                     anchors.fill: parent
-                    
+
                     WidgetLabel {
                         id: songTitle
                         alignment: root.alignment
