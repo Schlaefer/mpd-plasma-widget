@@ -2,16 +2,18 @@ import QtQuick
 import QtQuick.Controls as QQC2
 import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
-import org.kde.plasma.components as PlasmaComponents
 import "../../Mpdw.js" as Mpdw
 import "../../Components/Elements"
+import "../../../logic"
 
 Kirigami.ScrollablePage {
     id: root
 
+    required property MpdState mpdState
+    required property bool narrowLayout
+    required property Kirigami.PageRow pageStack
     property int depth: 1
     property string shownAlbumartist
-
     property alias searchField: searchField
     property alias viewState: controller.viewState
 
@@ -23,7 +25,9 @@ Kirigami.ScrollablePage {
     header: QQC2.ToolBar {
         RowLayout {
             anchors.fill: parent
-            GlobalNav { }
+            GlobalNav {
+                narrowLayout: root.narrowLayout
+             }
             QQC2.ToolButton {
                 id: shuffleBtn
                 icon.name: Mpdw.icons.queueRandom
@@ -99,16 +103,18 @@ Kirigami.ScrollablePage {
                     shownAlbumartist = listItemPlaylist.albumartist
                     let properties = {
                         "depth": root.depth + 1,
-                        "songs": mpdState.library.getSongsOfAartist(listItemPlaylist.albumartist),
+                        "narrowLayout": Qt.binding(() => root.narrowLayout),
+                        "pageStack": root.pageStack,
+                        "songs": root.mpdState.library.getSongsOfAartist(listItemPlaylist.albumartist),
                         "title": listItemPlaylist.albumartist,
                     }
-                    app.pageStack.push(Qt.resolvedUrl("AlbumartistSongsPage.qml"), properties)
+                    root.pageStack.push(Qt.resolvedUrl("AlbumartistSongsPage.qml"), properties)
                 }
 
                 Loader {
                     id: artistContextMenuLoader
                     property var getSongs: function () {
-                        return mpdState.library.getSongsOfAartist(listItemPlaylist.albumartist)
+                        return root.mpdState.library.getSongsOfAartist(listItemPlaylist.albumartist)
                     }
                 }
 
@@ -125,8 +131,8 @@ Kirigami.ScrollablePage {
                     }
 
                     GridLayout {
-                        columns: win.narrowLayout ? 4 : 6
-                        rows: win.narrowLayout ? 1 : -1
+                        columns: root.narrowLayout ? 4 : 6
+                        rows: root.narrowLayout ? 1 : -1
 
                         Layout.alignment: Qt.AlignRight
 
@@ -135,7 +141,9 @@ Kirigami.ScrollablePage {
                             model: ListModel {}
                             delegate: ListCoverimage {
                                 id: image
+
                                 loadingPriority: 200
+                                narrowLayout: root.narrowLayout
 
                                 // Move picture inside the automatic Kirigami
                                 // mouse hover highlight
@@ -156,13 +164,13 @@ Kirigami.ScrollablePage {
                                         if (mouse.button == Qt.LeftButton) {
                                             let properties = {
                                                 "depth": root.depth + 1,
-                                                "songs": mpdState.library.getSongsByAartistAndAlbum(
+                                                "songs": root.mpdState.library.getSongsByAartistAndAlbum(
                                                              model.album,
                                                              model.albumartist),
                                                 // @i18n
                                                 "title": model.album + " - " + model.albumartist,
                                             }
-                                            app.pageStack.push(Qt.resolvedUrl("AlbumartistSongsPage.qml"),
+                                            root.pageStack.push(Qt.resolvedUrl("AlbumartistSongsPage.qml"),
                                                                      properties)
                                         } else if (mouse.button == Qt.RightButton) {
                                             if (!contextMenuLoader.item) {
@@ -177,7 +185,7 @@ Kirigami.ScrollablePage {
                                     Loader {
                                         id: contextMenuLoader
                                         property var getSongs: function () {
-                                            return mpdState.library.getSongsByAartistAndAlbum(model.album,
+                                            return root.mpdState.library.getSongsByAartistAndAlbum(model.album,
                                                                                               model.albumartist)
                                         }
                                     }
@@ -186,7 +194,7 @@ Kirigami.ScrollablePage {
                         }
 
                         Component.onCompleted: {
-                            let songs = mpdState.library.getASongsByAartistPerAlbum(listItemPlaylist.albumartist)
+                            let songs = root.mpdState.library.getASongsByAartistPerAlbum(listItemPlaylist.albumartist)
                             songs.forEach(function (song) {
                                 images.model.append(song)
                             })
@@ -207,7 +215,7 @@ Kirigami.ScrollablePage {
                 text: qsTr("Play")
                 onTriggered: {
                     let songs = getSongs()
-                    mpdState.replaceQueue(songs.map(song => song.file))
+                    root.mpdState.replaceQueue(songs.map(song => song.file))
                 }
             }
             QQC2.MenuSeparator {}
@@ -220,7 +228,7 @@ Kirigami.ScrollablePage {
                         app.showPassiveNotification(qsTr("%n appended", "", songs.length),  Kirigami.Units.humanMoment)
                     }
 
-                    mpdState.addSongsToQueue(songs.map(song => song.file), "append", callback)
+                    root.mpdState.addSongsToQueue(songs.map(song => song.file), "append", callback)
                 }
             }
             QQC2.MenuItem {
@@ -231,7 +239,7 @@ Kirigami.ScrollablePage {
                     let callback = function() {
                         app.showPassiveNotification(qsTr("%n inserted", "", songs.length),  Kirigami.Units.humanMoment)
                     }
-                    mpdState.addSongsToQueue(songs.map(song => song.file), "insert", callback)
+                    root.mpdState.addSongsToQueue(songs.map(song => song.file), "insert", callback)
                 }
             }
         }

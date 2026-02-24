@@ -107,7 +107,7 @@ Item {
                                 songTitle.text = qsTr("Queue is empty")
                                 return
                             }
-                            songTitle.text = FormatHelpers.title(mpdState.mpdInfo)
+                            songTitle.text = FormatHelpers.title(root.mpdState.mpdInfo)
                         }
 
                         Component.onCompleted: {

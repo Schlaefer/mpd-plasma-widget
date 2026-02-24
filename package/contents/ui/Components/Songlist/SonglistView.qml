@@ -12,6 +12,7 @@ ListViewGeneric {
     // so this should be handled on the QueuePage only if possible.
     signal userInteracted()
 
+    required property bool narrowLayout
     property alias actionDeselect: actionDeselect
 
     Keys.onPressed: (event) => {
@@ -159,7 +160,7 @@ ListViewGeneric {
 
         readonly property string buttonText: qsTr("Deselect")
 
-        text: win.narrowLayout ? "" : buttonText
+        text: root.narrowLayout ? "" : buttonText
         tooltip: qsTr("Deselect All")
         icon.name: Mpdw.icons.selectNone
         // Both queue and album pages can have the button at the same time. Only act

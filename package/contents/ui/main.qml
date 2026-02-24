@@ -52,7 +52,7 @@ PlasmoidItem {
             main._appWindow = component.createObject(null, {
                 initialHeight: availableScreenRect.height,
                 mpdState: mpdState,
-                narrowBreakPoint: cfgNarrowBreakPoint,
+                narrowBreakPoint: Qt.binding(() => cfgNarrowBreakPoint),
                 volumeState: volumeState
             })
             main._appWindow.visible = true
@@ -96,7 +96,7 @@ PlasmoidItem {
         if (!main.mpdState.mpdInfo || main.mpdState.mpdQueue.length === 0 ) {
             return qsTr("Queue is empty")
         }
-        const out = FormatHelpers.title(main.mpdState.mpdInfo) 
+        const out = FormatHelpers.title(main.mpdState.mpdInfo)
         + "\n" + FormatHelpers.artist(main.mpdState.mpdInfo)
         + "\n" + FormatHelpers.album(main.mpdState.mpdInfo)
 

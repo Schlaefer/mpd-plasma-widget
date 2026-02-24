@@ -7,13 +7,14 @@ import "../../../scripts/formatHelpers.js" as FmH
 Item {
     id: root
 
+    property bool isSortable: false
+    property int carretIndex: -1
+    property bool narrowLayout: false
+    property int playingIndex: -1
+    property SonglistView parentView
     property alias actions: listItem.actions
     property alias alternatingBackground: listItem.alternatingBackground
     property alias coverLoadingPriority: image.loadingPriority
-    property bool isSortable: false
-    property int carretIndex: -1
-    property int playingIndex: -1
-    property SonglistView parentView
 
     width: parentView.width
     implicitHeight: listItem.implicitHeight
@@ -80,6 +81,7 @@ Item {
             ListCoverimage {
                 id: image
                 isSelected: model.checked
+                narrowLayout: root.narrowLayout
                 // move image inside kirigami 6 hover highlight bubble
                 Layout.leftMargin: root.isSortable ? 0 : Kirigami.Units.largeSpacing
             }
@@ -107,12 +109,12 @@ Item {
                     Layout.fillWidth: true
                     color: Kirigami.Theme.textColor
                     textFormat: Text.PlainText
-                    font.bold: !win.narrowLayout
-                    text: win.narrowLayout ? FmH.title(model) : model.title
+                    font.bold: !root.narrowLayout
+                    text: root.narrowLayout ? FmH.title(model) : model.title
                     wrapMode: Text.WordWrap
                 }
                 Text {
-                    visible: !win.narrowLayout
+                    visible: !root.narrowLayout
                     Layout.fillWidth: true
                     color: titleText.color
                     textFormat: Text.PlainText
@@ -121,7 +123,7 @@ Item {
                 }
 
                 Text {
-                    visible: !win.narrowLayout
+                    visible: !root.narrowLayout
                     Layout.fillWidth: true
                     textFormat: Text.PlainText
                     color: titleText.color

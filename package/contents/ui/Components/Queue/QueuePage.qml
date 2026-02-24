@@ -6,11 +6,13 @@ import "../../Mpdw.js" as Mpdw
 import "../../Components/Elements"
 import "../../Components/Songlist"
 import "../../Components/Queue"
-import "../../../scripts/formatHelpers.js" as FmH
+import "../../../logic"
 
 Kirigami.ScrollablePage {
-    id: queuePage
+    id: root
 
+    required property MpdState mpdState
+    required property bool narrowLayout
     property alias followMode: followMode
 
     Layout.fillWidth: true
@@ -21,7 +23,9 @@ Kirigami.ScrollablePage {
     header: ToolBar {
         RowLayout {
             anchors.fill: parent
-            GlobalNav { }
+            GlobalNav {
+                narrowLayout: root.narrowLayout
+            }
             RowLayout {
                 Kirigami.ActionToolBar {
                     id: actionToolBar
@@ -92,7 +96,7 @@ Kirigami.ScrollablePage {
                                 shortcut: "Shift+C"
                                 displayHint: Kirigami.DisplayHint.IconOnly
                                 onTriggered: {
-                                    mpdState.clearQueue()
+                                    root.mpdState.clearQueue()
                                 }
                             }
                         }
@@ -104,6 +108,8 @@ Kirigami.ScrollablePage {
 
     SonglistView {
         id: songlistView
+
+        narrowLayout: root.narrowLayout
 
         header: SonglistHeader {
             leftActions: [
@@ -117,7 +123,7 @@ Kirigami.ScrollablePage {
                     onTriggered: {
                         let positions = songlistView.model.getSelected()
                         songlistView.model.selectedRemove()
-                        mpdState.removeFromQueue(positions)
+                        root.mpdState.removeFromQueue(positions)
                     }
                 }
             ]
@@ -128,7 +134,7 @@ Kirigami.ScrollablePage {
             anchors.centerIn: parent
             width: parent.width - (Kirigami.Units.largeSpacing * 4)
             text: qsTr("Queue is empty")
-            visible: mpdState.mpdQueue.length === 0
+            visible: root.mpdState.mpdQueue.length === 0
         }
 
         delegate: SonglistItem {
@@ -136,32 +142,33 @@ Kirigami.ScrollablePage {
 
             coverLoadingPriority: 50
             isSortable: true
+            narrowLayout: root.narrowLayout
             parentView: songlistView
-            playingIndex: mpdState.mpdInfo ? mpdState.mpdInfo.pos : -1
+            playingIndex: root.mpdState.mpdInfo ? root.mpdState.mpdInfo.pos : -1
             carretIndex: songlistView.currentIndex
 
             actions: [
                 Kirigami.Action {
-                    icon.name: (songlistItem.playingIndex === model.index && mpdState.mpdPlaying)
+                    icon.name: (songlistItem.playingIndex === model.index && root.mpdState.mpdPlaying)
                                ? Mpdw.icons.queuePause
                                : Mpdw.icons.queuePlay
                     tooltip: qsTr("Play Now")
                     onTriggered: {
                         if (songlistItem.playingIndex === model.index) {
-                            mpdState.togglePlayPause()
+                            root.mpdState.togglePlayPause()
                         } else {
-                            mpdState.playInQueue(model.pos)
+                            root.mpdState.playInQueue(model.pos)
                         }
                     }
                 },
                 Kirigami.Action {
                     icon.name: Mpdw.icons.queueRemoveSingle
                     tooltip: qsTr("Remove from Queue")
-                    visible: !win.narrowLayout
+                    visible: !root.narrowLayout
                     onTriggered: {
                         let index = model.index
                         songlistView.model.remove(index)
-                        mpdState.removeFromQueue([index])
+                        root.mpdState.removeFromQueue([index])
                     }
                 }
             ]
@@ -170,21 +177,21 @@ Kirigami.ScrollablePage {
 
     QueueFollowModeController {
         id: followMode
-        currentPosition: mpdState.mpdInfo ? mpdState.mpdInfo.pos : -1
+        currentPosition: root.mpdState.mpdInfo ? root.mpdState.mpdInfo.pos : -1
         listView: songlistView
     }
 
 
     function populateQueue() {
         // Queue is empty, clear everything
-        if (mpdState.mpdQueue.length === 0) {
+        if (root.mpdState.mpdQueue.length === 0) {
             songlistView.model.clear()
             return
         }
 
         var i = 0
-        for (i; i < mpdState.mpdQueue.length; i++) {
-            let mpdSong = mpdState.mpdQueue[i]
+        for (i; i < root.mpdState.mpdQueue.length; i++) {
+            let mpdSong = root.mpdState.mpdQueue[i]
             let ourSong = songlistView.model.get(i)
 
             //console.log("------- Queue Refresh Item ---------")
@@ -216,10 +223,10 @@ Kirigami.ScrollablePage {
     }
 
     Connections {
-        target: mpdState
+        target: root.mpdState
 
         function onMpdQueueChanged() {
-            queuePage.populateQueue()
+            root.populateQueue()
         }
 
         function onMpdInfoChanged() {
@@ -228,7 +235,7 @@ Kirigami.ScrollablePage {
     }
 
     Component.onCompleted: {
-        queuePage.populateQueue()
+        root.populateQueue()
     }
 
     Connections {

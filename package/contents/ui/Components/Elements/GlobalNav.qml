@@ -6,12 +6,16 @@ import "../../Mpdw.js" as Mpdw
 import "../../../scripts/formatHelpers.js" as FmH
 
 RowLayout {
+    id: root
+
+    required property bool narrowLayout
+
     Repeater {
         model: win.app.pages
 
         PlasmaComponents.ToolButton {
             icon.name: modelData.icon
-            text: win.narrowLayout ? "" : modelData.text
+            text: root.narrowLayout ? "" : modelData.text
             checkable: true
             checked: win.app.currentPage === modelData.name
             onClicked: win.app.showPage(modelData.name)

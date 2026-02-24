@@ -1,27 +1,38 @@
 import QtQuick
 import org.kde.kirigami as Kirigami
 import "../../Components/Songlist"
+import "../../../logic"
 
 Kirigami.ScrollablePage {
     id: root
 
+    required property MpdState mpdState
+    required property bool narrowLayout
+    required property Kirigami.PageRow pageStack
     property alias playlistId: listView.playlistId
 
-    header: SonglistNav { }
+    header: SonglistNav {
+        id: nav
+        pageStack: root.pageStack
+        title: root.title
+    }
 
     SonglistView {
         id: listView
+
+        narrowLayout: root.narrowLayout
 
         property string playlistId
 
         delegate: SonglistItem {
             id: songlistItem
+            narrowLayout: root.narrowLayout
             parentView: listView
             carretIndex: listView.currentIndex
         }
 
         Component.onCompleted: {
-            mpdState.getPlaylist(playlistId)
+            root.mpdState.getPlaylist(playlistId)
         }
 
         Connections {

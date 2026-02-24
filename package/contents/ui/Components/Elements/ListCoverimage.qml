@@ -6,13 +6,14 @@ import "./../../Mpdw.js" as Mpdw
 Item {
     id: root
 
+    property bool narrowLayout: false
     property alias loadingPriority: image.loadingPriority
     property bool isSelected: false
 
-    Layout.preferredHeight: (win.narrowLayout ? Kirigami.Units.iconSizes.medium : Kirigami.Units.iconSizes.large)
+    Layout.preferredHeight: (root.narrowLayout ? Kirigami.Units.iconSizes.medium : Kirigami.Units.iconSizes.large)
         // Move picture inside the automatic Kirigami mouse hover highlight
         + (Kirigami.Units.mediumSpacing)
-    Layout.preferredWidth: win.narrowLayout ? Kirigami.Units.iconSizes.medium : Kirigami.Units.iconSizes.large
+    Layout.preferredWidth: root.narrowLayout ? Kirigami.Units.iconSizes.medium : Kirigami.Units.iconSizes.large
 
     Kirigami.Icon {
         id: coverPlaceholderIcon

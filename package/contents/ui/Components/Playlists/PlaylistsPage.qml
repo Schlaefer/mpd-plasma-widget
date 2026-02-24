@@ -6,10 +6,14 @@ import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
 import "../../Mpdw.js" as Mpdw
 import "../../Components/Elements"
+import "../../../logic"
 
 Kirigami.ScrollablePage {
     id: root
 
+    required property bool narrowLayout
+    required property MpdState mpdState
+    required property Kirigami.PageRow pageStack
     property int depth: 1
 
     visible: false
@@ -19,7 +23,9 @@ Kirigami.ScrollablePage {
     header: ToolBar {
         RowLayout {
             anchors.fill: parent
-            GlobalNav { }
+            GlobalNav {
+                narrowLayout: root.narrowLayout
+             }
         }
     }
 
@@ -34,10 +40,13 @@ Kirigami.ScrollablePage {
             onClicked: {
                 let properties =  {
                     "depth": root.depth + 1,
+                    "mpdState": root.mpdState,
+                    "narrowLayout": Qt.binding(() => root.narrowLayout),
+                    "pageStack": root.pageStack,
                     "playlistId": listItemPlaylist.title,
                     "title": listItemPlaylist.title,
                 }
-                app.pageStack.push(Qt.resolvedUrl("PlaylistSongsPage.qml"), properties)
+                root.pageStack.push(Qt.resolvedUrl("PlaylistSongsPage.qml"), properties)
             }
             width: ListView.view ? ListView.view.width : implicitWidth
             actions: [
@@ -45,7 +54,7 @@ Kirigami.ScrollablePage {
                     icon.name: Mpdw.icons.queuePlay
                     tooltip: qsTr("Replace Queue and Start Playing")
                     onTriggered: {
-                        mpdState.playPlaylist(listItemPlaylist.title)
+                        root.mpdState.playPlaylist(listItemPlaylist.title)
                     }
                 },
                 Kirigami.Action {
@@ -59,7 +68,7 @@ Kirigami.ScrollablePage {
                                 Kirigami.Units.humanMoment
                             )
                         }
-                        mpdState.loadPlaylist(playlistTitle, callback)
+                        root.mpdState.loadPlaylist(playlistTitle, callback)
                     }
                 },
                 Kirigami.Action {
@@ -75,6 +84,7 @@ Kirigami.ScrollablePage {
             contentItem: RowLayout {
                 Label {
                     Layout.fillWidth: true
+                    //@BOGUS
                     height: Math.max(implicitHeight, Kirigami.Units.iconSizes.smallMedium)
                     text: listItemPlaylist.title
                     wrapMode: Text.Wrap
@@ -91,7 +101,7 @@ Kirigami.ScrollablePage {
         buttonText: qsTr("Delete Playlist")
 
         onConfirmed: function () {
-            mpdState.removePlaylist(itemTitle)
+            root.mpdState.removePlaylist(itemTitle)
             deleteConfirmationDialog.close()
         }
     }
@@ -103,16 +113,16 @@ Kirigami.ScrollablePage {
 
         function populateModel() {
             model.clear()
-            let playlists = mpdState.mpdPlaylists
+            let playlists = root.mpdState.mpdPlaylists
             for (let i in playlists) {
                 model.append({ "title": playlists[i] })
             }
         }
 
-        Component.onCompleted: { mpdState.getPlaylists() }
+        Component.onCompleted: { root.mpdState.getPlaylists() }
 
         Connections {
-            target: mpdState
+            target: root.mpdState
             function onMpdPlaylistsChanged() {
                 playlistList.populateModel()
             }

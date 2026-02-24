@@ -35,14 +35,6 @@ PlasmaCore.Window {
     minimumWidth: 250
     minimumHeight: app.footer.height
 
-    // Listen to changes made in the widget config
-    Connections {
-        target: main
-        function onCfgNarrowBreakPointChanged() {
-            win.narrowBreakPoint = main.cfgNarrowBreakPoint
-        }
-    }
-
     Component.onCompleted: {
         height = (initialHeight > 800 ? 0.7 : 0.95) * initialHeight
         width = height / 1.60
@@ -134,28 +126,41 @@ PlasmaCore.Window {
 
         Component {
             id: queuePageComponent
-            QueuePage { }
+            QueuePage {
+                mpdState: app.mpdState
+                narrowLayout: app.narrowLayout
+            }
         }
 
         Component {
             id: albumartistsPageComponent
-            AlbumartistsPage { }
+            AlbumartistsPage {
+                mpdState: app.mpdState
+                narrowLayout: app.narrowLayout
+                pageStack: app.pageStack
+            }
         }
 
         Component {
             id: playlistPageComponent
-            PlaylistsPage { }
+            PlaylistsPage {
+                mpdState: app.mpdState
+                narrowLayout: app.narrowLayout
+                pageStack: app.pageStack
+            }
         }
 
         Repeater {
+            id: shortcutRepeater
             model: win.app.pages
             // Anchor shortcut to an item in the scene since the delegates are created
             // dynamically.
             Item {
+                id: root
                 Shortcut {
                     sequence: modelData.shortcut
                     onActivated: function() {
-                        win.app.showPage(modelData.name)
+                        app.showPage(modelData.name)
                     }
                 }
             }
