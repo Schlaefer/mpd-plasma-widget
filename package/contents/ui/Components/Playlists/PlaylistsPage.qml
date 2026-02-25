@@ -63,10 +63,7 @@ Kirigami.ScrollablePage {
                     onTriggered: {
                         let playlistTitle = listItemPlaylist.title
                         let callback = () => {
-                            app.showPassiveNotification(
-                                qsTr("Added playlist %1").arg(playlistTitle),
-                                Kirigami.Units.humanMoment
-                            )
+                            AppContext.notify(qsTr("Added playlist %1").arg(playlistTitle))
                         }
                         root.mpdState.loadPlaylist(playlistTitle, callback)
                     }

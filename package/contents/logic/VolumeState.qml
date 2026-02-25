@@ -6,6 +6,8 @@ import QtQuick
 Item {
     id: root
 
+    required property MpdState mpdState
+
     /**
      * Our internal volume value that is considered as the "truth" by the UI
      */
@@ -29,7 +31,7 @@ Item {
 
         // Don't trigger sending to mpd again if we just received the "mixer"
         // event value from mpd for our own value change.
-        if (root.volume === mpdState.mpdVolume) {
+        if (root.volume === root.mpdState.volume) {
             return
         }
 
@@ -70,7 +72,7 @@ Item {
     }
 
     Connections {
-        target: mpdState
+        target: root.mpdState
         function onVolumeChanged() {
             // We want to react to volume changes not comming from us. But we
             // have to respect the time window we set for our own debounce-send
@@ -81,7 +83,7 @@ Item {
                 return
             }
             // So it wasn't us, let's adjust our volume to the mpd state.
-            root.volume = mpdState.volume
+            root.volume = root.mpdState.volume
         }
     }
 
@@ -97,8 +99,8 @@ Item {
         // serve the old value.
         interval: 2 * volumeDebounceTimer.interval < 2000 ? 2000 : 2 * volumeDebounceTimer.interval
         onTriggered: {
-            if (root.volume !== mpdState.volume) {
-                root.volume = mpdState.volume
+            if (root.volume !== root.mpdState.volume) {
+                root.volume = root.mpdState.volume
             }
         }
     }
@@ -114,7 +116,7 @@ Item {
         property int value
         interval: 100
         onTriggered: {
-            mpdState.setVolume(value)
+            root.mpdState.setVolume(value)
         }
     }
 }

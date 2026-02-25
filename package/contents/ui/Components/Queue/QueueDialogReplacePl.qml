@@ -1,3 +1,5 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import org.kde.kirigami as Kirigami
 import org.kde.plasma.components as PlasmaComponents
@@ -22,7 +24,7 @@ Kirigami.PromptDialog {
             id: actionButton
             icon.name: Mpdw.icons.dialogOk
             onTriggered: {
-                app.showPassiveNotification(qsTr('Saved'),  Kirigami.Units.humanMoment)
+                AppContext.notify(qsTr('Saved'))
                 root.mpdState.replacePlaylistWithQueue(listCombo.currentText)
                 root.close()
             }
@@ -54,7 +56,7 @@ Kirigami.PromptDialog {
 
         function populateModel() {
             listCombo.model.clear()
-            let playlists = mpdState.mpdPlaylists
+            let playlists = root.mpdState.mpdPlaylists
             for (let i in playlists) {
                 listCombo.model.append({ "title": playlists[i] })
             }
@@ -62,11 +64,11 @@ Kirigami.PromptDialog {
         }
 
         Component.onCompleted: {
-            mpdState.getPlaylists()
+            root.mpdState.getPlaylists()
         }
 
         Connections {
-            target: mpdState
+            target: root.mpdState
             function onMpdPlaylistsChanged() {
                 listCombo.populateModel()
             }

@@ -1,9 +1,10 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
-import QtQuick.Controls
-import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
 import "../../Mpdw.js" as Mpdw
 import "../../Components/Elements"
+import "../../../logic"
 
 ListViewGeneric {
     id: root
@@ -12,6 +13,7 @@ ListViewGeneric {
     // so this should be handled on the QueuePage only if possible.
     signal userInteracted()
 
+    required property MpdState mpdState
     required property bool narrowLayout
     property alias actionDeselect: actionDeselect
 
@@ -92,7 +94,7 @@ ListViewGeneric {
 
     Keys.onReturnPressed: (event) => {
         let position = model.get(root.currentIndex).pos
-        mpdState.playInQueue(position)
+        root.mpdState.playInQueue(position)
         userInteracted()
         event.accepted = true
     }
@@ -120,7 +122,7 @@ ListViewGeneric {
                 tooltip: qsTr("Replace Queue and Start Playing")
                 icon.name: Mpdw.icons.queuePlay
                 onTriggered: {
-                    mpdState.replaceQueue(root.model.getSelectedFilesOrAll())
+                    root.mpdState.replaceQueue(root.model.getSelectedFilesOrAll())
                 }
             },
             Kirigami.Action {
@@ -131,10 +133,10 @@ ListViewGeneric {
                 onTriggered: {
                     let songs = root.model.getSelectedFilesOrAll()
                     let callback = () => {
-                        app.showPassiveNotification(qsTr("%n appended", "", songs.length),  Kirigami.Units.humanMoment)
+                        AppContext.notify(qsTr("%n appended", "", songs.length))
                     }
 
-                    mpdState.addSongsToQueue(songs, "append", callback)
+                    root.mpdState.addSongsToQueue(songs, "append", callback)
                 }
 
             },
@@ -146,9 +148,9 @@ ListViewGeneric {
                 onTriggered: {
                     let songs = root.model.getSelectedFilesOrAll()
                     let callback = () => {
-                        app.showPassiveNotification(qsTr("%n inserted", "", songs.length),  Kirigami.Units.humanMoment)
+                        AppContext.notify(qsTr("%n inserted", "", songs.length))
                     }
-                    mpdState.addSongsToQueue(songs, "insert", callback)
+                    root.mpdState.addSongsToQueue(songs, "insert", callback)
                 }
             }
         ]

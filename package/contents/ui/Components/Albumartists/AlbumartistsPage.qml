@@ -19,7 +19,11 @@ Kirigami.ScrollablePage {
 
     visible: false
 
-    AlbumartistsController { id: controller }
+    AlbumartistsController {
+        id: controller
+        mpdState: root.mpdState
+        view: listView
+    }
 
     globalToolBarStyle: Kirigami.ApplicationHeaderStyle.None
     header: QQC2.ToolBar {
@@ -103,6 +107,7 @@ Kirigami.ScrollablePage {
                     shownAlbumartist = listItemPlaylist.albumartist
                     let properties = {
                         "depth": root.depth + 1,
+                        "mpdState": root.mpdState,
                         "narrowLayout": Qt.binding(() => root.narrowLayout),
                         "pageStack": root.pageStack,
                         "songs": root.mpdState.library.getSongsOfAartist(listItemPlaylist.albumartist),
@@ -164,6 +169,9 @@ Kirigami.ScrollablePage {
                                         if (mouse.button == Qt.LeftButton) {
                                             let properties = {
                                                 "depth": root.depth + 1,
+                                                "mpdState": root.mpdState,
+                                                "narrowLayout": Qt.binding(() => root.narrowLayout),
+                                                "pageStack": root.pageStack,
                                                 "songs": root.mpdState.library.getSongsByAartistAndAlbum(
                                                              model.album,
                                                              model.albumartist),
@@ -225,7 +233,7 @@ Kirigami.ScrollablePage {
                 onTriggered: {
                     let songs = getSongs()
                     let callback = function() {
-                        app.showPassiveNotification(qsTr("%n appended", "", songs.length),  Kirigami.Units.humanMoment)
+                        AppContext.notify(qsTr("%n appended", "", songs.length))
                     }
 
                     root.mpdState.addSongsToQueue(songs.map(song => song.file), "append", callback)
@@ -237,7 +245,7 @@ Kirigami.ScrollablePage {
                 onTriggered: {
                     let songs = getSongs()
                     let callback = function() {
-                        app.showPassiveNotification(qsTr("%n inserted", "", songs.length),  Kirigami.Units.humanMoment)
+                        AppContext.notify(qsTr("%n inserted", "", songs.length))
                     }
                     root.mpdState.addSongsToQueue(songs.map(song => song.file), "insert", callback)
                 }

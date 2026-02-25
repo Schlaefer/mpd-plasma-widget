@@ -3,10 +3,15 @@ import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
 import "../../Components/Elements"
 import "../../../scripts/formatHelpers.js" as FmH
+import "../../../logic"
+import "../Songlist"
 
 Item {
     id: root
 
+    required property MpdState mpdState
+    required property int index
+    required property var model
     property bool isSortable: false
     property int carretIndex: -1
     property bool narrowLayout: false
@@ -71,7 +76,7 @@ Item {
                 onDropped: {
                     root.parentView.userInteracted()
                     if (startIndex !== endIndex) {
-                        mpdState.moveInQueue(startIndex, endIndex)
+                        root.mpdState.moveInQueue(startIndex, endIndex)
                     }
 
                     startIndex = -1
@@ -80,7 +85,8 @@ Item {
 
             ListCoverimage {
                 id: image
-                isSelected: model.checked
+                isSelected: root.model.checked
+                model: root.model
                 narrowLayout: root.narrowLayout
                 // move image inside kirigami 6 hover highlight bubble
                 Layout.leftMargin: root.isSortable ? 0 : Kirigami.Units.largeSpacing

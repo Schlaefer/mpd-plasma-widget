@@ -4,10 +4,15 @@ import "songLibrary.js" as SongLibrary
 Item {
     id: root
 
+    signal error(string message)
     signal gotPlaylist(var plData)
     signal savedQueueAsPlaylist(bool success)
 
+    required property string cfgMpdHost
+    required property string cfgMpdPort
+    property var coverManager
     property string scriptRoot
+    property string _lastError
 
     /**
       * Properties of currently playing song (title, albumartist, file, ...)
@@ -133,14 +138,14 @@ Item {
             }
 
             // Queue is empty
-            if (mpdState.mpdQueue.length === 0) {
+            if (root.mpdQueue.length === 0) {
                 mpdInfo = undefined
                 return
             }
 
             // Queue was cleared, filled, but never left the "stop" state.
             // Sending a play event will start the first song.
-            if (mpdState.mpdQueue.length > 0) {
+            if (root.mpdQueue.length > 0) {
                 mpdInfo = mpdQueue[0]
                 return
             }
@@ -281,7 +286,7 @@ Item {
             throw new Error("Invalid argument: items must be an array")
         }
 
-        var position = mpdState.mpdInfo ? parseInt(mpdState.mpdInfo.pos) + 1 : 0
+        var position = root.mpdInfo ? parseInt(root.mpdInfo.pos) + 1 : 0
         executable.startList()
         items.forEach(function(song) {
             let args = [song]
@@ -409,14 +414,14 @@ Item {
         executable.execCmd("setvol", [value])
     }
 
-    function getCover(title, ctitle, root, prefix) {
+    function getCover(title, ctitle, directory, prefix) {
         let cmd = ''
         cmd += '/usr/bin/env bash'
         cmd += ' "' + scriptRoot + '/downloadCover.sh"'
-        cmd += ' ' + main.cfgMpdHost
+        cmd += ' ' + root.cfgMpdHost
         cmd += ' ' + bEsc(title)
-        cmd += ' "' + root + '"'
-        cmd += ' ' + main.cfgMpdPort
+        cmd += ' "' + directory + '"'
+        cmd += ' ' + root.cfgMpdPort
         cmd += ' "' + ctitle.replace('/', '\\\\/') + '"'
 
         let clb = function (exitCode, stdout) {
@@ -424,7 +429,7 @@ Item {
                 return
             }
 
-            coverManager.markFetched(!stdout.includes("No data"))
+            root.coverManager.markFetched(!stdout.includes("No data"))
         }
         executable.exec(cmd, clb)
     }
@@ -619,8 +624,8 @@ Item {
             let cmd = []
             cmd.push("/usr/bin/env python3")
             cmd.push('"' + root.scriptRoot + '/mpdPlasmaWidgetExec.py"')
-            cmd.push("--host " + main.cfgMpdHost)
-            cmd.push("--port " + main.cfgMpdPort)
+            cmd.push("--host " + root.cfgMpdHost)
+            cmd.push("--port " + root.cfgMpdPort)
 
             exec(cmd.join(" ") + " " + command, callback)
         }
@@ -646,18 +651,20 @@ Item {
 
     Connections {
         function onExited(exitCode, stdout, stderr, exitStatus, cmd) {
-            main.appLastError = ""
+            root._lastError = ""
             if (exitCode !== 0) {
                 if (stderr.includes("No data")) {
                     // "No data" answer from mpd is a succesfull request for us.
                     return
                 }
-                main.appLastError = fmtErrorMessage(stderr)
+                root._lastError = fmtErrorMessage(stderr)
+                root.error(root._lastError)
                 mpdNetworkTimeoutTimer.start()
 
                 return
             }
-            main.appLastError = stderr || ""
+            root._lastError = stderr || ""
+            root.error(root._lastError)
         }
 
         target: executable

@@ -1,8 +1,14 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
+
+import "../../../logic"
 
 Item {
     id: root
 
+    required property MpdState mpdState
+    required property ListView view
     property string viewState: "normal"
     property string searchTerm: ""
 
@@ -12,18 +18,18 @@ Item {
       * @param {string} searchtext
       */
     function filter(searchText = "") {
-        listView.model.clear()
-        mpdState.library.filterLibrary(searchText)
-        let hits = mpdState.library.getAartists(searchText)
-        hits.forEach((hit) => { listView.model.append({"albumartist": hit}) })
+        root.view.model.clear()
+        root.mpdState.library.filterLibrary(searchText)
+        let hits = root.mpdState.library.getAartists(searchText)
+        hits.forEach((hit) => { root.view.model.append({"albumartist": hit}) })
     }
 
     function shuffle() {
-        listView.model.clear()
-        mpdState.library.filterLibrary()
-        let hits = mpdState.library.getAartists()
+        root.view.model.clear()
+        root.mpdState.library.filterLibrary()
+        let hits = root.mpdState.library.getAartists()
         hits.sort((a, b) => { return Math.floor(Math.random() * 2) > 0 ? 1 : -1 })
-        hits.forEach(hit => { listView.model.append({ "albumartist": hit }) })
+        hits.forEach(hit => { root.view.model.append({ "albumartist": hit }) })
     }
 
     onViewStateChanged: {
@@ -31,7 +37,7 @@ Item {
         case "shuffle":
             searchField.text = ""
             shuffle()
-            listView.positionViewAtIndex(0, ListView.Beginning)
+            root.view.positionViewAtIndex(0, ListView.Beginning)
             break
         case "startSearch":
             searchFieldFocusTimer.start()
@@ -42,8 +48,8 @@ Item {
         default:
             searchField.text = ""
             filter()
-            listView.positionViewAtIndex(0, ListView.Beginning)
-            listView.forceActiveFocus()
+            root.view.positionViewAtIndex(0, ListView.Beginning)
+            root.view.forceActiveFocus()
         }
     }
 
@@ -67,11 +73,11 @@ Item {
     }
 
     Connections {
-        target: mpdState
+        target: root.mpdState
         function onLibraryChanged() { filter() }
     }
 
     Component.onCompleted: {
-        mpdState.getLibrary()
+        root.mpdState.getLibrary()
     }
 }

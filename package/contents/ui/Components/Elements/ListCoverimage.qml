@@ -1,11 +1,15 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
 import "./../../Mpdw.js" as Mpdw
+import "../../../logic"
 
 Item {
     id: root
 
+    required property var model
     property bool narrowLayout: false
     property alias loadingPriority: image.loadingPriority
     property bool isSelected: false
@@ -46,11 +50,11 @@ Item {
         }
 
         Component.onCompleted: {
-            if (model.orphaned) {
+            if (root.model.orphaned) {
                 return
             }
 
-            const coverPath = coverManager.getCover(model, loadingPriority)
+            const coverPath = AppContext.getCoverManager().getCover(root.model, loadingPriority)
             if (coverPath) {
                 setCover(coverPath)
             }
@@ -59,9 +63,9 @@ Item {
 
         Connections {
             enabled: image._waitingForCover
-            target: coverManager
+            target: AppContext.getCoverManager()
             function onGotCover() {
-                const coverPath = coverManager.getCover(model, image.loadingPriority)
+                const coverPath = AppContext.getCoverManager().getCover(root.model, image.loadingPriority)
                 if (!coverPath) {
                     return
                 }
@@ -79,7 +83,7 @@ Item {
         y: parent.width - height + offset
         color: Kirigami.Theme.activeBackgroundColor
         border.color: Kirigami.Theme.hoverColor
-        visible: isSelected
+        visible: root.isSelected
 
         Kirigami.Icon {
             color: Kirigami.Theme.activeTextColor

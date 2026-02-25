@@ -1,10 +1,11 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
 import org.kde.plasma.components as PlasmaComponents
 import "../../Mpdw.js" as Mpdw
 import "../../../logic"
-import "../Elements"
 
 Kirigami.PromptDialog {
     id: root
@@ -32,12 +33,12 @@ Kirigami.PromptDialog {
             function afterSave(success) {
                 if (success) {
                     newPlaylistErrorMsg.visible = false
-                    app.showPassiveNotification(qsTr('Saved'),  Kirigami.Units.humanMoment)
+                    AppContext.notify(qsTr('Saved'))
                     root.close()
                 } else {
                     newPlaylistErrorMsg.visible = true
                 }
-                root.savedQueueAsPlaylist.disconnect(afterSave)
+                root.mpdState.savedQueueAsPlaylist.disconnect(afterSave)
             }
         },
         Kirigami.Action {

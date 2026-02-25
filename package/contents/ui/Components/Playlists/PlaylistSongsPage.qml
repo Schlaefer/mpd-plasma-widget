@@ -20,12 +20,14 @@ Kirigami.ScrollablePage {
     SonglistView {
         id: listView
 
+        mpdState: root.mpdState
         narrowLayout: root.narrowLayout
 
         property string playlistId
 
         delegate: SonglistItem {
             id: songlistItem
+            mpdState: root.mpdState
             narrowLayout: root.narrowLayout
             parentView: listView
             carretIndex: listView.currentIndex
@@ -36,7 +38,7 @@ Kirigami.ScrollablePage {
         }
 
         Connections {
-            target: mpdState
+            target: root.mpdState
             function onGotPlaylist(playlistData) {
                 listView.model.clear()
                 for (let i in playlistData) {

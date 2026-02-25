@@ -115,6 +115,7 @@ Kirigami.ScrollablePage {
     SonglistView {
         id: songlistView
 
+        mpdState: root.mpdState
         narrowLayout: root.narrowLayout
 
         header: SonglistHeader {
@@ -148,6 +149,7 @@ Kirigami.ScrollablePage {
 
             coverLoadingPriority: 50
             isSortable: true
+            mpdState: root.mpdState
             narrowLayout: root.narrowLayout
             parentView: songlistView
             playingIndex: root.mpdState.mpdInfo ? root.mpdState.mpdInfo.pos : -1

@@ -17,16 +17,7 @@ import "../../../logic"
 PlasmaCore.Window {
     id: win
 
-    property alias app: app
-
-    required property CoverManager coverManager
-    required property MpdState mpdState
-    required property VolumeState volumeState
-
-    property int narrowBreakPoint: 520
-    property bool narrowLayout: app.width < narrowBreakPoint
-    property int windowPreMinimizeSize: -1
-    property int initialHeight: -1
+    property int initialHeight: AppContext.initialHeight
 
     modality: Qt.NonModal
     flags: Qt.Dialog
@@ -39,6 +30,7 @@ PlasmaCore.Window {
     Component.onCompleted: {
         height = (initialHeight > 800 ? 0.8 : 0.95) * initialHeight
         width = height / 1.8
+        AppContext.setApp(app)
     }
 
     mainItem: Kirigami.ApplicationItem {
@@ -46,13 +38,11 @@ PlasmaCore.Window {
 
         anchors.fill: parent
 
-        property alias coverManager: win.coverManager
-        property alias mpdState: win.mpdState
-        property alias volumeState: win.volumeState
-        property alias narrowLayout: win.narrowLayout
-        property alias windowPreMinimizeSize: win.windowPreMinimizeSize
-        property alias initialHeight: win.initialHeight
-
+        readonly property MpdState mpdState: AppContext.getMpdState()
+        readonly property VolumeState volumeState: AppContext.getVolumeState()
+        property int narrowBreakPoint: AppContext.narrowBreakPoint
+        property bool narrowLayout: app.width < narrowBreakPoint
+        property int windowPreMinimizeSize: -1
 
         /**
           * Global properties for pages
@@ -154,7 +144,7 @@ PlasmaCore.Window {
 
         Repeater {
             id: shortcutRepeater
-            model: win.app.pages
+            model: app.pages
             // Anchor shortcut to an item in the scene since the delegates are created
             // dynamically.
             Item {
@@ -233,7 +223,6 @@ PlasmaCore.Window {
                         sourceSize.height: songinfo.height
                         sourceSize.width: songinfo.height
 
-                        coverManager: app.coverManager
                         mpdState: app.mpdState
                         volumeState: app.volumeState
 
@@ -277,9 +266,9 @@ PlasmaCore.Window {
                                     id: songTitle
                                     Layout.fillWidth: true
                                     Layout.leftMargin: Kirigami.Units.largeSpacing
-                                    Layout.bottomMargin: (win.narrowLayout) ?  Kirigami.Units.largeSpacing : 0
+                                    Layout.bottomMargin: (app.narrowLayout) ?  Kirigami.Units.largeSpacing : 0
                                     color: Kirigami.Theme.textColor
-                                    font.bold: !win.narrowLayout
+                                    font.bold: !app.narrowLayout
                                     elide: Text.ElideRight
                                     textFormat: Text.PlainText
                                     text: FormatHelpers.title(app.mpdState.mpdInfo)
@@ -287,7 +276,7 @@ PlasmaCore.Window {
 
                                 Text {
                                     id: songArtist
-                                    visible: !win.narrowLayout
+                                    visible: !app.narrowLayout
                                     Layout.fillWidth: true
                                     Layout.leftMargin: Kirigami.Units.largeSpacing
                                     color: Kirigami.Theme.textColor
@@ -298,7 +287,7 @@ PlasmaCore.Window {
 
                                 Text {
                                     id: songAlbum
-                                    visible: !win.narrowLayout
+                                    visible: !app.narrowLayout
                                     Layout.fillWidth: true
                                     Layout.leftMargin: Kirigami.Units.largeSpacing
                                     Layout.bottomMargin: Kirigami.Units.largeSpacing
@@ -383,20 +372,16 @@ PlasmaCore.Window {
                                 }
                             }
 
+                            // Buttons for repeat, random, consume playback
                             RowLayout {
                                 Layout.fillWidth: true
                                 Layout.rightMargin: Kirigami.Units.largeSpacing
-
-                                //  Layout.alignment: Qt.AlignRight
-                                Item { Layout.fillWidth: true }
-
+                                Item { Layout.fillWidth: true } // push Repeater right
                                 Repeater {
-                                    model: [
-                                        mpdToggleRepeatAct,
-                                        mpdToggleRandomAct,
-                                        mpdToggleConsumeAct,
-                                    ]
-                                    MpdToggleOptionItem {}
+                                    model: [mpdToggleRepeatAct, mpdToggleRandomAct, mpdToggleConsumeAct]
+                                    MpdToggleView {
+                                        narrowLayout: app.narrowLayout
+                                    }
                                 }
                             }
                         }
@@ -420,28 +405,30 @@ PlasmaCore.Window {
             onTriggered: { app.mpdState.togglePlayPause() }
         }
 
-        Kirigami.Action {
+        MpdToggleAction {
             id: mpdToggleRepeatAct
-            property string mpdOption: "repeat"
+            mpdOption: "repeat"
+            mpdState: app.mpdState
             text: qsTr("Repeat")
             icon.name: Mpdw.icons.queueRepeat
             shortcut: "R"
             tooltip: "Toggle MPD's Repeat mode"
             onTriggered: app.mpdState.toggleOption("repeat")
         }
-
-        Kirigami.Action {
+        MpdToggleAction {
             id: mpdToggleRandomAct
-            property string mpdOption: "random"
+            mpdOption: "random"
+            mpdState: app.mpdState
             text: qsTr("Random")
             icon.name: Mpdw.icons.queueRandom
             shortcut: "X"
             tooltip: "Toggle MPD's Random mode"
             onTriggered: app.mpdState.toggleOption("random")
         }
-        Kirigami.Action {
+        MpdToggleAction {
             id: mpdToggleConsumeAct
-            property string mpdOption: "consume"
+            mpdOption: "consume"
+            mpdState: app.mpdState
             text: qsTr("Consume")
             icon.name: Mpdw.icons.queueConsume
             shortcut: "C"

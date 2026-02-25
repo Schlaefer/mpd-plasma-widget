@@ -13,7 +13,6 @@ Item {
 
     signal sourceChanged(string source)
 
-    required property CoverManager coverManager
     required property MpdState mpdState
     required property VolumeState volumeState
     property bool applyEffects: false
@@ -69,7 +68,7 @@ Item {
                     text: qsTr("Clear Cover Cache")
                     icon.name: Mpdw.icons.clearCache
                     onTriggered: {
-                        root.coverManager.clearCache()
+                        AppContext.getCoverManager().clearCache()
                     }
                 }
             }
@@ -93,16 +92,12 @@ Item {
         fillMode: Image.PreserveAspectFit
 
         function updateCover() {
-            if (!root.mpdState.mpdInfo) {
-                return
-            }
-
-            let cover = root.coverManager.getCover(root.mpdState.mpdInfo, 1)
+            let cover = AppContext.getCoverManager().getCover(root.mpdState.mpdInfo, 1)
             if (typeof (cover) === "undefined") {
-                root.coverManager.gotCover.connect(updateCover)
+                AppContext.getCoverManager().gotCover.connect(updateCover)
                 return
             }
-            root.coverManager.gotCover.disconnect(updateCover)
+            AppContext.getCoverManager().gotCover.disconnect(updateCover)
             if (cover === null) {
                 coverImage.source = ""
                 return
@@ -114,12 +109,23 @@ Item {
             coverImage.source = "file://" + cover + "-large.jpg"
         }
 
-        onSourceChanged: {
-            root.sourceChanged(coverImage.source)
+        Component.onCompleted: {
+            // @SOMEDAY Do better.
+            //
+            // Case A) mpdInfo may still not be fetched from the server when started
+            // as a desktop widget. That will work fine though being bound to
+            // onMpdInfoChanged.
+            //
+            // Case B) mpdInfo is usually always available for the app footer image
+            // But showing the image isn't triggered by onMpdInfoChanged, so we have
+            // to trigger it manually but guard against case A.
+            if (root.mpdState.mpdInfo) {
+                updateCover()
+            }
         }
 
-        Component.onCompleted: {
-            coverImage.updateCover()
+        onSourceChanged: {
+            root.sourceChanged(coverImage.source)
         }
 
         Connections {
@@ -137,7 +143,7 @@ Item {
         }
 
         Connections {
-            target: root.coverManager
+            target: AppContext.getCoverManager()
             function onAfterReset() {
                 coverImage.source = ""
                 coverImage.updateCover()

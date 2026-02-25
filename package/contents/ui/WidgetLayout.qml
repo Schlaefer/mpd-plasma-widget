@@ -18,7 +18,6 @@ Item {
     required property int fontSize
     required property bool horizontalLayout
     required property bool solidBackground
-    required property CoverManager coverManager
     required property var main
     required property MpdState mpdState
     required property VolumeState volumeState
@@ -34,7 +33,6 @@ Item {
         // Cover Image
         WidgetCoverImage {
             id: coverImageContainer
-            coverManager: root.coverManager
             mpdState: root.mpdState
             volumeState: root.volumeState
             applyEffects: true
@@ -106,6 +104,10 @@ Item {
                             function onMpdInfoChanged() {
                                 songTitle.setSongTitle()
                             }
+                            //@TODO don't react on every queue change
+                            function onMpdQueueChanged() {
+                                songTitle.setSongTitle()
+                            }
                         }
 
                         function setSongTitle() {
@@ -114,10 +116,6 @@ Item {
                                 return
                             }
                             songTitle.text = FormatHelpers.title(root.mpdState.mpdInfo)
-                        }
-
-                        Component.onCompleted: {
-                            songTitle.setSongTitle()
                         }
                     }
 

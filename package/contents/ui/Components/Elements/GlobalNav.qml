@@ -11,14 +11,14 @@ RowLayout {
     required property bool narrowLayout
 
     Repeater {
-        model: win.app.pages
+        model: app.pages
 
         PlasmaComponents.ToolButton {
             icon.name: modelData.icon
             text: root.narrowLayout ? "" : modelData.text
             checkable: true
-            checked: win.app.currentPage === modelData.name
-            onClicked: win.app.showPage(modelData.name)
+            checked: app.currentPage === modelData.name
+            onClicked: app.showPage(modelData.name)
             Kirigami.MnemonicData.enabled: false
 
             PlasmaComponents.ToolTip {

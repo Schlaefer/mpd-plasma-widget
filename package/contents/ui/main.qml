@@ -23,9 +23,9 @@ PlasmoidItem {
     property string cfgMpdPort: Plasmoid.configuration.cfgMpdPort
     property string cfgShadowColor: Plasmoid.configuration.cfgShadowColor
 
-    property alias coverManager: coverManagerInstance
-    property alias mpdState: mpdStateInstance
-    property alias volumeState: volumeStateInstance
+    property bool bootstrapFinished: false
+    property MpdState mpdState
+    property VolumeState volumeState
 
     property var _appWindow: null
     property string appLastError: ""
@@ -40,55 +40,26 @@ PlasmoidItem {
 
     Plasmoid.backgroundHints: cfgSolidBackground ? PlasmaCore.Types.StandardBackground : PlasmaCore.Types.NoBackground
 
-    function toggleAppWindow() {
-        if (!_appWindow) {
-            var component = Qt.createComponent("Components/Application/ApplicationWindow.qml")
+    Component.onCompleted: {
+        AppContext.narrowBreakPoint = Qt.binding(() => main.cfgNarrowBreakPoint)
+        AppContext.bootstrap({
+            cfgCacheForDays: main.cfgCacheForDays,
+            cfgCacheRoot: main.cfgCacheRoot,
+            cfgMpdHost: main.cfgMpdHost,
+            cfgMpdPort: main.cfgMpdPort,
+        })
+        main.mpdState = AppContext.getMpdState()
+        main.volumeState = AppContext.getVolumeState()
+        main.bootstrapFinished = true
+    }
 
-            if (component.status === Component.Error) {
-                console.error(component.errorString())
-                return
-            }
-
-            main._appWindow = component.createObject(null, {
-                initialHeight: availableScreenRect.height,
-                coverManager: main.coverManager,
-                mpdState: main.mpdState,
-                narrowBreakPoint: Qt.binding(() => cfgNarrowBreakPoint),
-                volumeState: volumeState
-            })
-            main._appWindow.visible = true
-        } else {
-            main._appWindow.visible = !main._appWindow.visible
+    compactRepresentation: Loader {
+        active: main.bootstrapFinished
+        sourceComponent: CompactPresentation {
+            main: main
+            mpdState: main.mpdState
+            volumeState: main.volumeState
         }
-    }
-
-    function unloadAppWindow() {
-        if (_appWindow) {
-            _appWindow?.destroy()
-            _appWindow = null
-        }
-
-        mpdState.clearLibrary()
-    }
-
-    CoverManager {
-        id: coverManagerInstance
-    }
-
-    MpdState {
-        id: mpdStateInstance
-        // @TODO does this need decodeURIComponent?
-        scriptRoot: Qt.resolvedUrl('../scripts').toString().replace("file://", "")
-    }
-
-    VolumeState {
-        id: volumeStateInstance
-    }
-
-    compactRepresentation: CompactPresentation {
-        main: main
-        mpdState: main.mpdState
-        volumeState: main.volumeState
     }
 
     // @BOGUS What does that do?
@@ -105,26 +76,6 @@ PlasmoidItem {
     }
     toolTipSubText: qsTr("Middle-click to play/pause.\nScroll to adjust volume")
     toolTipTextFormat: Text.PlainText
-
-
-    // Widget shown on desktop
-    fullRepresentation: WidgetLayout {
-        id: widgetLayout
-        anchors.fill: parent
-
-        alignment: main.cfgAlignment
-        cornerRadius: main.cfgCornerRadius
-        fontSize: main.cfgFontSize
-        horizontalLayout: main.cfgHorizontalLayout
-        shadowColor: main.cfgShadowColor
-        shadowSpread: main.cfgShadowSpread
-        solidBackground: main.cfgSolidBackground
-
-        coverManager: main.coverManager
-        main: main
-        mpdState: main.mpdState
-        volumeState: main.volumeState
-    }
 
     Plasmoid.contextualActions: [
         PlasmaCore.Action {
@@ -160,8 +111,29 @@ PlasmoidItem {
         },
         PlasmaCore.Action {
             isSeparator: true
-        },
+        }
     ]
+
+    // Widget shown on desktop
+    fullRepresentation: Loader {
+        active: main.bootstrapFinished
+        sourceComponent: WidgetLayout {
+            id: widgetLayout
+            anchors.fill: parent
+
+            alignment: main.cfgAlignment
+            cornerRadius: main.cfgCornerRadius
+            fontSize: main.cfgFontSize
+            horizontalLayout: main.cfgHorizontalLayout
+            shadowColor: main.cfgShadowColor
+            shadowSpread: main.cfgShadowSpread
+            solidBackground: main.cfgSolidBackground
+
+            main: main
+            mpdState: main.mpdState
+            volumeState: main.volumeState
+        }
+    }
 
     Connections {
         function onCfgMpdHostChanged() {
@@ -170,7 +142,14 @@ PlasmoidItem {
     }
 
     Connections {
-        target: main.coverManager
+        target: main.mpdState
+        function onError(error) {
+            main.appLastError = error
+        }
+    }
+
+    Connections {
+        target: AppContext.getCoverManager()
         function onAfterReset() {
             main.unloadAppWindow()
         }
@@ -199,6 +178,31 @@ PlasmoidItem {
             }
             main.unloadAppWindow()
         }
+    }
+
+    function toggleAppWindow() {
+        if (!_appWindow) {
+            const component = Qt.createComponent("Components/Application/ApplicationWindow.qml")
+            // Don't put into Component.onCompleted with the rest of the bootstrap. It
+            // wont provide the right value.
+            AppContext.initialHeight = availableScreenRect.height
+            // Don't provide any initializing properties here. We want to keep the app
+            // window isolated from the plasmoid utilizing AppContext as global config
+            // provider.
+            main._appWindow = component.createObject()
+            main._appWindow.visible = true
+        } else {
+            main._appWindow.visible = !main._appWindow.visible
+        }
+    }
+
+    function unloadAppWindow() {
+        if (_appWindow) {
+            _appWindow?.destroy()
+            _appWindow = null
+        }
+
+        mpdState.clearLibrary()
     }
 
     // Development convenience to automatically open the app window on widget start.
