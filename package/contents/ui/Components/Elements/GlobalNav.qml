@@ -1,8 +1,9 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import org.kde.plasma.components as PlasmaComponents
 import org.kde.kirigami as Kirigami
 import QtQuick.Layouts
-import "../../Mpdw.js" as Mpdw
 import "../../../scripts/formatHelpers.js" as FmH
 
 RowLayout {
@@ -14,6 +15,10 @@ RowLayout {
         model: app.pages
 
         PlasmaComponents.ToolButton {
+            id: button
+
+            required property var modelData
+
             icon.name: modelData.icon
             text: root.narrowLayout ? "" : modelData.text
             checkable: true
@@ -22,7 +27,7 @@ RowLayout {
             Kirigami.MnemonicData.enabled: false
 
             PlasmaComponents.ToolTip {
-                text: FmH.tooltipWithShortcut(modelData.tooltip, modelData.shortcut)
+                text: FmH.tooltipWithShortcut(button.modelData.tooltip, button.modelData.shortcut)
             }
         }
     }
