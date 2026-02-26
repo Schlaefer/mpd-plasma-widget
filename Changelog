@@ -1,5 +1,7 @@
 # Next
 
+# 6.6.0
+
 - Show success notification on saving playlist
 - Show fail notification on playlist delete
 - Fixes Queue and Playlists view jumping when deleting items
