@@ -168,7 +168,10 @@ ListViewGeneric {
         // Both queue and album pages can have the button at the same time. Only act
         // on the view visisble to the user.
         shortcut: root.activeFocus ? "Shift+A" : undefined
-        onTriggered: root.model.deselectAll()
+        onTriggered: {
+            root.model.deselectAll()
+            root.userInteracted()
+        }
     }
 
     onCurrentIndexChanged: {

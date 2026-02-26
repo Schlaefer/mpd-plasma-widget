@@ -38,7 +38,8 @@ Item {
     }
 
     // Scrolling is considered user interaction
-    function onContentYChanged() {
+    // @SOMEDAY Should also fine to just use userInteracted()
+    function userScrolled() {
         if (!viewReady) return
         // Don't react on our own showCurrent scrolling
         if (_ourScrolling) {
@@ -57,7 +58,7 @@ Item {
     }
 
     // Everything the list view indicated as user interaction
-    function onUserInteracted() {
+    function userInteracted() {
         if (!viewReady) return
         if (autoMode || disableFollowOnEditTimer.running) {
             autoMode = false

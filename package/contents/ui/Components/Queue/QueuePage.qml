@@ -117,6 +117,8 @@ Kirigami.ScrollablePage {
 
         mpdState: root.mpdState
         narrowLayout: root.narrowLayout
+        onUserInteracted: root.followMode.userInteracted()
+        onContentYChanged: root.followMode.userScrolled()
 
         header: SonglistHeader {
             leftActions: [
@@ -131,6 +133,7 @@ Kirigami.ScrollablePage {
                         let positions = songlistView.model.getSelected()
                         songlistView.model.selectedRemove()
                         root.mpdState.removeFromQueue(positions)
+                        root.followMode.userInteracted()
                     }
                 }
             ]
@@ -167,6 +170,7 @@ Kirigami.ScrollablePage {
                         } else {
                             root.mpdState.playInQueue(model.pos)
                         }
+                        songlistView.userInteracted()
                     }
                 },
                 Kirigami.Action {
@@ -177,6 +181,7 @@ Kirigami.ScrollablePage {
                         let index = model.index
                         songlistView.model.remove(index)
                         root.mpdState.removeFromQueue([index])
+                        songlistView.userInteracted()
                     }
                 }
             ]
