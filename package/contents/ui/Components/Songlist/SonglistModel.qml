@@ -52,11 +52,30 @@ ListModel {
      * @param {int} row - The moved rows are inserted *before* that index!
      */
     onRowsMoved: function(parent, start, end, destination, row) {
-        // moved upwards → reverse order
         if (row < start) {
+            // Draging upwards → reverse order
             let tmp = start
             start = row
             row = tmp
+        } else {
+            // Draging downwards
+            //
+            // Dragging Song 1 down gives a start of 0 but a row (target) value of 2.
+            // But since Song 2 moves up at the same time the changed rows are the
+            // postions 0,1 and not 0,1,2. Without corection this creates a phantom
+            // entry at the bottom of the list when updating the positions.
+            //
+            //                  Drag                 Result
+            //              ┌───────────┐         ┌───────────┐
+            // Position 0   │   Song 1  ├───┐     │   Song 2  │
+            //              └───────────┘   │     └───────────┘
+            //              ┌───────────┐   │     ┌───────────┐
+            // Position 1   │   Song 2  │   │     │   Song 1  │
+            //              └───────────┘   │     └───────────┘
+            //                              │
+            // Position 2               ◀──┘
+            //
+            row = row - 1
         }
 
         // Pass start and end because we only need to update positions that

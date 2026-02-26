@@ -4,6 +4,7 @@
 - Show fail notification on playlist delete
 - Fixes Queue and Playlists view jumping when deleting items
 - Fixes user interaction not detected to delay auto jumping to current song in Queue
+- Fixes phantom song when dragging song to last item in Queue
 - Tweaks initial app window size and proportions
 - Considerable code refactoring and cleanup
 
