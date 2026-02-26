@@ -47,6 +47,8 @@ PlasmoidItem {
             cfgCacheRoot: main.cfgCacheRoot,
             cfgMpdHost: main.cfgMpdHost,
             cfgMpdPort: main.cfgMpdPort,
+            // @TODO does this need decodeURIComponent?
+            scriptRoot: Qt.resolvedUrl('../scripts').toString().replace("file://", "")
         })
         main.mpdState = AppContext.getMpdState()
         main.volumeState = AppContext.getVolumeState()

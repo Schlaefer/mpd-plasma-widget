@@ -21,10 +21,7 @@ QtObject {
     property Component _coverManagerComponent: Component { CoverManager { }}
 
     property MpdState _mpdState
-    property Component _mpdStateComponent:Component { MpdState {
-        // @TODO does this need decodeURIComponent?
-        scriptRoot: Qt.resolvedUrl('../scripts').toString().replace("file://", "")
-    }}
+    property Component _mpdStateComponent:Component { MpdState { }}
 
 
     function bootstrap(config) {
@@ -37,6 +34,7 @@ QtObject {
         root._mpdState = _mpdStateComponent.createObject(null, {
             cfgMpdHost: config.cfgMpdHost,
             cfgMpdPort: config.cfgMpdPort,
+            scriptRoot: config.scriptRoot
         })
         root._mpdState.coverManager = root._coverManager
 

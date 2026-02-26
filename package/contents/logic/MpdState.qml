@@ -10,8 +10,8 @@ Item {
 
     required property string cfgMpdHost
     required property string cfgMpdPort
+    required property string scriptRoot
     property var coverManager
-    property string scriptRoot
     property string _lastError
 
     /**
