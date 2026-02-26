@@ -32,7 +32,8 @@ Kirigami.PromptDialog {
 
             function afterSave(success) {
                 if (success) {
-                    newPlaylistErrorMsg.visible = false
+                    newPlaylistErrorMsg.visible = false // Flashes for a moment while dialog closes
+                    playlistExistsMessage.visible = false
                     AppContext.notify(qsTr('Saved'))
                     root.close()
                 } else {
@@ -53,10 +54,11 @@ Kirigami.PromptDialog {
     ColumnLayout {
         PlasmaComponents.TextField {
             id: newPlaylistTitle
-            Layout.fillWidth: true
+
             property bool playlistTitleExists
+
+            Layout.fillWidth: true
             placeholderText: qsTr("New Playlist Name…")
-            // Doesn't work due to animation(?), we use a timer instead.
 
             function updatePlaylistTitleExists() {
                 playlistTitleExists = root.mpdState.mpdPlaylists.indexOf(text) !== -1
@@ -101,7 +103,7 @@ Kirigami.PromptDialog {
         }
 
         Kirigami.InlineMessage {
-            id: msg
+            id: playlistExistsMessage
             Layout.fillWidth: true
             visible: newPlaylistTitle.playlistTitleExists
             type: Kirigami.MessageType.Warning
