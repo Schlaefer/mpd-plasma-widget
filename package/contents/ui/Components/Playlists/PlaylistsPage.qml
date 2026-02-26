@@ -109,14 +109,25 @@ Kirigami.ScrollablePage {
         delegate: delegateComponentPlaylists
 
         function populateModel() {
-            model.clear()
-            let playlists = root.mpdState.mpdPlaylists
-            for (let i in playlists) {
-                model.append({ "title": playlists[i] })
+            const playlists = root.mpdState.mpdPlaylists
+            let i = 0
+            for (i = 0; i < playlists.length; i++) {
+                const mpdTitle = playlists[i]
+                const ourTitle = model.get(i)?.title
+                if (ourTitle) {
+                    if (mpdTitle === ourTitle) { continue }
+                    model.remove(i)
+                }
+                model.insert(i, {"title": mpdTitle})
+            }
+            for (let k = model.count - 1; k >= i; k--) {
+                model.remove(k)
             }
         }
 
-        Component.onCompleted: { root.mpdState.getPlaylists() }
+        Component.onCompleted: {
+            root.mpdState.getPlaylists()
+        }
 
         Connections {
             target: root.mpdState
