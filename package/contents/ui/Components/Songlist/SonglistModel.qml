@@ -62,8 +62,9 @@ ListModel {
             //
             // Dragging Song 1 down gives a start of 0 but a row (target) value of 2.
             // But since Song 2 moves up at the same time the changed rows are the
-            // postions 0,1 and not 0,1,2. Without corection this creates a phantom
-            // entry at the bottom of the list when updating the positions.
+            // postions 0,1 and not 0,1,2. Without correction this creates a phantom
+            // entry at the bottom of the list when an item is dragged to be the last
+            // in the list.
             //
             //                  Drag                 Result
             //              ┌───────────┐         ┌───────────┐
