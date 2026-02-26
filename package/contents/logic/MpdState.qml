@@ -355,9 +355,10 @@ Item {
      * Deletes a playlist
      *
      * @param {sting} title playlist title in MPD
+     * @param {requestCallback} callback - callback after execution
      */
-    function removePlaylist(title) {
-        executable.execCmd("rm", [title])
+    function removePlaylist(title, callback) {
+        executable.execCmd("rm", [title], callback)
     }
 
     /**

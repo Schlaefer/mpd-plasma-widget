@@ -98,7 +98,11 @@ Kirigami.ScrollablePage {
         buttonText: qsTr("Delete Playlist")
 
         onConfirmed: function () {
-            root.mpdState.removePlaylist(itemTitle)
+            root.mpdState.removePlaylist(itemTitle, (status) => {
+                if (status != 0) {
+                    AppContext.notify(qsTr("Error deleting playlist").arg(itemTitle))
+                }
+            })
             deleteConfirmationDialog.close()
         }
     }
