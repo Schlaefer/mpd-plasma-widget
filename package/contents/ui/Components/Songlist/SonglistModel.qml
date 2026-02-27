@@ -25,14 +25,15 @@ ListModel {
     onRowsInserted: function(parent, first, last) {
         for(let i = first; i <= last; i++) {
             let data = {
-                // MPD can give us a song but has no information about it except
-                // "file". This can happen if a file is listed in loaded
-                // playlist but the actual file is missing on disk.
+                // If a playlist was loaded to the queue but a file doesn't exist in
+                // MPD the *only* populated property is "file", which is the string of
+                // the file-path of the unknown playlist item. We mark these item as
+                // orphaned.
                 "orphaned": false,
             }
 
             let insertedSong = root.get(i)
-            if (insertedSong.time === "") {
+            if (insertedSong.added === "") {
                 data.title = insertedSong.file
                 data.orphaned = true
             }
