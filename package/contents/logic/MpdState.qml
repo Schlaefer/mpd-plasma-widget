@@ -105,6 +105,7 @@ Item {
     }
 
     function disconnect() {
+        root.mpdConnectionAvailable = false
         mpdIdleLoopTimer.stop()
         mpdNetworkTimeoutTimer.stop()
     }
@@ -241,6 +242,12 @@ Item {
         if (root._playState === MpdState.PlayState.Stop && root.mpdInfo) {
             playInQueue(root.mpdInfo.pos)
             return
+        }
+        // If we have a working connection and something to play we promote that
+        // new state early instead of waiting for the server roundtrip to improve our
+        // local UI responsivness.
+        if (root.mpdConnectionAvailable && root.mpdQueue.length > 0) {
+            root.mpdPlaying = !root.mpdPlaying
         }
 
         executable.execCmd("pause")
