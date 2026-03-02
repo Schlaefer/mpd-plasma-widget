@@ -43,14 +43,18 @@ PlasmoidItem {
 
     Component.onCompleted: {
         AppContext.narrowBreakPoint = Qt.binding(() => main.cfgNarrowBreakPoint)
-        AppContext.bootstrap({
-            cfgCacheForDays: main.cfgCacheForDays,
-            cfgCacheRoot: main.cfgCacheRoot,
-            cfgMpdHost: main.cfgMpdHost,
-            cfgMpdPort: main.cfgMpdPort,
+        AppContext.cacheRoot = Qt.binding(() => main.cfgCacheRoot)
+        AppContext.cacheForDays = Qt.binding(() => main.cfgCacheForDays)
+        AppContext.mpdHost = Qt.binding(() => main.cfgMpdHost)
+        AppContext.mpdPort = Qt.binding(() => main.cfgMpdPort)
+
+        const bootstrapped = AppContext.bootstrap({
             // @TODO does this need decodeURIComponent?
             scriptRoot: Qt.resolvedUrl('../scripts').toString().replace("file://", "")
         })
+        if (!bootstrapped) {
+            return
+        }
         main.mpdState = AppContext.getMpdState()
         main.volumeState = AppContext.getVolumeState()
         main.bootstrapFinished = true

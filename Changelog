@@ -1,5 +1,9 @@
 # Next
 
+# 6.7.1
+
+- Fixes global configuration for cache and mpd-host not being applied immediately (6.6.0 refactor regression)
+
 # 6.7.0
 
 - Sets default IP to localhost

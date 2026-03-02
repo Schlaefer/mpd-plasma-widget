@@ -10,6 +10,10 @@ QtObject {
 
     property int initialHeight: 900
     property int narrowBreakPoint: 520
+    property string cacheRoot
+    property string cacheForDays
+    property string mpdHost
+    property string mpdPort
 
     // Don't expose it raw, always isolate a specific functionality with a method here.
     property Kirigami.ApplicationItem _app
@@ -25,15 +29,18 @@ QtObject {
 
 
     function bootstrap(config) {
+        if (!cacheRoot || !cacheForDays || !mpdHost || !mpdPort) {
+            throw new Error("AppContext.bootstrap failed without proper initialization.")
+        }
 
         root._coverManager = _coverManagerComponent.createObject(null, {
-            cfgCacheForDays: config.cfgCacheForDays,
-            cfgCacheRoot: config.cfgCacheRoot,
+            cfgCacheForDays: Qt.binding(() => root.cacheForDays),
+            cfgCacheRoot: Qt.binding(() => root.cacheRoot),
         })
 
         root._mpdState = _mpdStateComponent.createObject(null, {
-            cfgMpdHost: config.cfgMpdHost,
-            cfgMpdPort: config.cfgMpdPort,
+            cfgMpdHost: Qt.binding(() => root.mpdHost),
+            cfgMpdPort: Qt.binding(() => root.mpdPort),
             scriptRoot: config.scriptRoot
         })
         root._mpdState.coverManager = root._coverManager
@@ -46,6 +53,8 @@ QtObject {
 
         root._coverManager.bootstrap()
         root._mpdState.connect()
+
+        return true
     }
 
     function getCoverManager() {
