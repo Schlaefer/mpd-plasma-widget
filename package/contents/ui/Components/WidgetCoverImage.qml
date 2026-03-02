@@ -16,6 +16,7 @@ Item {
     required property MpdState mpdState
     required property VolumeState volumeState
     property bool applyEffects: false
+    property bool overlayFeedback: false
     property int coverRadius: 0
     property int shadowSpread: 0
     property string shadowColor
@@ -41,6 +42,8 @@ Item {
         }
 
         onWheel: function (wheel) {
+            volumeStateConnection.enabled = true
+            volumeStateTimer.restart()
             root.volumeState.wheel(wheel.angleDelta.y)
         }
         onDoubleClicked: {
@@ -181,5 +184,135 @@ Item {
             radius: root.shadowSpread
             samples: 17
         }
+    }
+
+    // #############################################
+    // # Overlay for play/pause and volume
+    // #############################################
+    Item {
+        id: overlay
+        anchors.centerIn: parent
+        width: parent.width
+        height: parent.height
+        opacity: 0
+
+        Behavior on opacity {
+            enabled: overlay.opacity > 0
+            OpacityAnimator {
+                duration: 300
+                easing.type: Easing.OutCubic;
+            }
+        }
+
+        // Backdrop
+        Rectangle {
+            id: backdrop
+            anchors.centerIn: parent
+            width: (overlayIcon.width > overlayText.width ? overlayIcon.width : overlayIcon.height) + 20
+            height: width
+            radius: width / 2
+            color: Qt.rgba(
+                Kirigami.Theme.backgroundColor.r,
+                Kirigami.Theme.backgroundColor.g,
+                Kirigami.Theme.backgroundColor.b,
+                0.9
+            )
+        }
+
+
+        Kirigami.Icon {
+            id: overlayIcon
+            anchors.centerIn: parent
+            width: coverImage.paintedHeight / 5
+            height: width
+            source: Mpdw.icons.queuePlay
+            visible: false
+        }
+
+        Label {
+            id: overlayText
+            anchors.centerIn: parent
+            width: coverImage.paintedHeight / 7
+            height: width
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+            font.pointSize: width / 3 < 10 ? 10 : width / 3
+            visible: false
+        }
+
+    }
+
+    // Controls fading out the overlay
+    Timer {
+        id: fadeOutTimer
+        interval: 300
+        repeat: false
+        onTriggered: overlay.opacity = 0
+    }
+
+    // Avoids show/hide flicker in on widget start
+    Timer {
+        running: true
+        interval: 500
+        onTriggered: {
+            mpdStateConnection.enabled = true
+            // volumeStateConnection.enabled = true
+        }
+    }
+
+    Connections {
+        id: mpdStateConnection
+        target: root.mpdState
+        enabled: false
+        function onMpdPlayingChanged() {
+            root.showFeedback({icon: root.mpdState.mpdPlaying ? Mpdw.icons.queuePlay : Mpdw.icons.queuePause})
+        }
+    }
+
+    // I only want to emit volume change info for the otherwise no feedback scroll on
+    // the cover, not if the change comes from others of our own interface elements
+    // (e.g. sliders) or mpd-server change. This is surely personal taste, but I find
+    // that feedback distracting.
+    Timer {
+        id: volumeStateTimer
+        interval: 500
+        onTriggered: {
+            volumeStateConnection.enabled = false
+        }
+    }
+
+    Connections {
+        id: volumeStateConnection
+        target: root.volumeState
+        enabled: false
+        function onVolumeChanged() {
+            root.showFeedback({text: qsTr("%1\%").arg(root.volumeState.volume)})
+        }
+    }
+
+    function showFeedback(options) {
+        if (!root.overlayFeedback) {
+            return
+        }
+
+        // Hide all overlays
+        overlayIcon.visible = false
+        overlayText.visible = false
+
+        if (options.icon) {
+            // Icon overlay
+            overlayIcon.source = options.icon
+            overlayIcon.visible = true
+        } else if (options.text) {
+            // Text overlay
+            overlayText.text = options.text
+            overlayText.visible = true
+        } else {
+            return
+        }
+
+        // Fade in
+        overlay.opacity = 0.8
+        fadeOutTimer.restart()
     }
 }

@@ -39,6 +39,7 @@ Item {
             mpdState: root.mpdState
             volumeState: root.volumeState
             applyEffects: true
+            overlayFeedback: true
             onHeightChanged: sourceSizeTimer.restart()
             onWidthChanged: sourceSizeTimer.restart()
             Layout.fillHeight: true
