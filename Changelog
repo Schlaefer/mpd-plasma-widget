@@ -2,6 +2,7 @@
 
 # 6.7.0
 
+- Set default IP to localhost
 - Adds volume and play/pause feedback when interacting with cover
 - Adds volume slider in horizontal widget layout
 - Makes visibility of volume slider in widget layout configurable
