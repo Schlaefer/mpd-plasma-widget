@@ -30,8 +30,6 @@ Item {
         columns: root.horizontalLayout ? 3 : 1
         rows: root.horizontalLayout ? 1 : 3
         anchors.fill: parent
-        // Prevents cover flowing out of the plasmoid container.
-        clip: true
 
         // Cover Image
         WidgetCoverImage {
