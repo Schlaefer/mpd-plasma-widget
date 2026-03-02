@@ -41,6 +41,8 @@ Item {
             applyEffects: true
             onHeightChanged: sourceSizeTimer.restart()
             onWidthChanged: sourceSizeTimer.restart()
+            Layout.fillHeight: true
+            Layout.fillWidth: root.horizontalLayout ? false : true
 
             // Delay setting the source otherwise resizing the widget is very shoppy.
             Timer {

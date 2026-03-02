@@ -21,7 +21,6 @@ Item {
     property string shadowColor
     property alias sourceSize: coverImage.sourceSize
 
-    Layout.fillHeight: true
     MouseArea {
         anchors.fill: parent
         acceptedButtons: Qt.LeftButton | Qt.RightButton
