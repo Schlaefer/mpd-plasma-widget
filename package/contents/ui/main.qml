@@ -64,19 +64,20 @@ PlasmoidItem {
         }
     }
 
-    // @BOGUS What does that do?
-    Plasmoid.status: PlasmaCore.Types.PassiveStatus
     toolTipMainText: {
         if (!main.mpdState.mpdInfo || main.mpdState.mpdQueue.length === 0 ) {
             return qsTr("Queue is empty")
         }
-        const out = FormatHelpers.title(main.mpdState.mpdInfo)
-        + "\n" + FormatHelpers.artist(main.mpdState.mpdInfo)
-        + "\n" + FormatHelpers.album(main.mpdState.mpdInfo)
-
-        return out
+        return FormatHelpers.title(main.mpdState.mpdInfo)
     }
-    toolTipSubText: qsTr("Middle-click to play/pause.\nScroll to adjust volume")
+    toolTipSubText: {
+        const out = [
+            qsTr("by %1").arg(FormatHelpers.artist(main.mpdState.mpdInfo)),
+            qsTr("Scroll to adjust volume (%1\%)").arg(main.volumeState.volume),
+            qsTr("Middle-click to play/pause"),
+        ]
+        return out.join("\n")
+    }
     toolTipTextFormat: Text.PlainText
 
     Plasmoid.contextualActions: [
