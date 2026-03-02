@@ -97,7 +97,7 @@ Item {
         // pass, otherwise we "jank back" to a previous, outdated value mpdState
         // just received. Also wait at least a second, otherwise mpd may still
         // serve the old value.
-        interval: 2 * volumeDebounceTimer.interval < 2000 ? 2000 : 2 * volumeDebounceTimer.interval
+        interval: 2 * volumeDebounceTimer.interval < 1500 ? 1500 : 2 * volumeDebounceTimer.interval
         onTriggered: {
             if (root.volume !== root.mpdState.volume) {
                 root.volume = root.mpdState.volume
