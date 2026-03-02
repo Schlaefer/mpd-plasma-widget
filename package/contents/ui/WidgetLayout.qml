@@ -67,14 +67,9 @@ Item {
             Layout.leftMargin: !root.horizontalLayout ? Kirigami.Units.largeSpacing : 0
             Layout.rightMargin: !root.horizontalLayout ? Kirigami.Units.largeSpacing : 0
 
-            // Orientation bugged? Hide on horizontal layout for now
-            // See: https://bugs.kde.org/show_bug.cgi?id=474611
-            // Layout.maximumWidth: root.horizontalLayout ? 15 : -1
-            // orientation: root.horizontalLayout ? Qt.Vertical : Qt.Horizontal
-            visible: !root.horizontalLayout
             from: 0
             to: 100
-            stepSize: 1
+            stepSize: 3
             onValueChanged: root.volumeState.set(volumeSlider.value)
             value: root.volumeState.volume
         }
