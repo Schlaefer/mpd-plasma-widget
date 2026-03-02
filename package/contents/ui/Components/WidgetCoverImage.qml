@@ -27,6 +27,8 @@ Item {
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         onClicked: function (mouse) {
             if (mouse.button === Qt.LeftButton) {
+                mpdStateConnection.enabled = true
+                feedbackOverlayTimer.restart()
                 root.mpdState.togglePlayPause()
             } else if (mouse.button === Qt.RightButton) {
                 if (!contextMenuLoader.item) {
@@ -43,7 +45,7 @@ Item {
 
         onWheel: function (wheel) {
             volumeStateConnection.enabled = true
-            volumeStateTimer.restart()
+            feedbackOverlayTimer.restart()
             root.volumeState.wheel(wheel.angleDelta.y)
         }
         onDoubleClicked: {
@@ -250,13 +252,16 @@ Item {
         onTriggered: overlay.opacity = 0
     }
 
-    // Avoids show/hide flicker in on widget start
+
+    // I only want to emit overlay change info for events on the cover which have no
+    // other indicator. This is surely personal taste, but I find feedback from other
+    // sources distracting.
     Timer {
-        running: true
+        id: feedbackOverlayTimer
         interval: 500
         onTriggered: {
-            mpdStateConnection.enabled = true
-            // volumeStateConnection.enabled = true
+            mpdStateConnection.enabled = false
+            volumeStateConnection.enabled = false
         }
     }
 
@@ -266,18 +271,6 @@ Item {
         enabled: false
         function onMpdPlayingChanged() {
             root.showFeedback({icon: root.mpdState.mpdPlaying ? Mpdw.icons.queuePlay : Mpdw.icons.queuePause})
-        }
-    }
-
-    // I only want to emit volume change info for the otherwise no feedback scroll on
-    // the cover, not if the change comes from others of our own interface elements
-    // (e.g. sliders) or mpd-server change. This is surely personal taste, but I find
-    // that feedback distracting.
-    Timer {
-        id: volumeStateTimer
-        interval: 500
-        onTriggered: {
-            volumeStateConnection.enabled = false
         }
     }
 
