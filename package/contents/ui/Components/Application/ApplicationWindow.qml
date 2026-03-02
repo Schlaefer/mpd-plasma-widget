@@ -9,6 +9,7 @@ import "./../../Mpdw.js" as Mpdw
 import "./../../Components/"
 import "./../../Components/Albumartists"
 import "./../../Components/Application"
+import "./../../Components/Elements"
 import "./../../Components/Queue"
 import "./../../Components/Playlists"
 import "../../../scripts/formatHelpers.js" as FormatHelpers
@@ -369,6 +370,13 @@ PlasmaCore.Window {
 
                                         }
                                     }
+                                }
+
+                                MessageIcon {
+                                    // @TODO This should be passed in as property
+                                    message: main.appLastError
+                                    Layout.preferredHeight: Kirigami.Units.iconSizes.small
+                                    Layout.preferredWidth: Layout.preferredHeight
                                 }
                             }
 

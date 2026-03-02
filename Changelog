@@ -1,5 +1,10 @@
 # Next
 
+# 6.7.0
+
+- Changes error reporting from text to info icon
+- Adds error info icon the App footer bar
+
 # 6.6.1
 
 - Fixes some songs considered orphaned

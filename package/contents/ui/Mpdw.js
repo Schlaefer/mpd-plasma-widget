@@ -16,7 +16,7 @@ const icons = {
     queueClear: "edit-delete",
     queuePlaceholderCover: "media-default-album",
 
-    playlistDelete: "edit-delete", 
+    playlistDelete: "edit-delete",
 
     selectAll: "edit-select-all-symbolic",
     selectNone: "edit-select-none",
@@ -41,6 +41,9 @@ const icons = {
 
     appConfigGeneral: "configure",
     appConfigAppearance: "preferences-desktop-color",
+    appError: "emblem-warning",
+    appMpdError: "network-offline",
+
     clearCache: "emblem-warning",
     mpdUpdate: "view-refresh",
 

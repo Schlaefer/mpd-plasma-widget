@@ -4,8 +4,8 @@ import QtQuick
 import QtQuick.Layouts
 import org.kde.plasma.components as PlasmaComponents
 import org.kde.kirigami as Kirigami
-import "./Mpdw.js" as Mpdw
 import "./Components"
+import "./Components/Elements"
 import "../logic"
 import "../scripts/formatHelpers.js" as FormatHelpers
 
@@ -77,115 +77,121 @@ Item {
             value: root.volumeState.volume
         }
 
-        // Title
-        ColumnLayout {
-            id: descriptionContainer
-            Layout.leftMargin: Kirigami.Units.largeSpacing
-            Layout.rightMargin: Kirigami.Units.largeSpacing
+        // Wrapper for info/error icon
+        Item {
+            id: descriptionContainerWrapper
+            Layout.fillWidth: true
+            implicitHeight: innerLayout.implicitHeight
 
-            // Wrapper to attach MouseArea
-            Item {
-                Layout.fillWidth: true
-                implicitHeight: innerLayout.implicitHeight
+            // Title
+            ColumnLayout {
+                anchors.fill: parent
+                Layout.leftMargin: Kirigami.Units.largeSpacing
+                Layout.rightMargin: Kirigami.Units.largeSpacing
 
-                ColumnLayout {
-                    id: innerLayout
-                    opacity: notification.text ? 0 : 1
-                    anchors.fill: parent
+                // Wrapper to attach App-window MouseArea
+                Item {
+                    Layout.fillWidth: true
+                    implicitHeight: innerLayout.implicitHeight
 
-                    WidgetLabel {
-                        id: songTitle
-                        alignment: root.alignment
-                        fontSize: root.fontSize
-                        font.weight: Font.Bold
-                        solidBackground: root.solidBackground
-                        Connections {
-                            target: root.mpdState
-                            function onMpdInfoChanged() {
-                                songTitle.setSongTitle()
+                    ColumnLayout {
+                        id: innerLayout
+                        // opacity: notification.text ? 0 : 1
+                        anchors.fill: parent
+
+                        WidgetLabel {
+                            id: songTitle
+                            alignment: root.alignment
+                            fontSize: root.fontSize
+                            font.weight: Font.Bold
+                            solidBackground: root.solidBackground
+                            Connections {
+                                target: root.mpdState
+                                function onMpdInfoChanged() {
+                                    songTitle.setSongTitle()
+                                }
+                                //@TODO don't react on every queue change
+                                function onMpdQueueChanged() {
+                                    songTitle.setSongTitle()
+                                }
                             }
-                            //@TODO don't react on every queue change
-                            function onMpdQueueChanged() {
-                                songTitle.setSongTitle()
+
+                            function setSongTitle() {
+                                if (root.mpdState.mpdQueue.length === 0) {
+                                    songTitle.text = qsTr("Queue is empty")
+                                    return
+                                }
+                                songTitle.text = FormatHelpers.title(root.mpdState.mpdInfo)
                             }
                         }
 
-                        function setSongTitle() {
-                            if (root.mpdState.mpdQueue.length === 0) {
-                                songTitle.text = qsTr("Queue is empty")
-                                return
+                        WidgetLabel {
+                            id: songArtist
+                            fontSize: root.fontSize
+                            alignment: root.alignment
+                            solidBackground: root.solidBackground
+                            Connections {
+                                target: root.mpdState
+                                function onMpdInfoChanged() {
+                                    songArtist.text = FormatHelpers.artist(root.mpdState.mpdInfo)
+                                }
                             }
-                            songTitle.text = FormatHelpers.title(root.mpdState.mpdInfo)
+                        }
+
+                        WidgetLabel {
+                            id: songAlbum
+                            fontSize: root.fontSize
+                            alignment: root.alignment
+                            solidBackground: root.solidBackground
+                            Layout.rightMargin: (errorIcon.visible ? (root.alignment !== 2 ? errorIcon.implicitWidth : undefined) : undefined)
+                            Layout.leftMargin: (errorIcon.visible ?  (root.alignment !== 2 ? undefined : errorIcon.implicitWidth) : undefined)
+                            Connections {
+                                target: root.mpdState
+
+                                function onMpdInfoChanged() {
+                                    songAlbum.text = FormatHelpers.album(root.mpdState.mpdInfo)
+                                }
+                            }
                         }
                     }
 
-                    WidgetLabel {
-                        id: songArtist
-                        fontSize: root.fontSize
-                        alignment: root.alignment
-                        solidBackground: root.solidBackground
-                        Connections {
-                            target: root.mpdState
-                            function onMpdInfoChanged() {
-                                songArtist.text = FormatHelpers.artist(root.mpdState.mpdInfo)
-                            }
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            root.main.toggleAppWindow()
                         }
-                    }
-
-                    WidgetLabel {
-                        id: songAlbum
-                        fontSize: root.fontSize
-                        alignment: root.alignment
-                        solidBackground: root.solidBackground
-                        Connections {
-                            target: root.mpdState
-
-                            function onMpdInfoChanged() {
-                                songAlbum.text = FormatHelpers.album(root.mpdState.mpdInfo)
-                            }
-                        }
-                    }
-
-                }
-
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: {
-                        root.main.toggleAppWindow()
                     }
                 }
             }
 
-            // Notifications
-            RowLayout {
-                visible: !!notification.text
-                WidgetLabel {
-                    id: notification
-                    Layout.fillWidth: true
+            MessageIcon {
+                id: errorIcon
+                anchors.bottom: parent.bottom
+                anchors.margins: Kirigami.Units.smallSpacing
+                message: root.main.appLastError
+                height: Kirigami.Units.iconSizes.small
+                width: height
 
-                    fontSize: root.fontSize
-                    alignment: root.alignment
-                    solidBackground: root.solidBackground
-
-                    visible: text.length > 0
-                    font.italic: true
-                    wrapMode: Text.Wrap
-
-                    Connections {
-                        function onAppLastErrorChanged() {
-                            notification.text = root.main.appLastError
+                states: [
+                    State {
+                        name: "left"
+                        when: root.alignment === 2
+                        AnchorChanges {
+                            target: errorIcon
+                            anchors.left: descriptionContainerWrapper.left
+                            anchors.right: undefined
                         }
-
-                        target: root.main
+                    },
+                    State {
+                        name: "right"
+                        when: root.alignment !== 2
+                        AnchorChanges {
+                            target: errorIcon
+                            anchors.right: descriptionContainerWrapper.right
+                            anchors.left: undefined
+                        }
                     }
-                }
-
-                PlasmaComponents.ToolButton {
-                    icon.name: Mpdw.icons.dialogClose
-                    icon.height: Kirigami.Units.iconSizes.small
-                    icon.width: Kirigami.Units.iconSizes.small
-                    onClicked: notification.text = ''
-                }
+                ]
             }
         }
     }
