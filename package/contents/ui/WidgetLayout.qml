@@ -17,6 +17,7 @@ Item {
     required property int alignment
     required property int fontSize
     required property bool horizontalLayout
+    required property bool showVolumeSlider
     required property bool solidBackground
     required property var main
     required property MpdState mpdState
@@ -67,6 +68,8 @@ Item {
             Layout.leftMargin: !root.horizontalLayout ? Kirigami.Units.largeSpacing : 0
             Layout.rightMargin: !root.horizontalLayout ? Kirigami.Units.largeSpacing : 0
 
+            visible: root.showVolumeSlider
+            orientation: root.horizontalLayout ? Qt.Vertical : Qt.Horizontal
             from: 0
             to: 100
             stepSize: 3

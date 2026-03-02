@@ -25,6 +25,10 @@
             <default>false</default>
         </entry>
 
+        <entry name="cfgShowVolumeSlider" type="Bool">
+            <default>true</default>
+        </entry>
+
         <entry name="cfgCacheRoot" type="Path">
             <default>$HOME/.cache/com.siezi.plasma.mpdWidget</default>
         </entry>

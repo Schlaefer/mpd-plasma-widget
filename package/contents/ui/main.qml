@@ -12,6 +12,7 @@ PlasmoidItem {
 
     property bool cfgHorizontalLayout: Plasmoid.configuration.cfgHorizontalLayout
     property bool cfgSolidBackground: Plasmoid.configuration.cfgSolidBackground
+    property bool cfgShowVolumeSlider: Plasmoid.configuration.cfgShowVolumeSlider
     property int cfgNarrowBreakPoint: Plasmoid.configuration.cfgNarrowBreakPoint
     property int cfgCornerRadius: Plasmoid.configuration.cfgCornerRadius
     property int cfgFontSize: Plasmoid.configuration.cfgFontSize
@@ -130,6 +131,7 @@ PlasmoidItem {
             horizontalLayout: main.cfgHorizontalLayout
             shadowColor: main.cfgShadowColor
             shadowSpread: main.cfgShadowSpread
+            showVolumeSlider: main.cfgShowVolumeSlider
             solidBackground: main.cfgSolidBackground
 
             main: main

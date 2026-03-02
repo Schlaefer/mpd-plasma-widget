@@ -10,6 +10,7 @@ KCMUtils.SimpleKCM {
 
     property alias cfg_cfgAlignment: cfgAlignment.selected
     property alias cfg_cfgHorizontalLayout: cfgHorizontalLayout.checked
+    property alias cfg_cfgShowVolumeSlider: cfgShowVolumeSlider.checked
     property alias cfg_cfgFontSize: cfgFontSize.value
     property alias cfg_cfgCornerRadius: cfgCornerRadius.value
     property alias cfg_cfgNarrowBreakPoint: cfgNarrowBreakPoint.value
@@ -34,6 +35,11 @@ KCMUtils.SimpleKCM {
             id: cfgSolidBackground
 
             Kirigami.FormData.label: i18n("Solid Background:")
+        }
+        PlasmaComponents.CheckBox {
+            id: cfgShowVolumeSlider
+
+            Kirigami.FormData.label: i18n("Show Volume Slider:")
         }
 
         Item {

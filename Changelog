@@ -2,7 +2,8 @@
 
 # 6.7.0
 
-- Adds slider in horizontal widget layout
+- Adds volume slider in horizontal widget layout
+- Makes visibility of volume slider in widget layout configurable
 - Changes error reporting from text to info icon
 - Adds error info icon the App footer bar
 - Tweaks panel hover popup information
