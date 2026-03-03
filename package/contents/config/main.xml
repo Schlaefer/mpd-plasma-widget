@@ -21,6 +21,14 @@
             <default>10</default>
         </entry>
 
+        <entry name="cfgUseCustomFontColor" type="Bool">
+            <default>false</default>
+        </entry>
+
+        <entry name="cfgCustomFontColor" type="Color">
+            <default>#000000</default>
+        </entry>
+
         <entry name="cfgHorizontalLayout" type="Bool">
             <default>false</default>
         </entry>

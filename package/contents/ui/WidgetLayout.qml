@@ -16,6 +16,8 @@ Item {
 
     required property int alignment
     required property int fontSize
+    required property bool useCustomFontColor
+    required property string customFontColor
     required property bool horizontalLayout
     required property bool showVolumeSlider
     required property bool solidBackground
@@ -106,6 +108,7 @@ Item {
                             fontSize: root.fontSize
                             font.weight: Font.Bold
                             solidBackground: root.solidBackground
+                            color: root.useCustomFontColor ? root.customFontColor : Kirigami.Theme.textColor
                             Connections {
                                 target: root.mpdState
                                 function onMpdInfoChanged() {
@@ -131,6 +134,7 @@ Item {
                             fontSize: root.fontSize
                             alignment: root.alignment
                             solidBackground: root.solidBackground
+                            color: root.useCustomFontColor ? root.customFontColor : Kirigami.Theme.textColor
                             Connections {
                                 target: root.mpdState
                                 function onMpdInfoChanged() {
@@ -144,6 +148,7 @@ Item {
                             fontSize: root.fontSize
                             alignment: root.alignment
                             solidBackground: root.solidBackground
+                            color: root.useCustomFontColor ? root.customFontColor : Kirigami.Theme.textColor
                             Layout.rightMargin: (errorIcon.visible ? (root.alignment !== 2 ? errorIcon.implicitWidth : undefined) : undefined)
                             Layout.leftMargin: (errorIcon.visible ?  (root.alignment !== 2 ? undefined : errorIcon.implicitWidth) : undefined)
                             Connections {

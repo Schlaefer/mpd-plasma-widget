@@ -1,5 +1,8 @@
 # Next
 
+- Adds option for picking custom widget font color
+- Minor tweaks and code refactoring
+
 # 6.7.1
 
 - Fixes global configuration for cache and mpd-host not being applied immediately (6.6.0 refactor regression)

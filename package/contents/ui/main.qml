@@ -16,6 +16,8 @@ PlasmoidItem {
     property int cfgNarrowBreakPoint: Plasmoid.configuration.cfgNarrowBreakPoint
     property int cfgCornerRadius: Plasmoid.configuration.cfgCornerRadius
     property int cfgFontSize: Plasmoid.configuration.cfgFontSize
+    property bool cfgUseCustomFontColor: Plasmoid.configuration.cfgUseCustomFontColor
+    property string cfgCustomFontColor: Plasmoid.configuration.cfgCustomFontColor
     property int cfgShadowSpread: Plasmoid.configuration.cfgShadowSpread
     property int cfgAlignment: Plasmoid.configuration.cfgAlignment
     property string cfgCacheForDays: Plasmoid.configuration.cfgCacheForDays
@@ -127,6 +129,8 @@ PlasmoidItem {
             alignment: main.cfgAlignment
             cornerRadius: main.cfgCornerRadius
             fontSize: main.cfgFontSize
+            useCustomFontColor: main.cfgUseCustomFontColor
+            customFontColor: main.cfgCustomFontColor
             horizontalLayout: main.cfgHorizontalLayout
             shadowColor: main.cfgShadowColor
             shadowSpread: main.cfgShadowSpread

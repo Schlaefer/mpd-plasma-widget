@@ -11,6 +11,8 @@ KCMUtils.SimpleKCM {
     property alias cfg_cfgAlignment: cfgAlignment.selected
     property alias cfg_cfgHorizontalLayout: cfgHorizontalLayout.checked
     property alias cfg_cfgShowVolumeSlider: cfgShowVolumeSlider.checked
+    property alias cfg_cfgUseCustomFontColor: cfgUseCustomFontColor.checked
+    property alias cfg_cfgCustomFontColor: cfgCustomFontColor.color
     property alias cfg_cfgFontSize: cfgFontSize.value
     property alias cfg_cfgCornerRadius: cfgCornerRadius.value
     property alias cfg_cfgNarrowBreakPoint: cfgNarrowBreakPoint.value
@@ -100,6 +102,18 @@ KCMUtils.SimpleKCM {
 
             to: 1000
             Kirigami.FormData.label: i18n("Font Size:")
+        }
+
+        RowLayout {
+            Kirigami.FormData.label: i18n("Custom Font Color:")
+            PlasmaComponents.CheckBox {
+                id: cfgUseCustomFontColor
+            }
+            KQControls.ColorButton {
+                id: cfgCustomFontColor
+                enabled: cfgUseCustomFontColor.checked
+                showAlphaChannel: true
+            }
         }
 
         Item {
