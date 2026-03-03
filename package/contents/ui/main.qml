@@ -46,8 +46,7 @@ PlasmoidItem {
         AppContext.mpdPort = Qt.binding(() => main.cfgMpdPort)
 
         const bootstrapped = AppContext.bootstrap({
-            // @TODO does this need decodeURIComponent?
-            scriptRoot: Qt.resolvedUrl('../scripts').toString().replace("file://", "")
+            scriptRoot: decodeURIComponent(Qt.resolvedUrl('../scripts').toString().replace("file://", ""))
         })
         if (!bootstrapped) {
             return
