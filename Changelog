@@ -1,5 +1,7 @@
 # Next
 
+# 6.8.0
+
 - Adds option for picking custom widget font color
 - Double clicking on cover widget to skip song is replaced with Shift+Click and Middle clicking
 - Minor tweaks and code refactoring
