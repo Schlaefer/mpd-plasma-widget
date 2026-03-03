@@ -21,6 +21,9 @@ Item {
     property int shadowSpread: 0
     property string shadowColor
     property alias sourceSize: coverImage.sourceSize
+    readonly property int _overlayFadeOutTime: 600
+    readonly property real _overlayOpacity: 0.8
+    readonly property int _overlayShowTime: 500
 
     MouseArea {
         anchors.fill: parent
@@ -201,8 +204,8 @@ Item {
         Behavior on opacity {
             enabled: overlay.opacity > 0
             OpacityAnimator {
-                duration: 300
-                easing.type: Easing.OutCubic;
+                duration: root._overlayFadeOutTime
+                easing.type: Easing.InCubic
             }
         }
 
@@ -213,14 +216,21 @@ Item {
             width: (overlayIcon.width > overlayText.width ? overlayIcon.width : overlayIcon.height) + 20
             height: width
             radius: width / 2
+            opacity: root._overlayOpacity
             color: Qt.rgba(
                 Kirigami.Theme.backgroundColor.r,
                 Kirigami.Theme.backgroundColor.g,
                 Kirigami.Theme.backgroundColor.b,
-                0.9
+                0.6
             )
         }
 
+        DropShadow {
+            anchors.fill: backdrop
+            radius: 8
+            color: backdrop.color
+            source: backdrop
+        }
 
         Kirigami.Icon {
             id: overlayIcon
@@ -242,12 +252,13 @@ Item {
             visible: false
         }
 
+
     }
 
     // Controls fading out the overlay
     Timer {
         id: fadeOutTimer
-        interval: 300
+        interval: root._overlayShowTime
         repeat: false
         onTriggered: overlay.opacity = 0
     }
@@ -305,7 +316,7 @@ Item {
         }
 
         // Fade in
-        overlay.opacity = 0.8
+        overlay.opacity = 1
         fadeOutTimer.restart()
     }
 }
