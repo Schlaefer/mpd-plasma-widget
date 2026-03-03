@@ -4,7 +4,6 @@ import "songLibrary.js" as SongLibrary
 Item {
     id: root
 
-    signal error(string message)
     signal gotPlaylist(var plData)
     signal savedQueueAsPlaylist(bool success)
 
@@ -12,7 +11,6 @@ Item {
     required property string cfgMpdPort
     required property string scriptRoot
     property var coverManager
-    property string _lastError
 
     /**
       * Properties of currently playing song (title, albumartist, file, ...)
@@ -660,20 +658,23 @@ Item {
 
     Connections {
         function onExited(exitCode, stdout, stderr, exitStatus, cmd) {
-            root._lastError = ""
             if (exitCode !== 0) {
                 if (stderr.includes("No data")) {
                     // "No data" answer from mpd is a succesfull request for us.
+                    ErrorHandler.lastError = ""
                     return
                 }
-                root._lastError = fmtErrorMessage(stderr)
-                root.error(root._lastError)
+                ErrorHandler.lastError = fmtErrorMessage(stderr)
                 mpdNetworkTimeoutTimer.start()
 
                 return
             }
-            root._lastError = stderr || ""
-            root.error(root._lastError)
+            if (stderr) {
+                ErrorHandler.lastError = stderr
+                return
+            }
+
+            ErrorHandler.lastError = ""
         }
 
         target: executable

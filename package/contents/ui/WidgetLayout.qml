@@ -169,7 +169,6 @@ Item {
                 id: errorIcon
                 anchors.bottom: parent.bottom
                 anchors.margins: Kirigami.Units.smallSpacing
-                message: root.main.appLastError
                 height: Kirigami.Units.iconSizes.small
                 width: height
 

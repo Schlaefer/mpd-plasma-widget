@@ -29,7 +29,6 @@ PlasmoidItem {
     property VolumeState volumeState
 
     property var _appWindow: null
-    property string appLastError: ""
 
     height: cfgHorizontalLayout ? 80 : 410
     width: cfgHorizontalLayout ? 300 : 300
@@ -143,13 +142,6 @@ PlasmoidItem {
     Connections {
         function onCfgMpdHostChanged() {
             main.mpdState.connect()
-        }
-    }
-
-    Connections {
-        target: main.mpdState
-        function onError(error) {
-            main.appLastError = error
         }
     }
 

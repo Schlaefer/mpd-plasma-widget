@@ -1,1 +1,2 @@
 singleton AppContext 1.0 AppContext.qml
+singleton ErrorHandler 1.0 ErrorHandler.qml

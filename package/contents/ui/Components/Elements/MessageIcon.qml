@@ -4,11 +4,10 @@ import QtQuick
 import QtQuick.Controls
 import org.kde.kirigami as Kirigami
 import "../../Mpdw.js" as Mpdw
+import "../../../logic"
 
 Kirigami.Icon {
     id: root
-
-    property alias message: tooltip.text
 
     visible: !!tooltip.text
     source: Mpdw.icons.appMpdError
@@ -23,6 +22,17 @@ Kirigami.Icon {
         ToolTip {
             id: tooltip
             visible: meF.containsMouse
+        }
+    }
+
+    Component.onCompleted: {
+        tooltip.text = ErrorHandler.lastError
+    }
+
+    Connections {
+        target: ErrorHandler
+        function onLastErrorChanged() {
+            tooltip.text = ErrorHandler.lastError
         }
     }
 }
