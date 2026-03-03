@@ -100,6 +100,11 @@ Item {
         fillMode: Image.PreserveAspectFit
 
         function updateCover() {
+            if (!root.mpdState.mpdInfo) {
+                // Queue got emptied.
+                coverImage.source = ""
+                return
+            }
             let cover = AppContext.getCoverManager().getCover(root.mpdState.mpdInfo, 1)
             if (typeof (cover) === "undefined") {
                 AppContext.getCoverManager().gotCover.connect(updateCover)
@@ -141,12 +146,6 @@ Item {
 
             function onMpdInfoChanged() {
                 coverImage.updateCover()
-            }
-
-            function onMpdQueueChanged() {
-                if (root.mpdState.mpdQueue.length === 0) {
-                    coverImage.source = ""
-                }
             }
         }
 

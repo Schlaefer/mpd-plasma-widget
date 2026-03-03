@@ -9,7 +9,7 @@ import "../../../logic"
 ListViewGeneric {
     id: root
 
-    // @TODO We only care about it on the QueuePage for the follow mode,
+    // @SOMEDAY We only care about it on the QueuePage for the follow mode,
     // so this should be handled on the QueuePage only if possible.
     signal userInteracted()
 

@@ -99,7 +99,6 @@ Item {
 
                     ColumnLayout {
                         id: innerLayout
-                        // opacity: notification.text ? 0 : 1
                         anchors.fill: parent
 
                         WidgetLabel {
@@ -109,19 +108,20 @@ Item {
                             font.weight: Font.Bold
                             solidBackground: root.solidBackground
                             color: root.useCustomFontColor ? root.customFontColor : Kirigami.Theme.textColor
+                            Component.onCompleted: {
+                                // If the queue is empty on startup, then no mpdInfo change event
+                                // will come. We have to trigger the title "empty queue message" now.
+                                songTitle.setSongTitle()
+                            }
                             Connections {
                                 target: root.mpdState
                                 function onMpdInfoChanged() {
                                     songTitle.setSongTitle()
                                 }
-                                //@TODO don't react on every queue change
-                                function onMpdQueueChanged() {
-                                    songTitle.setSongTitle()
-                                }
                             }
 
                             function setSongTitle() {
-                                if (root.mpdState.mpdQueue.length === 0) {
+                                if (!root.mpdState.mpdInfo) {
                                     songTitle.text = qsTr("Queue is empty")
                                     return
                                 }

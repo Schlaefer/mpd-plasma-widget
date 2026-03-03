@@ -93,7 +93,8 @@ Item {
             mpdIdleLoopTimer.start()
             _connected = true
 
-            update()
+            root._getStatus(() => root._getInfo(() => root._getQueue()))
+
             if (libraryRequested) {
                 getLibrary()
             }
@@ -112,20 +113,12 @@ Item {
     /**************************************************************************/
 
     /**
-     * Inits update of all mpd data required by our plasmoid
-     */
-    function update() {
-        root._getStatus()
-        root._getQueue() // also calls getInfo()
-    }
-
-    /**
       * Get info of currently playing song
       *
       * When mpd is stopped it evalutates what is going to be played next on
       * toggling "play".
       */
-    function _getInfo() {
+    function _getInfo(callback) {
         executable.execCmd('currentsong', [], function (exitCode, stdout) {
             if (exitCode !== 0) {
                 return
@@ -134,21 +127,12 @@ Item {
             if (stdout)  {
                 // Queue is playing, paused, or stopped after a playing.
                 mpdInfo = JSON.parse(stdout)
-                return
-            }
-
-            // Queue is empty
-            if (root.mpdQueue.length === 0) {
+            } else if (root.mpdQueue.length === 0) {
+                // Queue is empty
                 mpdInfo = undefined
-                return
             }
 
-            // Queue was cleared, filled, but never left the "stop" state.
-            // Sending a play event will start the first song.
-            if (root.mpdQueue.length > 0) {
-                mpdInfo = mpdQueue[0]
-                return
-            }
+            if (callback) callback()
         })
     }
 
@@ -158,18 +142,27 @@ Item {
                 return
             }
             if (stdout) {
-                let queue = JSON.parse(stdout)
-                root.mpdQueue = queue
+                mpdQueue = JSON.parse(stdout)
+                if (_playState === MpdState.PlayState.Stop) {
+                    // A) Queue was empty, filled, but never left the "stop" state. We
+                    // only have a "playlist"-event but nothing updated mpdInfo to
+                    // indicate we have a playable item.
+                    // B) Changing the queue in stopped state may also modify the
+                    // first element (moving/deleting).
+                    mpdInfo = mpdQueue[0]
+                }
             } else {
                 mpdQueue = []
             }
 
-            // Info evaluates queue data
-            _getInfo()
+            if (mpdQueue.length === 0) {
+                // Queue got emptied, manually clear any existing mpdInfo.
+                root.mpdInfo = undefined
+            }
         })
     }
 
-    function _getStatus() {
+    function _getStatus(callback) {
         executable.execCmd("status", [], function (exitCode, stdout) {
             if (exitCode !== 0) {
                 return
@@ -202,7 +195,7 @@ Item {
                 default:
                     throw new Error("Unknown mpd play status " + parsed.state)
             }
-
+            if (callback) callback()
         })
     }
 
