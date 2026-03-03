@@ -160,7 +160,7 @@ Kirigami.ScrollablePage {
 
             actions: [
                 Kirigami.Action {
-                    icon.name: (songlistItem.playingIndex === model.index && root.mpdState.mpdPlaying)
+                    icon.name: (songlistItem.playingIndex === model.index && root.mpdState.isPlaying)
                                ? Mpdw.icons.queuePause
                                : Mpdw.icons.queuePlay
                     tooltip: qsTr("Play Now")

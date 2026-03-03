@@ -306,7 +306,7 @@ PlasmaCore.Window {
                                 Layout.leftMargin: Kirigami.Units.largeSpacing
                                 ToolButton {
                                     id: ppBtn
-                                    icon.name: app.mpdState.mpdPlaying ? Mpdw.icons.queuePause : Mpdw.icons.queuePlay
+                                    icon.name: app.mpdState.isPlaying ? Mpdw.icons.queuePause : Mpdw.icons.queuePlay
                                     onClicked: mpdTogglePlayPauseAct.onTriggered()
                                     ToolTip { text: qsTr("Starts and pauses playback") + " (P)" }
                                 }

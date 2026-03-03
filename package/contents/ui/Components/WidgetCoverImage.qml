@@ -269,8 +269,8 @@ Item {
         id: mpdStateConnection
         target: root.mpdState
         enabled: false
-        function onMpdPlayingChanged() {
-            root.showFeedback({icon: root.mpdState.mpdPlaying ? Mpdw.icons.queuePlay : Mpdw.icons.queuePause})
+        function onIsPlayingChanged() {
+            root.showFeedback({icon: root.mpdState.isPlaying ? Mpdw.icons.queuePlay : Mpdw.icons.queuePause})
         }
     }
 

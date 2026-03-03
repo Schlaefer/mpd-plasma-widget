@@ -21,17 +21,18 @@ Item {
       */
     property var mpdInfo: undefined
     property var mpdQueue: []
-    property bool mpdPlaying
+    property bool isPlaying
     property var mpdPlaylists: ({})
     property string lastPlayedPlaylist: ""
     property var library
     property bool consume: false
     property bool repeat: false
     property bool random: false
+    // Never use this, use VolumeState.
     property int volume: 100
 
     property bool binaryAvailable: false
-    property bool mpdConnectionAvailable: false
+    property bool _connected: false
     property bool libraryRequested: false
 
     property int _playState
@@ -92,7 +93,7 @@ Item {
 
             mpdNetworkTimeoutTimer.interval = mpdNetworkTimeoutTimer.startInterval
             mpdIdleLoopTimer.start()
-            mpdConnectionAvailable = true
+            _connected = true
 
             update()
             if (libraryRequested) {
@@ -105,7 +106,7 @@ Item {
     }
 
     function disconnect() {
-        root.mpdConnectionAvailable = false
+        root._connected = false
         mpdIdleLoopTimer.stop()
         mpdNetworkTimeoutTimer.stop()
     }
@@ -190,15 +191,15 @@ Item {
             switch (parsed.state) {
                 case("play"):
                     root._playState = MpdState.PlayState.Play
-                    root.mpdPlaying = true
+                    root.isPlaying = true
                     break
                 case("pause"):
                     root._playState = MpdState.PlayState.Pause
-                    root.mpdPlaying = false
+                    root.isPlaying = false
                     break
                 case("stop"):
                     root._playState = MpdState.PlayState.Stop
-                    root.mpdPlaying = false
+                    root.isPlaying = false
                     break
                 default:
                     throw new Error("Unknown mpd play status " + parsed.state)
@@ -218,7 +219,7 @@ Item {
      * Download whole song library
      */
     function getLibrary() {
-        if (!mpdConnectionAvailable) {
+        if (!_connected) {
             libraryRequested = true
             return
         }
@@ -246,8 +247,8 @@ Item {
         // If we have a working connection and something to play we promote that
         // new state early instead of waiting for the server roundtrip to improve our
         // local UI responsivness.
-        if (root.mpdConnectionAvailable && root.mpdQueue.length > 0) {
-            root.mpdPlaying = !root.mpdPlaying
+        if (root._connected && root.mpdQueue.length > 0) {
+            root.isPlaying = !root.isPlaying
         }
 
         executable.execCmd("pause")
@@ -593,7 +594,7 @@ Item {
         }
 
         function execCmd(command, args = [], callback) {
-            if (binaryAvailable !== true || mpdConnectionAvailable !== true) {
+            if (binaryAvailable !== true || _connected !== true) {
                 return
             }
 

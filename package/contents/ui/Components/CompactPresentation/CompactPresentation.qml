@@ -36,7 +36,7 @@ Loader {
         Kirigami.Icon {
             id: icon
             anchors.fill: parent
-            source: root.mpdState.mpdPlaying ? Mpdw.icons.queuePause : Mpdw.icons.queuePlay
+            source: root.mpdState.isPlaying ? Mpdw.icons.queuePause : Mpdw.icons.queuePlay
         }
     }
 }

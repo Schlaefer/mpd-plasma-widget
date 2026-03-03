@@ -39,7 +39,9 @@ PlasmoidItem {
     width: 300
     height: 410
 
-    Plasmoid.backgroundHints: cfgSolidBackground ? PlasmaCore.Types.StandardBackground : PlasmaCore.Types.NoBackground
+    Plasmoid.backgroundHints: cfgSolidBackground
+        ? PlasmaCore.Types.StandardBackground
+        : PlasmaCore.Types.NoBackground
 
     Component.onCompleted: {
         AppContext.narrowBreakPoint = Qt.binding(() => main.cfgNarrowBreakPoint)
@@ -98,7 +100,7 @@ PlasmoidItem {
             text: qsTr("Pause")
             icon.name: "media-playback-pause"
             priority: PlasmaCore.Action.LowPriority
-            visible: main.mpdState.mpdPlaying
+            visible: main.mpdState.isPlaying
             enabled: visible
             onTriggered: main.mpdState.togglePlayPause()
         },
@@ -106,7 +108,7 @@ PlasmoidItem {
             text: qsTr("Play")
             icon.name: "media-playback-start"
             priority: PlasmaCore.Action.LowPriority
-            visible: !main.mpdState.mpdPlaying && main.mpdState.mpdQueue.length > 0
+            visible: !main.mpdState.isPlaying && main.mpdState.mpdQueue.length > 0
             enabled: visible
             onTriggered: main.mpdState.togglePlayPause()
         },
