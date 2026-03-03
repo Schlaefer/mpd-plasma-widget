@@ -31,13 +31,8 @@ PlasmoidItem {
     property var _appWindow: null
     property string appLastError: ""
 
-    // Make sure a somewhat reasonable layout with text and cover image is visible
-    // when the user puts the widget on the desktop for the first time.
-    // Layout.minimumHeight: cfgHorizontalLayout ? 40 : 180
-    // Layout.minimumWidth: cfgHorizontalLayout ? 150 : 50
-    // @TODO QT6
-    width: 300
-    height: 410
+    height: cfgHorizontalLayout ? 80 : 410
+    width: cfgHorizontalLayout ? 300 : 300
 
     Plasmoid.backgroundHints: cfgSolidBackground
         ? PlasmaCore.Types.StandardBackground
