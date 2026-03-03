@@ -28,9 +28,13 @@ Item {
 
     MouseArea {
         anchors.fill: parent
-        acceptedButtons: Qt.LeftButton | Qt.RightButton
+        acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
         onClicked: function (mouse) {
             if (mouse.button === Qt.LeftButton) {
+                if (mouse.modifiers & Qt.ShiftModifier) {
+                    nextSong()
+                    return
+                }
                 mpdStateConnection.enabled = true
                 feedbackOverlayTimer.restart()
                 root.mpdState.togglePlayPause()
@@ -43,8 +47,10 @@ Item {
                 } else {
                     contextMenuLoader.item.popup()
                 }
-
+            } else if (mouse.button === Qt.MiddleButton) {
+                nextSong()
             }
+
         }
 
         onWheel: function (wheel) {
@@ -52,8 +58,10 @@ Item {
             feedbackOverlayTimer.restart()
             root.volumeState.wheel(wheel.angleDelta.y)
         }
-        onDoubleClicked: {
+
+        function nextSong() {
             root.mpdState.playNext()
+            root.showFeedback({icon: Mpdw.icons.queueSkipNext})
         }
 
         Loader {

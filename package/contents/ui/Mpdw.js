@@ -15,6 +15,7 @@ const icons = {
     queueRemoveSelected: "edit-delete-remove",
     queueClear: "edit-delete",
     queuePlaceholderCover: "media-default-album",
+    queueSkipNext: "media-skip-forward",
 
     playlistDelete: "edit-delete",
 
