@@ -21,9 +21,10 @@ Item {
     property int shadowSpread: 0
     property string shadowColor
     property alias sourceSize: coverImage.sourceSize
-    readonly property int _overlayFadeOutTime: 600
+    readonly property int _overlayFadeOutTime: 400
     readonly property real _overlayOpacity: 0.8
-    readonly property int _overlayShowTime: 500
+    readonly property int _overlayShowTimeDefault: 100
+    readonly property int _overlayShowTimeLong: 2000
 
     MouseArea {
         anchors.fill: parent
@@ -205,7 +206,7 @@ Item {
             enabled: overlay.opacity > 0
             OpacityAnimator {
                 duration: root._overlayFadeOutTime
-                easing.type: Easing.InCubic
+                easing.type: Easing.InQuad
             }
         }
 
@@ -258,7 +259,7 @@ Item {
     // Controls fading out the overlay
     Timer {
         id: fadeOutTimer
-        interval: root._overlayShowTime
+        interval: root._overlayShowTimeDefault
         repeat: false
         onTriggered: overlay.opacity = 0
     }
@@ -290,11 +291,11 @@ Item {
         target: root.volumeState
         enabled: false
         function onVolumeChanged() {
-            root.showFeedback({text: qsTr("%1\%").arg(root.volumeState.volume)})
+            root.showFeedback({text: qsTr("%1\%").arg(root.volumeState.volume)}, root._overlayShowTimeLong)
         }
     }
 
-    function showFeedback(options) {
+    function showFeedback(item, duration) {
         if (!root.overlayFeedback) {
             return
         }
@@ -303,13 +304,13 @@ Item {
         overlayIcon.visible = false
         overlayText.visible = false
 
-        if (options.icon) {
+        if (item.icon) {
             // Icon overlay
-            overlayIcon.source = options.icon
+            overlayIcon.source = item.icon
             overlayIcon.visible = true
-        } else if (options.text) {
+        } else if (item.text) {
             // Text overlay
-            overlayText.text = options.text
+            overlayText.text = item.text
             overlayText.visible = true
         } else {
             return
@@ -317,6 +318,7 @@ Item {
 
         // Fade in
         overlay.opacity = 1
+        fadeOutTimer.interval = duration || root._overlayShowTimeDefault
         fadeOutTimer.restart()
     }
 }
