@@ -39,6 +39,13 @@ KCMUtils.SimpleKCM {
             Layout.preferredWidth: 200
         }
 
+        PlasmaComponents.Button {
+            text: i18n("Update MPD Data")
+            icon.name: Mpdw.icons.mpdUpdate
+            onClicked: {
+                root.cfg_appContext.getMpdState().forceReloadEverything()
+            }
+        }
 
         Kirigami.InlineMessage {
             Layout.fillWidth: true
@@ -84,6 +91,12 @@ KCMUtils.SimpleKCM {
             id: cfgCacheForDays
 
             Kirigami.FormData.label: i18n("Cache Covers for Days:")
+        }
+
+        PlasmaComponents.Button {
+            text: i18n("Clear Cover Cache")
+            icon.name: Mpdw.icons.clearCache
+            onClicked: root.cfg_appContext.getCoverManager().clearCache()
         }
 
         Kirigami.InlineMessage {

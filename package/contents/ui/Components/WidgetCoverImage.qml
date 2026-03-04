@@ -28,7 +28,7 @@ Item {
 
     MouseArea {
         anchors.fill: parent
-        acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
+        acceptedButtons: Qt.LeftButton | Qt.MiddleButton
         onClicked: function (mouse) {
             if (mouse.button === Qt.LeftButton) {
                 if (mouse.modifiers & Qt.ShiftModifier) {
@@ -38,19 +38,9 @@ Item {
                 mpdStateConnection.enabled = true
                 feedbackOverlayTimer.restart()
                 root.mpdState.togglePlayPause()
-            } else if (mouse.button === Qt.RightButton) {
-                if (!contextMenuLoader.item) {
-                    contextMenuLoader.sourceComponent = contextMenuComponent
-                }
-                if (contextMenuLoader.item.visible) {
-                    contextMenuLoader.item.close()
-                } else {
-                    contextMenuLoader.item.popup()
-                }
             } else if (mouse.button === Qt.MiddleButton) {
                 nextSong()
             }
-
         }
 
         onWheel: function (wheel) {
@@ -62,32 +52,6 @@ Item {
         function nextSong() {
             root.mpdState.playNext()
             root.showFeedback({icon: Mpdw.icons.queueSkipNext})
-        }
-
-        Loader {
-            id: contextMenuLoader
-        }
-
-        Component {
-            id: contextMenuComponent
-            Menu {
-                id: contextMenu
-                MenuItem {
-                    text: qsTr("Update MPD Data")
-                    icon.name: Mpdw.icons.mpdUpdate
-                    onTriggered: {
-                        root.mpdState.forceReloadEverything()
-                    }
-                }
-                MenuSeparator {}
-                MenuItem {
-                    text: qsTr("Clear Cover Cache")
-                    icon.name: Mpdw.icons.clearCache
-                    onTriggered: {
-                        AppContext.getCoverManager().clearCache()
-                    }
-                }
-            }
         }
     }
 

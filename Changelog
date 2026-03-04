@@ -1,6 +1,8 @@
 # Next
 
+- Moves clearing cache and data update from cover right-click to general settings page
 - Adds warning on general settings page if python3 or (image)magick are not found
+
 # 6.9.0
 
 - Adds search field for playlists
