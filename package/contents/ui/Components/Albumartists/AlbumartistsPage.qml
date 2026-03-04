@@ -14,7 +14,7 @@ Kirigami.ScrollablePage {
     required property Kirigami.PageRow pageStack
     property int depth: 1
     property string shownAlbumartist
-    property alias searchField: searchField
+    property alias searchField: navSearchField
     property alias viewState: controller.viewState
 
     visible: false
@@ -42,34 +42,14 @@ Kirigami.ScrollablePage {
                     text: qsTr("Suggest")
                 }
             }
-            RowLayout {
-                Layout.alignment: Qt.AlignRight
-                Layout.rightMargin: Kirigami.Units.smallSpacing
-                Kirigami.SearchField {
-                    id: searchField
-                    // Per default the text field is stuck at 200 width and cut off at
-                    // small sizes
-                    implicitWidth: root.width > 400 ? 200 : (root.width/2) - (10000/root.width)
-                    placeholderText: qsTr("Search…")
-                    onTextChanged: controller.searchTerm = text
-
-                    // Don't double navigate in search field (left, right) and
-                    // list view (up, down) at the same time.
-                    Keys.onUpPressed: (event) => { event.accepted = true }
-                    Keys.onDownPressed: (event) => { event.accepted = true }
-                    Keys.onTabPressed: (event) => { listView.forceActiveFocus() }
-
-                    // Disable default Ctrl+F behavior
-                    focusSequence: undefined
-                    Keys.onEscapePressed: (event) => {
-                        if (searchField.text.length > 0) {
-                            searchField.text = ""
-                        } else {
-                            controller.viewState = "normal"
-                        }
-                        event.accepted = true
-                    }
-                }
+            NavSearchField {
+                id: navSearchField
+                pageWidth: root.width
+                placeholder: qsTr("Search…")
+                tooltip: "Ctrl+F"
+                onEscapePressed: controller.viewState = "normal"
+                onTabPressed: listView.forceActiveFocus()
+                onTextChanged: controller.searchTerm = text
             }
         }
     }

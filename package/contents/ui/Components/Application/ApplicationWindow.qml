@@ -406,6 +406,15 @@ PlasmaCore.Window {
         }
 
         Kirigami.Action {
+            shortcut:  "Ctrl+Shift+F"
+            onTriggered: {
+                app.showPage("playlist")
+                while (app.pageStack.depth > 1) { app.pageStack.pop() } // Exit subviews
+                app.getPage('playlist').searchField.forceActiveFocus()
+            }
+        }
+
+        Kirigami.Action {
             id: mpdTogglePlayPauseAct
             shortcut: "p"
             onTriggered: { app.mpdState.togglePlayPause() }

@@ -14,6 +14,7 @@ Kirigami.ScrollablePage {
     required property bool narrowLayout
     required property MpdState mpdState
     required property Kirigami.PageRow pageStack
+    property alias searchField: navSearchField
     property int depth: 1
 
     visible: false
@@ -25,7 +26,16 @@ Kirigami.ScrollablePage {
             anchors.fill: parent
             GlobalNav {
                 narrowLayout: root.narrowLayout
-             }
+            }
+            NavSearchField {
+                id: navSearchField
+                placeholder: qsTr("Search Playlists…")
+                tooltip: "Ctrl+Shift+F"
+                pageWidth: root.width
+                onEscapePressed: playlistList.forceActiveFocus()
+                onTabPressed: playlistList.forceActiveFocus()
+                onTextChanged: playlistList.populateModel(text)
+            }
         }
     }
 
@@ -112,8 +122,11 @@ Kirigami.ScrollablePage {
 
         delegate: delegateComponentPlaylists
 
-        function populateModel() {
-            const playlists = root.mpdState.mpdPlaylists
+        function populateModel(searchTerm = ""){
+            let playlists = root.mpdState.mpdPlaylists
+            if (searchTerm) {
+                playlists = playlists.filter((title) => title.toLowerCase().match(searchTerm.toLowerCase()))
+            }
             let i = 0
             for (i = 0; i < playlists.length; i++) {
                 const mpdTitle = playlists[i]

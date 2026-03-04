@@ -1,11 +1,12 @@
 # Global
 
-| Shortcut | Action        |
-| -------- | ------------- |
-| 1        | Queue View    |
-| 2        | Artist View   |
-| 3        | Playlist View |
-| Ctrl+F   | Search        |
+| Shortcut      | Action           |
+| ------------- | ---------------- |
+| 1             | Queue View       |
+| 2             | Artist View      |
+| 3             | Playlist View    |
+| Ctrl+F        | Search           |
+| Ctrl+Shift+F  | Search Playlists |
 
 # Playback
 

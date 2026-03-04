@@ -20,7 +20,7 @@ Item {
     property var mpdInfo: undefined
     property var mpdQueue: []
     property bool isPlaying
-    property var mpdPlaylists: ({})
+    property list<string> mpdPlaylists: []
     property string lastPlayedPlaylist: ""
     property var library
     property bool consume: false
