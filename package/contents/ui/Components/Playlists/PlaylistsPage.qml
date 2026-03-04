@@ -143,6 +143,10 @@ Kirigami.ScrollablePage {
         }
 
         Component.onCompleted: {
+            if (root.mpdState.mpdPlaylists.length > 0) {
+                playlistList.populateModel()
+                return
+            }
             root.mpdState.getPlaylists()
         }
 

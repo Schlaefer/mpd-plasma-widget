@@ -40,7 +40,6 @@ PlasmoidItem {
         : PlasmaCore.Types.NoBackground
 
     Component.onCompleted: {
-        AppContext.narrowBreakPoint = Qt.binding(() => main.cfgNarrowBreakPoint)
         AppContext.cacheRoot = Qt.binding(() => main.cfgCacheRoot)
         AppContext.cacheForDays = Qt.binding(() => main.cfgCacheForDays)
         AppContext.mpdHost = Qt.binding(() => main.cfgMpdHost)
@@ -172,7 +171,7 @@ PlasmoidItem {
 
     Timer {
         id: appWindowUnloader
-        interval: 120000
+        interval: 120000 // 2 min
         onTriggered: {
             if (main._appWindow.visible) {
                 start()
@@ -188,10 +187,12 @@ PlasmoidItem {
             // Don't put into Component.onCompleted with the rest of the bootstrap. It
             // wont provide the right value.
             AppContext.initialHeight = availableScreenRect.height
-            // Don't provide any initializing properties here. We want to keep the app
-            // window isolated from the plasmoid utilizing AppContext as global config
-            // provider.
-            main._appWindow = component.createObject()
+            // Only provide initial values which are unique to the instance
+            // configuration. We want to keep the app window isolated from the
+            // plasmoid utilizing AppContext as global config provider.
+            main._appWindow = component.createObject(null, {
+                narrowBreakPoint: Qt.binding(() => main.cfgNarrowBreakPoint)
+            })
             main._appWindow.visible = true
         } else {
             main._appWindow.visible = !main._appWindow.visible
@@ -203,8 +204,6 @@ PlasmoidItem {
             _appWindow?.destroy()
             _appWindow = null
         }
-
-        mpdState.clearLibrary()
     }
 
     // Development convenience to automatically open the app window on widget start.

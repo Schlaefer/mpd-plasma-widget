@@ -19,6 +19,7 @@ PlasmaCore.Window {
     id: win
 
     property int initialHeight: AppContext.initialHeight
+    property alias narrowBreakPoint: app.narrowBreakPoint
 
     modality: Qt.NonModal
     flags: Qt.Dialog
@@ -41,7 +42,7 @@ PlasmaCore.Window {
 
         readonly property MpdState mpdState: AppContext.getMpdState()
         readonly property VolumeState volumeState: AppContext.getVolumeState()
-        property int narrowBreakPoint: AppContext.narrowBreakPoint
+        property int narrowBreakPoint
         property bool narrowLayout: app.width < narrowBreakPoint
         property int windowPreMinimizeSize: -1
 

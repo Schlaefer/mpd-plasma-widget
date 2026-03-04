@@ -109,8 +109,9 @@ Item {
                             solidBackground: root.solidBackground
                             color: root.useCustomFontColor ? root.customFontColor : Kirigami.Theme.textColor
                             Component.onCompleted: {
-                                // If the queue is empty on startup, then no mpdInfo change event
+                                // A) If the queue is empty on startup, then no mpdInfo change event
                                 // will come. We have to trigger the title "empty queue message" now.
+                                // B) No change event when opening CompactRepresentation.
                                 songTitle.setSongTitle()
                             }
                             Connections {
@@ -135,12 +136,7 @@ Item {
                             alignment: root.alignment
                             solidBackground: root.solidBackground
                             color: root.useCustomFontColor ? root.customFontColor : Kirigami.Theme.textColor
-                            Connections {
-                                target: root.mpdState
-                                function onMpdInfoChanged() {
-                                    songArtist.text = FormatHelpers.artist(root.mpdState.mpdInfo)
-                                }
-                            }
+                            text: FormatHelpers.artist(root.mpdState.mpdInfo)
                         }
 
                         WidgetLabel {
@@ -149,15 +145,9 @@ Item {
                             alignment: root.alignment
                             solidBackground: root.solidBackground
                             color: root.useCustomFontColor ? root.customFontColor : Kirigami.Theme.textColor
+                            text: FormatHelpers.album(root.mpdState.mpdInfo)
                             Layout.rightMargin: (errorIcon.visible ? (root.alignment !== 2 ? errorIcon.implicitWidth : undefined) : undefined)
                             Layout.leftMargin: (errorIcon.visible ?  (root.alignment !== 2 ? undefined : errorIcon.implicitWidth) : undefined)
-                            Connections {
-                                target: root.mpdState
-
-                                function onMpdInfoChanged() {
-                                    songAlbum.text = FormatHelpers.album(root.mpdState.mpdInfo)
-                                }
-                            }
                         }
                     }
 

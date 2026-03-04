@@ -62,10 +62,24 @@ Item {
 
     Connections {
         target: root.mpdState
-        function onLibraryChanged() { filter() }
+        function onLibraryChanged() {
+            if (root.mpdState.library) {
+                root.filter()
+            }
+        }
     }
 
     Component.onCompleted: {
+        root.mpdState.registerClient()
+        if (root.mpdState.library) {
+            filter()
+        }
         root.mpdState.getLibrary()
+        return
+    }
+
+    Component.onDestruction: {
+        // onDestruction is triggered when main.qml destroys the window
+        root.mpdState.unregisterClient()
     }
 }

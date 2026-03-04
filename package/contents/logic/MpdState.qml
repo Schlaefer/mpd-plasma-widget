@@ -29,6 +29,7 @@ Item {
     // Never use this, use VolumeState.
     property int volume: 100
 
+    property int libraryClients: 0
     property bool binaryAvailable: false
     property bool _connected: false
     property bool libraryRequested: false
@@ -49,7 +50,7 @@ Item {
             return
         }
 
-        disconnect()
+        _disconnect()
         root.checkMpdConnectionAvailable()
     }
 
@@ -104,10 +105,14 @@ Item {
         executable.execRaw("--cmd status", callback)
     }
 
-    function disconnect() {
-        root._connected = false
+    function _disconnect() {
         mpdIdleLoopTimer.stop()
         mpdNetworkTimeoutTimer.stop()
+        _connected = false
+        mpdInfo = undefined
+        mpdQueue = []
+        mpdPlaylists = []
+        clearLibrary()
     }
 
     /**************************************************************************/
@@ -197,6 +202,31 @@ Item {
             }
             if (callback) callback()
         })
+    }
+
+    function registerClient() {
+        libraryClients++
+    }
+
+    function unregisterClient() {
+        libraryClients--
+        if (libraryClients < 0) {
+            throw new Error ("Number of registred MPD Library clients went negative.")
+        }
+    }
+
+    Timer {
+        id: libraryUnloader
+        interval: 120000 // 2 min
+        running: true
+        repeat: true
+        onTriggered: {
+            if (libraryClients > 0) {
+                restart()
+                return
+            }
+            root.clearLibrary()
+        }
     }
 
     /**
@@ -504,7 +534,7 @@ Item {
         running: false
         triggeredOnStart: true
         onTriggered: {
-            disconnect()
+            _disconnect()
 
             // Gradually increase reconnect time until we find a minimum time
             // necessary for a device stationary within the mpd network (desktop).

@@ -28,7 +28,6 @@ Loader {
                 root.mpdState.togglePlayPause()
                 break
                 default:
-                root.mpdState.connect()
                 root.main.expanded = !root.main.expanded
             }
         }
