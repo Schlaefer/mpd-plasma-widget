@@ -38,6 +38,15 @@ QQ2.Item {
         })
     }
 
+    function getSize(callback) {
+        executable.exec('du -sh "' +  coverManager.cfgCacheRoot + '" | cut -f1', function (exitCode, stdout) {
+            if (exitCode !== 0) {
+                return
+            }
+            if (callback) callback(stdout)
+        })
+    }
+
     /**
      * @return {mixed}
      *  - string: Path to cover image
@@ -117,13 +126,16 @@ QQ2.Item {
         gotCover(id)
     }
 
-    function clearCache() {
+    function clearCache(callback) {
         if (!coverManager.cfgCacheRoot || !filePrefix) {
             return
         }
 
         let cmd = "rm " + coverManager.cfgCacheRoot + "/" + filePrefix + "*"
-        executable.exec(cmd, function () { coverManager.reset() })
+        executable.exec(cmd, function () {
+            coverManager.reset()
+            if (callback) callback()
+        })
     }
 
     /**
