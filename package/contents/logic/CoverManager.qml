@@ -14,9 +14,11 @@ QQ2.Item {
     property var currentlyFetching
     property var covers: ({})
     property var fetchQueue: new CoverHelpers.FetchQueue()
+    property bool binaryAvailable: false
     readonly property string filePrefix: "mpdcover-"
 
     function bootstrap() {
+        checkBinaryAvailable()
         getLocalCovers()
     }
 
@@ -24,6 +26,16 @@ QQ2.Item {
         covers = {}
         getLocalCovers()
         afterReset()
+    }
+
+    // @SOMEDAY Incorporate further to prevent unecessary fetch requests. Currently
+    // only used as feedback in the config
+    function checkBinaryAvailable() {
+        executable.exec("which magick", function (exitCode) {
+            if (exitCode === 0) {
+                coverManager.binaryAvailable = true
+            }
+        })
     }
 
     /**

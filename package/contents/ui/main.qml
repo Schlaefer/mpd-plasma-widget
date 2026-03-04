@@ -54,6 +54,7 @@ PlasmoidItem {
         }
         main.mpdState = AppContext.getMpdState()
         main.volumeState = AppContext.getVolumeState()
+        Plasmoid.configuration.appContext = AppContext
         main.bootstrapFinished = true
     }
 

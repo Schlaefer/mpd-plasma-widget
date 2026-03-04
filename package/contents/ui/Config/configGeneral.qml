@@ -5,6 +5,8 @@ import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
 import org.kde.kquickcontrols as KQControls
 import org.kde.kcmutils as KCMUtils
+import "../../logic"
+import "./../Mpdw.js" as Mpdw
 
 KCMUtils.SimpleKCM {
     id: root
@@ -13,6 +15,7 @@ KCMUtils.SimpleKCM {
     property alias cfg_cfgMpdPort: cfgMpdPort.text
     property alias cfg_cfgCacheRoot: cfgCacheRoot.cleanPath
     property alias cfg_cfgCacheForDays: cfgCacheForDays.value
+    property AppContext cfg_appContext
 
     Kirigami.FormLayout {
         Item {
@@ -34,6 +37,14 @@ KCMUtils.SimpleKCM {
             Kirigami.FormData.label: i18n("MPD Server Port:")
             placeholderText: i18n("6600")
             Layout.preferredWidth: 200
+        }
+
+
+        Kirigami.InlineMessage {
+            Layout.fillWidth: true
+            visible: !root.cfg_appContext.getMpdState().binaryAvailable
+            type: Kirigami.MessageType.Error
+            text: i18n("'python3' not available")
         }
 
         Item {
@@ -73,6 +84,13 @@ KCMUtils.SimpleKCM {
             id: cfgCacheForDays
 
             Kirigami.FormData.label: i18n("Cache Covers for Days:")
+        }
+
+        Kirigami.InlineMessage {
+            Layout.fillWidth: true
+            visible: !root.cfg_appContext.getCoverManager().binaryAvailable
+            type: Kirigami.MessageType.Error
+            text: i18n("'magick' not available. Make sure that imagemagick is installed.")
         }
     }
 }
