@@ -1,13 +1,12 @@
 # Next
 
+# 6.9.0
+
+- Adds search field for playlists
 - Moves clearing cache and data update from cover right-click to general settings page
 - Shows cache folder size on settings page
 - Adds warning on general settings page if python3 or (image)magick are not found
 - Improves behavior if multiple widgets instances are running (limits to connecting to the same server for all widgets though).
-
-# 6.9.0
-
-- Adds search field for playlists
 
 # 6.8.0
 
