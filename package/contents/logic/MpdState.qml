@@ -135,6 +135,9 @@ Item {
             } else if (root.mpdQueue.length === 0) {
                 // Queue is empty
                 mpdInfo = undefined
+            } else if (root.mpdQueue.length > 0) {
+                // Queue was stopped but not modified
+                mpdInfo = root.mpdQueue[0]
             }
 
             if (callback) callback()

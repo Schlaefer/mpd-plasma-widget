@@ -1,6 +1,7 @@
 # Next
 
 - Fixes long title wrapping on Playlists
+- Fixes queue stop doesn't select first queue item (6.8.0 regression)
 
 # 6.9.1
 
