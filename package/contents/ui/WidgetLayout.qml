@@ -12,8 +12,6 @@ import "../scripts/formatHelpers.js" as FormatHelpers
 Item {
     id: root
 
-    anchors.fill: parent
-
     required property int alignment
     required property int fontSize
     required property bool useCustomFontColor
@@ -24,18 +22,60 @@ Item {
     required property var main
     required property MpdState mpdState
     required property VolumeState volumeState
-    property alias cornerRadius: coverImageContainer.coverRadius
-    property alias shadowColor: coverImageContainer.shadowColor
-    property alias shadowSpread: coverImageContainer.shadowSpread
+    property alias cornerRadius: coverImage.coverRadius
+    property alias shadowColor: coverImage.shadowColor
+    property alias shadowSpread: coverImage.shadowSpread
+
+    anchors.fill: parent
+
+    states: [
+        State {
+            name: "vertical"
+            when: !root.horizontalLayout
+            PropertyChanges {
+                coverImage.Layout.fillWidth: true
+                coverImage.Layout.minimumWidth: gridLayout.width
+
+                gridLayout.columns: 1
+                gridLayout.rows: 3
+
+                volumeSlider.Layout.fillHeight: false
+                volumeSlider.Layout.fillWidth: true
+                volumeSlider.Layout.leftMargin: Kirigami.Units.largeSpacing
+                volumeSlider.Layout.rightMargin: Kirigami.Units.largeSpacing
+                volumeSlider.Layout.bottomMargin: 0
+                volumeSlider.Layout.topMargin: 0
+                volumeSlider.orientation: Qt.Horizontal
+            }
+        },
+        State {
+            name: "horizontal"
+            when: root.horizontalLayout
+            PropertyChanges {
+                coverImage.Layout.fillWidth: false
+                coverImage.Layout.minimumWidth: gridLayout.height
+
+                gridLayout.columns: 3
+                gridLayout.rows: 1
+
+                volumeSlider.Layout.fillHeight: true
+                volumeSlider.Layout.fillWidth: false
+                volumeSlider.Layout.leftMargin: 0
+                volumeSlider.Layout.rightMargin: 0
+                volumeSlider.Layout.bottomMargin: Kirigami.Units.largeSpacing
+                volumeSlider.Layout.topMargin: Kirigami.Units.largeSpacing
+                volumeSlider.orientation: Qt.Vertical
+            }
+        }
+    ]
 
     GridLayout {
-        columns: root.horizontalLayout ? 3 : 1
-        rows: root.horizontalLayout ? 1 : 3
+        id: gridLayout
         anchors.fill: parent
 
         // Cover Image
         WidgetCoverImage {
-            id: coverImageContainer
+            id: coverImage
             mpdState: root.mpdState
             volumeState: root.volumeState
             applyEffects: true
@@ -43,41 +83,29 @@ Item {
             onHeightChanged: sourceSizeTimer.restart()
             onWidthChanged: sourceSizeTimer.restart()
             Layout.fillHeight: true
-            Layout.fillWidth: root.horizontalLayout ? false : true
 
             // Delay setting the source otherwise resizing the widget is very shoppy.
             Timer {
                 id: sourceSizeTimer
                 interval: 1000
                 onTriggered: {
-                    coverImageContainer.sourceSize.height = root.height
-                    coverImageContainer.sourceSize.width = root.height
+                    coverImage.sourceSize.height = root.height
+                    coverImage.sourceSize.width = root.height
                 }
             }
 
-            Component.onCompleted: {
-                sourceSizeTimer.start()
-            }
-
-            Layout.minimumWidth: root.horizontalLayout ? parent.height : parent.width
+            Component.onCompleted: sourceSizeTimer.start()
         }
 
         // Volume Slider
         PlasmaComponents.Slider {
             id: volumeSlider
-
-            Layout.fillHeight: root.horizontalLayout
-            Layout.fillWidth: !root.horizontalLayout
-            Layout.leftMargin: !root.horizontalLayout ? Kirigami.Units.largeSpacing : 0
-            Layout.rightMargin: !root.horizontalLayout ? Kirigami.Units.largeSpacing : 0
-
+            value: root.volumeState.volume
             visible: root.showVolumeSlider
-            orientation: root.horizontalLayout ? Qt.Vertical : Qt.Horizontal
             from: 0
             to: 100
             stepSize: 3
             onValueChanged: root.volumeState.set(volumeSlider.value)
-            value: root.volumeState.volume
         }
 
         // Wrapper for info/error icon
