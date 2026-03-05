@@ -1,5 +1,7 @@
 # Next
 
+# 6.9.1
+
 - Only one running widget will expose General settings, the others show a note.
 - Removes cache folder size display on settings page (caused stability issues)
 
