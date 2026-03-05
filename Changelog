@@ -1,5 +1,7 @@
 # Next
 
+- Fixes queue view jumping around clicking on songs or play buttons
+
 # 6.9.2
 
 - Fixes long title wrapping on Playlists

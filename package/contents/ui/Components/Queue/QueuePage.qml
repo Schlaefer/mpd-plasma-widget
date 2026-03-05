@@ -165,8 +165,11 @@ Kirigami.ScrollablePage {
                                : Mpdw.icons.queuePlay
                     tooltip: qsTr("Play Now")
                     onTriggered: {
+                        // Fixes queue jumping around (see git commit comment for more info)
+                        songlistItem.forceActiveFocus()
                         if (songlistItem.playingIndex === model.index) {
                             root.mpdState.togglePlayPause()
+
                         } else {
                             root.mpdState.playInQueue(model.pos)
                         }
