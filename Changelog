@@ -1,5 +1,7 @@
 # Next
 
+- Fixes long title wrapping on Playlists
+
 # 6.9.1
 
 - Only one running widget will expose General settings, the others show a note.

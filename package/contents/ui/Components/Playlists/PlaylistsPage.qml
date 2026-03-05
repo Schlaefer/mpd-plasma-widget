@@ -44,8 +44,8 @@ Kirigami.ScrollablePage {
 
         SwipeListItemGeneric {
             id: listItemPlaylist
-
             required property string title
+            width: playlistList.width - playlistList.leftMargin - playlistList.rightMargin // pushes action buttons away from under scrollbar
 
             onClicked: {
                 let properties =  {
@@ -58,7 +58,6 @@ Kirigami.ScrollablePage {
                 }
                 root.pageStack.push(Qt.resolvedUrl("PlaylistSongsPage.qml"), properties)
             }
-            width: ListView.view ? ListView.view.width : implicitWidth
             actions: [
                 Kirigami.Action {
                     icon.name: Mpdw.icons.queuePlay
@@ -89,10 +88,13 @@ Kirigami.ScrollablePage {
             ]
 
             contentItem: RowLayout {
+                id: mainLayout
+
                 Label {
                     Layout.fillWidth: true
-                    //@BOGUS
-                    height: Math.max(implicitHeight, Kirigami.Units.iconSizes.smallMedium)
+                    Layout.fillHeight: true
+                    Layout.rightMargin: listItemPlaylist.overlayWidth // margin for action buttons
+                    verticalAlignment: Text.AlignVCenter
                     text: listItemPlaylist.title
                     wrapMode: Text.Wrap
                 }
