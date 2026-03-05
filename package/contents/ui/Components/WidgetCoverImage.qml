@@ -70,6 +70,7 @@ Item {
         anchors.fill: parent
         Layout.maximumWidth: height > height ? width : height
         fillMode: Image.PreserveAspectFit
+        cache: false
 
         function updateCover() {
             if (!root.mpdState.mpdInfo) {
@@ -87,10 +88,6 @@ Item {
                 coverImage.source = ""
                 return
             }
-            // Force QML to update even if cover file stays the same. This helps if
-            // the cover "got stuck" for whatever reason: a play next even in the same
-            // album will always trigger.
-            coverImage.source = ""
             coverImage.source = "file://" + cover + "-large.jpg"
         }
 
