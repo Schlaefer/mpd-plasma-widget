@@ -1,5 +1,7 @@
 # Next
 
+- Removes cache folder size display on settings page (caused stability issues)
+
 # 6.9.0
 
 - Adds search field for playlists

@@ -98,25 +98,7 @@ KCMUtils.SimpleKCM {
                 text: i18n("Clear Cover Cache")
                 icon.name: Mpdw.icons.clearCache
                 onClicked: {
-                    root.cfg_appContext.getCoverManager().clearCache(() => {sizeInfo.update()})
-                }
-            }
-
-            PlasmaComponents.Label {
-                id: sizeInfo
-                verticalAlignment: Text.AlignVCenter
-                Layout.leftMargin: Kirigami.Units.smallSpacing
-                Layout.rightMargin: Layout.leftMargin
-                visible: false
-                Component.onCompleted: update()
-                function update() {
-                    root.cfg_appContext.getCoverManager().getSize((size) => {
-                        if (!size) {
-                            return
-                        }
-                        sizeInfo.text = size
-                        sizeInfo.visible = true
-                    })
+                    root.cfg_appContext.getCoverManager().clearCache()
                 }
             }
         }
