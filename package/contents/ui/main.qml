@@ -78,8 +78,10 @@ PlasmoidItem {
     toolTipSubText: {
         const out = [
             qsTr("by %1").arg(FormatHelpers.artist(main.mpdState.mpdInfo)),
+            main.mpdState.isPlaying ?
+                qsTr("Middle-click to pause") :
+                qsTr("Middle-click to play"),
             qsTr("Scroll to adjust volume (%1\%)").arg(main.volumeState.volume),
-            qsTr("Middle-click to play/pause"),
         ]
         return out.join("\n")
     }
