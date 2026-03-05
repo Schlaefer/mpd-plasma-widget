@@ -65,5 +65,8 @@
             <default>false</default>
         </entry>
 
+        <entry name="runtimeIsClient" type="Bool">
+            <default>false</default>
+        </entry>
     </group>
 </kcfg>

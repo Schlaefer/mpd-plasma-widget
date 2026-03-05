@@ -15,9 +15,12 @@ KCMUtils.SimpleKCM {
     property alias cfg_cfgMpdPort: cfgMpdPort.text
     property alias cfg_cfgCacheRoot: cfgCacheRoot.cleanPath
     property alias cfg_cfgCacheForDays: cfgCacheForDays.value
+    property bool cfg_runtimeIsClient
     property AppContext cfg_appContext
 
     Kirigami.FormLayout {
+        visible: !root.cfg_runtimeIsClient
+
         Item {
             Kirigami.FormData.label: i18n("MPD Connection")
             Kirigami.FormData.isSection: true
@@ -109,5 +112,13 @@ KCMUtils.SimpleKCM {
             type: Kirigami.MessageType.Error
             text: i18n("'magick' not available. Make sure that imagemagick is installed.")
         }
+    }
+
+    Kirigami.InlineMessage {
+        visible: root.cfg_runtimeIsClient
+        Layout.fillWidth: true
+        Layout.margins: Kirigami.Units.gridUnit
+        type: Kirigami.MessageType.Information
+        text: i18n("This widget picked up the General configuration of another running widget. Please change the configuration in the other widget.")
     }
 }

@@ -40,17 +40,20 @@ PlasmoidItem {
         : PlasmaCore.Types.NoBackground
 
     Component.onCompleted: {
-        AppContext.cacheRoot = Qt.binding(() => main.cfgCacheRoot)
-        AppContext.cacheForDays = Qt.binding(() => main.cfgCacheForDays)
-        AppContext.mpdHost = Qt.binding(() => main.cfgMpdHost)
-        AppContext.mpdPort = Qt.binding(() => main.cfgMpdPort)
-
-        const bootstrapped = AppContext.bootstrap({
-            scriptRoot: decodeURIComponent(Qt.resolvedUrl('../scripts').toString().replace("file://", ""))
-        })
-        if (!bootstrapped) {
-            return
+        Plasmoid.configuration.runtimeIsClient = AppContext.bootstrapStarted
+        if (!AppContext.bootstrapStarted) {
+            AppContext.cacheRoot = Qt.binding(() => main.cfgCacheRoot)
+            AppContext.cacheForDays = Qt.binding(() => main.cfgCacheForDays)
+            AppContext.mpdHost = Qt.binding(() => main.cfgMpdHost)
+            AppContext.mpdPort = Qt.binding(() => main.cfgMpdPort)
+            const bootstrapped = AppContext.bootstrap({
+                scriptRoot: decodeURIComponent(Qt.resolvedUrl('../scripts').toString().replace("file://", ""))
+            })
+            if (!bootstrapped) {
+                throw new Error("Main bootstrapping failed.")
+            }
         }
+
         main.mpdState = AppContext.getMpdState()
         main.volumeState = AppContext.getVolumeState()
         Plasmoid.configuration.appContext = AppContext

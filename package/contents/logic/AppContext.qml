@@ -26,12 +26,14 @@ QtObject {
     property MpdState _mpdState
     property Component _mpdStateComponent:Component { MpdState { }}
 
-    property bool bootstrapped: false
+    property bool bootstrapStarted: false
 
     function bootstrap(config) {
-        if (bootstrapped) {
+        if (bootstrapStarted) {
             return true
         }
+        root.bootstrapStarted = true
+
         if (!cacheRoot || !cacheForDays || !mpdHost || !mpdPort) {
             throw new Error("AppContext.bootstrap failed without proper initialization.")
         }
@@ -57,7 +59,6 @@ QtObject {
         root._coverManager.bootstrap()
         root._mpdState.connect()
 
-        root.bootstrapped = true
         return true
     }
 
