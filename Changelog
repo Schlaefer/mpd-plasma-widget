@@ -1,6 +1,7 @@
 # Next
 
-- Show volume badge when scrolling on panel icon
+- Adds volume badge when scrolling on panel icon
+- Fixes queue not properly updating on on queue changing events (6.8.0 regression)
 - Code refactoring and minor layout tweaks
 
 # 6.9.3

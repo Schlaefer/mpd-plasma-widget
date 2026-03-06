@@ -130,7 +130,7 @@ Item {
             }
 
             if (stdout)  {
-                // Queue is playing, paused, or stopped after a playing.
+                // Queue is playing or paused
                 mpdInfo = JSON.parse(stdout)
             } else if (root.mpdQueue.length === 0) {
                 // Queue is empty
@@ -471,13 +471,10 @@ Item {
 
     // If something is happening on the queue let's have it settle on the mpd side.
     Timer {
-        id: statusUpdateTimer
+        id: queueUpdateTimer
         interval: 100
-        onTriggered: {
-            root._getQueue()
-        }
+        onTriggered: root._getQueue()
     }
-
     Timer {
         id: infoUpdateTimer
         interval: 100
@@ -501,7 +498,8 @@ Item {
                 mpdIdleLoopTimer.start()
 
                 if (stdout.includes('player')) {
-                    infoUpdateTimer.start()
+                    // start, pause, stop, skip/play different position in queue
+                    infoUpdateTimer.restart()
                 }
 
                 if (stdout.includes('"mixer"')) {
@@ -513,7 +511,14 @@ Item {
                 }
 
                 if (stdout.includes('playlist')) {
-                    statusUpdateTimer.restart()
+                    queueUpdateTimer.restart()
+                    // A) If the queue got updated above the currently playing item
+                    // (inserts, removes) we have to requery the position of the
+                    // currently playing song.
+                    // B) If the queue got filled and immediatly starts playing we
+                    // only get an ["playlist"] event instead of ["playlist","player"]
+                    // from py-mpd2.
+                    infoUpdateTimer.restart()
                 }
 
                 if (stdout.includes('stored_playlist')) {
