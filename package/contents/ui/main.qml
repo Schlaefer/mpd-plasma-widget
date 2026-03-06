@@ -189,6 +189,10 @@ PlasmoidItem {
     function toggleAppWindow() {
         if (!_appWindow) {
             const component = Qt.createComponent("Components/Application/ApplicationWindow.qml")
+            if (component.status === Component.Error) {
+                console.error("Component error:", component.errorString());
+                return;
+            }
             // Don't put into Component.onCompleted with the rest of the bootstrap. It
             // wont provide the right value.
             AppContext.initialHeight = availableScreenRect.height
