@@ -155,19 +155,19 @@ Kirigami.ScrollablePage {
             mpdState: root.mpdState
             narrowLayout: root.narrowLayout
             parentView: songlistView
-            playingIndex: root.mpdState.mpdInfo ? root.mpdState.mpdInfo.pos : -1
+            indicateCurrentlyPlaying: model.currentlyPlaying
             carretIndex: songlistView.currentIndex
 
             actions: [
                 Kirigami.Action {
-                    icon.name: (songlistItem.playingIndex === model.index && root.mpdState.isPlaying)
+                    icon.name: (model.currentlyPlaying && root.mpdState.isPlaying)
                                ? Mpdw.icons.queuePause
                                : Mpdw.icons.queuePlay
                     tooltip: qsTr("Play Now")
                     onTriggered: {
                         // Fixes queue jumping around (see git commit comment for more info)
                         songlistItem.forceActiveFocus()
-                        if (songlistItem.playingIndex === model.index) {
+                        if (root.mpdState.mpdInfo.pos == model.pos) {
                             root.mpdState.togglePlayPause()
 
                         } else {
@@ -188,6 +188,44 @@ Kirigami.ScrollablePage {
                     }
                 }
             ]
+
+        }
+
+        Connections {
+            target: root.mpdState
+            function onMpdInfoChanged() {
+                songlistView.updateCurrentlyPlayingSong()
+            }
+        }
+
+        /**
+         * Sets model property "currentlyPlaying"
+         *
+         * Is also removes the property if a song isn't the currently playing
+         * anymore.
+         *
+         * We need this as model property, otherwise updating the currently playing
+         * item during drag & drop operations becomes a nightmare to
+         * track in the UI via SongListView property conditions (showing the wrong
+         * item as played because it switched place).
+         */
+        function updateCurrentlyPlayingSong() {
+            const length = songlistView.model.count - 1
+            // @SOMEDAY Iterating over all items removing the property is not efficient.
+            for (let i = 0; i <= length; i++) {
+                let last = songlistView.model.get(i)
+                last.currentlyPlaying = false
+                songlistView.model.set(i, last)
+            }
+            // Info may be unset on empty queue.
+            // Info may have changed but queue is still not fetched.
+            if (!root.mpdState.mpdInfo || root.mpdState.mpdQueue.length === 0) {
+                return
+            }
+            const position = root.mpdState.mpdInfo.pos
+            const model = songlistView.model.get(position)
+            model.currentlyPlaying = true
+            songlistView.model.set(position, model)
         }
     }
 
@@ -236,6 +274,7 @@ Kirigami.ScrollablePage {
         }
 
         followMode.showCurrent()
+        songlistView.updateCurrentlyPlayingSong()
     }
 
     Connections {

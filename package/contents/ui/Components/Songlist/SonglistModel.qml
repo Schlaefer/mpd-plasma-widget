@@ -30,6 +30,8 @@ ListModel {
                 // the file-path of the unknown playlist item. We mark these item as
                 // orphaned.
                 "orphaned": false,
+                // Marks item as currently playing in a MPD queue.
+                "currentlyPlaying": false,
             }
 
             let insertedSong = root.get(i)

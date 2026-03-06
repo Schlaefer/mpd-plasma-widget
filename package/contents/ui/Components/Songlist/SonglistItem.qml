@@ -15,7 +15,7 @@ Item {
     property bool isSortable: false
     property int carretIndex: -1
     property bool narrowLayout: false
-    property int playingIndex: -1
+    property int indicateCurrentlyPlaying
     property SonglistView parentView
     property alias actions: listItem.actions
     property alias alternatingBackground: listItem.alternatingBackground
@@ -27,7 +27,7 @@ Item {
     SwipeListItemGeneric {
         id: listItem
         width: root.width
-        highlightIndex: root.playingIndex
+        highlightIndex: root.indicateCurrentlyPlaying
         topPadding: 0
         bottomPadding: 0
         implicitHeight: mainLayout.implicitHeight
@@ -36,7 +36,7 @@ Item {
             id: currentlyPlayingBackgroundHighlight
             anchors.fill: parent
             color: Kirigami.Theme.highlightColor
-            visible: root.playingIndex === index
+            visible: root.indicateCurrentlyPlaying
             opacity: 0.35
         }
 
