@@ -32,9 +32,11 @@ Item {
     property int libraryClients: 0
     property bool binaryAvailable: false
     property bool _connected: false
-    property bool libraryRequested: false
 
     property int _playState
+    property bool _libraryRequested: false
+    property bool _playlistsRequested: false
+
     enum PlayState {
         Play,
         Pause,
@@ -55,9 +57,8 @@ Item {
     }
 
     function forceReloadEverything() {
-        if (library) {
-            root.libraryRequested = true
-        }
+        if (root.library) root._libraryRequested = true
+        if (root.mpdPlaylists.length === 0) _playlistsRequested = true
         connect()
     }
 
@@ -96,9 +97,8 @@ Item {
 
             root._getStatus(() => root._getInfo(() => root._getQueue()))
 
-            if (libraryRequested) {
-                getLibrary()
-            }
+            if (_libraryRequested) getLibrary()
+            if (_playlistsRequested) getPlaylists()
         }
 
         // Bypass the build-in normal cmd faclities, they are gatekept by the result of this.
@@ -111,8 +111,7 @@ Item {
         _connected = false
         mpdInfo = undefined
         mpdQueue = []
-        mpdPlaylists = []
-        clearLibrary()
+        _clearMemory()
     }
 
     /**************************************************************************/
@@ -228,15 +227,16 @@ Item {
                 restart()
                 return
             }
-            root.clearLibrary()
+            root._clearMemory()
         }
     }
 
     /**
-      * Clear the song library
-      */
-    function clearLibrary() {
+     * Clear big memory objects only used in management mode
+     */
+    function _clearMemory() {
         library = null
+        mpdPlaylists = []
     }
 
     /**
@@ -244,7 +244,7 @@ Item {
      */
     function getLibrary() {
         if (!_connected) {
-            libraryRequested = true
+            _libraryRequested = true
             return
         }
 
@@ -252,13 +252,13 @@ Item {
             if (exitCode !== 0) {
                 return
             }
+            _libraryRequested = false
             if (stdout) {
                 stdout = JSON.parse(stdout)
             } else {
                 stdout = []
             }
             library = new SongLibrary.SongLibrary(stdout)
-            libraryRequested = false
         })
     }
 
@@ -361,6 +361,11 @@ Item {
     function getPlaylists() {
         executable.execCmd("listplaylists", [], function (exitCode, stdout) {
             if (exitCode !== 0) {
+                return
+            }
+            root._playlistsRequested = false
+            if (stdout === "") {
+                root.mpdPlaylists = []
                 return
             }
             let playlists = JSON.parse(stdout)
