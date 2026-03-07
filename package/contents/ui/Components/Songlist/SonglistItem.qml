@@ -75,7 +75,10 @@ Item {
                 }
                 onDropped: {
                     root.parentView.userInteracted()
-                    if (startIndex !== endIndex) {
+                    // Condition 1) If dragged but released before the row position changed - i.e.
+                    // item wasn't actually moved - the startIndex will be -1. Don't pass
+                    // that invalid value to mpd, just ignore it as noaction.
+                    if (startIndex !== -1 &&  startIndex !== endIndex) {
                         root.mpdState.moveInQueue(startIndex, endIndex)
                     }
 

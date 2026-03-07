@@ -2,6 +2,7 @@
 
 - Adds "Update MPD Data" button also reloads playlists
 - Fixes UI glitches on Queue drag and drop
+- Fixes UI reloading when dragging in queue without moving an item
 
 # 6.9.4
 
