@@ -43,7 +43,7 @@ KCMUtils.SimpleKCM {
         }
 
         PlasmaComponents.Button {
-            text: i18n("Update MPD Data")
+            text: i18n("Reload MPD Data")
             icon.name: Mpdw.icons.mpdUpdate
             onClicked: {
                 root.cfg_appContext.getMpdState().forceReloadEverything()
