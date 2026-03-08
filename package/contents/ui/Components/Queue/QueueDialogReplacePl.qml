@@ -40,6 +40,7 @@ Kirigami.PromptDialog {
 
     PlasmaComponents.ComboBox {
         id: listCombo
+        objectName: "listCombo"
         model: ListModel {}
         implicitWidth: parent.width
 
