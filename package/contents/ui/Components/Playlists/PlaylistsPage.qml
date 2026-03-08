@@ -121,6 +121,7 @@ Kirigami.ScrollablePage {
 
     ListViewGeneric {
         id: playlistList
+        objectName: "playlistsList"
 
         delegate: delegateComponentPlaylists
 
