@@ -58,7 +58,7 @@ Item {
 
     function forceReloadEverything() {
         if (root.library) root._libraryRequested = true
-        if (root.mpdPlaylists.length === 0) _playlistsRequested = true
+        _playlistsRequested = true
         connect()
     }
 
