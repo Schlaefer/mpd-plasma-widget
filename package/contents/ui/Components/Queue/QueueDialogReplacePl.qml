@@ -64,6 +64,10 @@ Kirigami.PromptDialog {
         }
 
         Component.onCompleted: {
+            if (root.mpdState.mpdPlaylists.length > 0) {
+                listCombo.populateModel()
+                return
+            }
             root.mpdState.getPlaylists()
         }
 

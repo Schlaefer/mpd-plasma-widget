@@ -1,5 +1,9 @@
 # Next
 
+# 6.9.6
+
+- Fixes combo field in replace playlist sometimes empty
+
 # 6.9.5
 
 - Adds "Update MPD Data" button also reloads playlists
