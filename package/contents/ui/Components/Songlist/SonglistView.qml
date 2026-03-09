@@ -160,7 +160,7 @@ ListViewGeneric {
     Kirigami.Action {
         id: actionDeselect
 
-        readonly property string buttonText: qsTr("Deselect")
+        readonly property string buttonText: qsTr("Deselect All")
 
         text: root.narrowLayout ? "" : buttonText
         tooltip: qsTr("Deselect All")

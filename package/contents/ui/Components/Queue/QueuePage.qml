@@ -16,6 +16,8 @@ Kirigami.ScrollablePage {
     required property Kirigami.ApplicationItem app
     property alias followMode: followMode
 
+    signal searchLibrary(string term)
+
     Layout.fillWidth: true
     title: qsTr("Queue")
     visible: false
@@ -159,6 +161,9 @@ Kirigami.ScrollablePage {
             parentView: songlistView
             indicateCurrentlyPlaying: model.currentlyPlaying
             carretIndex: songlistView.currentIndex
+            contextmenuShowSearchActions: true
+
+            onSearchLibrary: term => root.searchLibrary(term)
 
             actions: [
                 Kirigami.Action {

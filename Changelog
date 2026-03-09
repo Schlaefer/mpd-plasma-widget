@@ -1,5 +1,7 @@
 # Next
 
+- Adds search for artist or album to queue item context menu
+
 # 6.9.6
 
 - Changes names of "Update MPD Data" button to "Reload MPD Data"

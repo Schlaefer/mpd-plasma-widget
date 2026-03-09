@@ -12,6 +12,7 @@ Item {
     required property MpdState mpdState
     required property int index
     required property var model
+    property bool contextmenuShowSearchActions: false
     property bool isSortable: false
     property int carretIndex: -1
     property bool narrowLayout: false
@@ -20,6 +21,8 @@ Item {
     property alias actions: listItem.actions
     property alias alternatingBackground: listItem.alternatingBackground
     property alias coverLoadingPriority: image.loadingPriority
+
+    signal searchLibrary(string term)
 
     width: parentView.width
     implicitHeight: listItem.implicitHeight
@@ -159,14 +162,28 @@ Item {
                     root.parentView.currentIndex = index
                 }
                 if (mouse.button === Qt.RightButton) {
-                    menuLoader.source = "SonglistItemContextMenu.qml"
+                    if (!menuLoader.item) {
+                        menuLoader.setSource("SonglistItemContextMenu.qml", {
+                            parentView: root.parentView,
+                            showSearchActions: root.contextmenuShowSearchActions,
+                        })
+                    }
                     if (!menuLoader.item.visible) {
-                        menuLoader.item.popup()
+                        menuLoader.item.open()
+                    } else  {
+                        menuLoader.item.close()
+                        menuLoader.source = ""
                     }
                 }
             }
             Loader {
                 id: menuLoader
+            }
+            Connections {
+                target: menuLoader.status === Loader.Ready ? menuLoader.item : null
+                function onSearchLibrary(term) {
+                    root.searchLibrary(term)
+                }
             }
         }
     }

@@ -17,10 +17,14 @@ Item {
       *
       * @param {string} searchtext
       */
-    function filter(searchText = "") {
+    function filter() {
+        viewState = searchTerm !== "" ? "search" : "normal"
+        if (searchTerm !== "") {
+            viewState = "search"
+        }
         root.view.model.clear()
-        root.mpdState.library.filterLibrary(searchText)
-        let hits = root.mpdState.library.getAartists(searchText)
+        root.mpdState.library.filterLibrary(searchTerm)
+        let hits = root.mpdState.library.getAartists(searchTerm)
         hits.forEach((hit) => { root.view.model.append({"albumartist": hit}) })
     }
 
@@ -54,10 +58,7 @@ Item {
     }
 
     onSearchTermChanged: {
-        if (searchTerm !== "") {
-            viewState = "search"
-        }
-        filter(searchTerm)
+        filter()
     }
 
     Connections {

@@ -1,57 +1,72 @@
 import QtQuick
-import QtQuick.Controls as QQC2
-import QtQuick.Layouts
 import "../../Mpdw.js" as Mpdw
+import "../../Components/Elements"
 
-QQC2.Menu {
-    id: contextMenu
+DynamicMenu {
+    id: root
 
-    QQC2.Action {
-        text: qsTr('Select Album')
-        icon.name: Mpdw.icons.selectAlbum
-        shortcut: "B"
-        onTriggered: {
-            parentView.model.selectNeighborsByAlbum(model, index)
-        }
+    property SonglistView parentView
+    property bool showSearchActions: false
+
+    signal searchLibrary(string term)
+
+    Component.onCompleted: {
+        if (showSearchActions) actions = actions.concat(_searchActions)
     }
-    QQC2.Action {
-        text: qsTr('Select Album-Artist')
-        icon.name: Mpdw.icons.selectArtist
-        shortcut: "V"
-        onTriggered: {
-            parentView.model.selectNeighborsByAartist(model, index)
-        }
-    }
-    QQC2.MenuSeparator {}
-    QQC2.Action {
-        text: qsTr('Select Above')
-        icon.name: Mpdw.icons.selectAbove
-        onTriggered: {
-            parentView.model.selectAbove(index)
-        }
-        enabled: index > 0
-    }
-    QQC2.Action {
-        text: qsTr('Select Below')
-        icon.name: Mpdw.icons.selectBelow
-        onTriggered: {
-            parentView.model.selectBelow(index)
-        }
-        enabled: index < parentView.model.count - 1
-    }
-    QQC2.MenuSeparator {}
-    QQC2.Action {
-        text: qsTr("Select All")
-        icon.name: Mpdw.icons.selectAll
-        shortcut: "A"
-        onTriggered: {
-            parentView.model.selectAll(true)
-        }
-    }
-    QQC2.Action {
-        text: parentView.actionDeselect.buttonText
-        icon.name: parentView.actionDeselect.icon.name
-        shortcut: parentView.actionDeselect.shortcut
-        onTriggered: parentView.actionDeselect.onTriggered()
-    }
+
+    actions: [
+        {
+            text: qsTr('Select Album'),
+            icon: Mpdw.icons.selectAlbum,
+            shortcut: "B",
+            handler: () => parentView.model.selectNeighborsByAlbum(model, index)
+        },
+        {
+            text: qsTr('Select Album-Artist'),
+            icon: Mpdw.icons.selectArtist,
+            shortcut: "V",
+            handler: () => parentView.model.selectNeighborsByAartist(model, index),
+        },
+        { separator: true },
+        {
+            text: qsTr('Select Above'),
+            icon: Mpdw.icons.selectAbove,
+            handler: () =>  parentView.model.selectAbove(index),
+            enabled: index > 0,
+        },
+        {
+            text: qsTr('Select Below'),
+            icon: Mpdw.icons.selectBelow,
+            handler: () => parentView.model.selectBelow(index),
+            enabled: index < parentView.model.count - 1,
+        },
+        { separator: true },
+        {
+            text: qsTr("Select All"),
+            icon: Mpdw.icons.selectAll,
+            shortcut: "A",
+            handler: () => parentView.model.selectAll(true),
+        },
+        {
+            text: parentView.actionDeselect.buttonText,
+            shortcut: parentView.actionDeselect.shortcut,
+            handler: () => parentView.actionDeselect.onTriggered(),
+        },
+    ]
+
+    property var _searchActions: [
+        { separator: true },
+        {
+            text: qsTr("Search for Album"),
+            icon: Mpdw.icons.appSearch,
+            enabled: model.album,
+            handler: () => root.searchLibrary(parentView.model.get(index).album),
+        },
+        {
+            enabled: root.app,
+            text: qsTr("Search for Album-Artist"),
+            enabled: model.albumartist,
+            handler: () => root.searchLibrary(parentView.model.get(index).albumartist)
+        },
+    ]
 }

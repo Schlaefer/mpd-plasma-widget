@@ -126,6 +126,8 @@ PlasmaCore.Window {
                 app: app
                 mpdState: app.mpdState
                 narrowLayout: app.narrowLayout
+
+                onSearchLibrary: (term) => app.searchLibrary(term)
             }
         }
 
@@ -147,6 +149,12 @@ PlasmaCore.Window {
                 narrowLayout: app.narrowLayout
                 pageStack: app.pageStack
             }
+        }
+
+        function searchLibrary(artist) {
+            const page = 'albumartists'
+            showPage(page)
+            getPage(page).searchField.text = artist
         }
 
         Repeater {

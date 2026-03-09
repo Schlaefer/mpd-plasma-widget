@@ -44,6 +44,7 @@ const icons = {
     appConfigAppearance: "preferences-desktop-color",
     appError: "emblem-warning",
     appMpdError: "network-offline",
+    appSearch: "system-search",
 
     clearCache: "emblem-warning",
     mpdUpdate: "view-refresh",

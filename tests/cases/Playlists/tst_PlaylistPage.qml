@@ -16,15 +16,15 @@ TestCase {
         scriptRoot: ""
     }
 
-    Kirigami.Page {
-        id: mockPage
-    }
+    Kirigami.ApplicationItem { id: mockApp }
+    Kirigami.Page { id: mockPage }
 
     function resetTestItem() {
         testItem = createTemporaryObject(Qt.createComponent(
             "../../../package/contents/ui/Components/Playlists/PlaylistsPage.qml"),
             null,
             {
+                app: mockApp,
                 mpdState: mpdState,
                 narrowLayout: false,
                 pageStack: Kirigami.PageRow
