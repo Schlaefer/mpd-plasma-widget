@@ -9,10 +9,11 @@ import "../../../scripts/formatHelpers.js" as FmH
 RowLayout {
     id: root
 
+    required property Kirigami.ApplicationItem app
     required property bool narrowLayout
 
     Repeater {
-        model: app.pages
+        model: root.app.pages
 
         PlasmaComponents.ToolButton {
             id: button
@@ -22,8 +23,8 @@ RowLayout {
             icon.name: modelData.icon
             text: root.narrowLayout ? "" : modelData.text
             checkable: true
-            checked: app.currentPage === modelData.name
-            onClicked: app.showPage(modelData.name)
+            checked: root.app.currentPage === modelData.name
+            onClicked: root.app.showPage(modelData.name)
             Kirigami.MnemonicData.enabled: false
 
             PlasmaComponents.ToolTip {

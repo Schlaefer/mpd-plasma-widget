@@ -13,6 +13,7 @@ Kirigami.ScrollablePage {
 
     required property MpdState mpdState
     required property bool narrowLayout
+    required property Kirigami.ApplicationItem app
     property alias followMode: followMode
 
     Layout.fillWidth: true
@@ -24,6 +25,7 @@ Kirigami.ScrollablePage {
         RowLayout {
             anchors.fill: parent
             GlobalNav {
+                app: root.app
                 narrowLayout: root.narrowLayout
             }
             RowLayout {

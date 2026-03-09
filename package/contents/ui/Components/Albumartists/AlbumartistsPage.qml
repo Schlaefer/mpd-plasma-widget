@@ -12,6 +12,7 @@ Kirigami.ScrollablePage {
     required property MpdState mpdState
     required property bool narrowLayout
     required property Kirigami.PageRow pageStack
+    required property Kirigami.ApplicationItem app
     property int depth: 1
     property string shownAlbumartist
     property alias searchField: navSearchField
@@ -30,6 +31,7 @@ Kirigami.ScrollablePage {
         RowLayout {
             anchors.fill: parent
             GlobalNav {
+                app: root.app
                 narrowLayout: root.narrowLayout
              }
             QQC2.ToolButton {

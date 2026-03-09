@@ -1,3 +1,5 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Effects
@@ -121,6 +123,7 @@ PlasmaCore.Window {
         Component {
             id: queuePageComponent
             QueuePage {
+                app: app
                 mpdState: app.mpdState
                 narrowLayout: app.narrowLayout
             }
@@ -129,6 +132,7 @@ PlasmaCore.Window {
         Component {
             id: albumartistsPageComponent
             AlbumartistsPage {
+                app: app
                 mpdState: app.mpdState
                 narrowLayout: app.narrowLayout
                 pageStack: app.pageStack
@@ -138,6 +142,7 @@ PlasmaCore.Window {
         Component {
             id: playlistPageComponent
             PlaylistsPage {
+                app: app
                 mpdState: app.mpdState
                 narrowLayout: app.narrowLayout
                 pageStack: app.pageStack
@@ -151,10 +156,11 @@ PlasmaCore.Window {
             // dynamically.
             Item {
                 id: root
+                required property var modelData
                 Shortcut {
-                    sequence: modelData.shortcut
+                    sequence: root.modelData.shortcut
                     onActivated: function() {
-                        app.showPage(modelData.name)
+                        app.showPage(root.modelData.name)
                     }
                 }
             }

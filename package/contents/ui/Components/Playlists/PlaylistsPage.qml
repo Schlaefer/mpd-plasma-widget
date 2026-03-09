@@ -14,6 +14,7 @@ Kirigami.ScrollablePage {
     required property bool narrowLayout
     required property MpdState mpdState
     required property Kirigami.PageRow pageStack
+    required property Kirigami.ApplicationItem app
     property alias searchField: navSearchField
     property int depth: 1
 
@@ -25,6 +26,7 @@ Kirigami.ScrollablePage {
         RowLayout {
             anchors.fill: parent
             GlobalNav {
+                app: root.app
                 narrowLayout: root.narrowLayout
             }
             NavSearchField {
