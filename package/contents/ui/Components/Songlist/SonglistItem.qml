@@ -152,7 +152,9 @@ Item {
             onClicked: function (mouse) {
                 root.parentView.userInteracted()
                 if (mouse.button === Qt.LeftButton) {
-                    if (mouse.modifiers & Qt.ShiftModifier) {
+                    if (menuLoader.item?.visible) {
+                        menuLoader.closeContextMenu()
+                    } else if (mouse.modifiers & Qt.ShiftModifier) {
                         root.parentView.model.selectTo(index)
                     } else if (mouse.modifiers & Qt.ControlModifier) {
                         root.parentView.model.selectToggle(index)
@@ -169,15 +171,20 @@ Item {
                         })
                     }
                     if (!menuLoader.item.visible) {
-                        menuLoader.item.open()
+                        const pos = root.mapToItem(root, mouse.x, mouse.y)
+                        menuLoader.item.popup(pos.x, pos.y)
                     } else  {
-                        menuLoader.item.close()
-                        menuLoader.source = ""
+                        menuLoader.closeContextMenu()
                     }
                 }
             }
             Loader {
                 id: menuLoader
+
+                function closeContextMenu() {
+                    item.close()
+                    source = ""
+                }
             }
             Connections {
                 target: menuLoader.status === Loader.Ready ? menuLoader.item : null
