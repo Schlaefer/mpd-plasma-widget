@@ -1,5 +1,16 @@
 class SongLibrary {
-    constructor(library) {
+
+    constructor(library, config) {
+        if (!config.unknownAlbumTitle) {
+            throw new Error("No title for unknown albums provided.")
+        }
+        this._unknownAlbumTitle = config.unknownAlbumTitle
+
+        if (!config.unknownArtistTitle) {
+            throw new Error("No title for unknown albums provided.")
+        }
+        this._unknownArtistTitle = config.unknownArtistTitle
+
         // Full library
         this._albums = this._buildLibrary(library)
         // Filtered library
@@ -22,8 +33,8 @@ class SongLibrary {
 
     /**
      * Returns one(!) song for every album of the aartist
-     *  
-     * @param {string} albumartist 
+     *
+     * @param {string} albumartist
      * @returns {array} of songs
      */
     getASongsByAartistPerAlbum(albumartist) {
@@ -37,7 +48,7 @@ class SongLibrary {
 
     /**
      * Gets list of albumartists
-     *  
+     *
      * @returns {array} List of albumartists
      */
     getAartists() {
@@ -95,7 +106,7 @@ class SongLibrary {
 
     /**
      * Build library structure out of list of songs
-     * 
+     *
      * @param {list} library list of songs
      * @returns library object {aartist1: {album1: [{song1}, ...], album2: [...]}, aartist2: ...}
      */
@@ -106,8 +117,11 @@ class SongLibrary {
                 return
             }
 
-            if (!song.albumartist || !song.album) {
-                return
+            if (!song.album) {
+                song.album = this._unknownAlbumTitle
+            }
+            if (!song.albumartist) {
+                song.albumartist = song.artist || this._unknownArtistTitle
             }
             if (!tree[song.albumartist]) {
                 tree[song.albumartist] = {}

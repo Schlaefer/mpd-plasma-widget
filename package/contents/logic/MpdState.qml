@@ -258,7 +258,10 @@ Item {
             } else {
                 stdout = []
             }
-            library = new SongLibrary.SongLibrary(stdout)
+            library = new SongLibrary.SongLibrary(stdout, {
+                unknownAlbumTitle: qsTr("Unknown Album"),
+                unknownArtistTitle: qsTr("Unknown Artist"),
+            })
         })
     }
 
