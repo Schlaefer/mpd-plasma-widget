@@ -1,9 +1,12 @@
 # Next
 
+# 6.10.0
+
 - Adds library showing songs with empty album and/or albumartist
 - Adds search for artist or album to queue item context menu
 - Adds short delay on saving playlists for duplicate warning
 - Fixes context-menu placing and behavior in song-lists
+- Code refactoring
 
 # 6.9.6
 
