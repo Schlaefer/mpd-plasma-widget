@@ -15,7 +15,11 @@ TestCase {
         scriptRoot: ""
     }
 
-    function resetTestItem() {
+    function cleanup() {
+        mpdState.mockReset()
+    }
+
+    function initTestItem() {
         testItem = createTemporaryObject(Qt.createComponent(
             "../../../package/contents/ui/Components/Queue/QueueDialogReplacePl.qml"),
             null,
@@ -23,26 +27,23 @@ TestCase {
     }
 
     function test_comboBoxInitWithNoPlaylists() {
-        mpdState.mockPlaylistsClear()
-        resetTestItem()
+        initTestItem()
         const listCombo = findChild(testItem, 'listCombo')
         compare(listCombo.count, 0)
     }
 
     function test_comboBoxUpdatePlaylists() {
-        mpdState.mockPlaylistsClear()
-        resetTestItem()
+        mpdState.r.playlistsCreate(3)
+        initTestItem()
         const listCombo = findChild(testItem, 'listCombo')
-        compare(listCombo.count, 0)
-        mpdState.mockPlaylistsSet(3)
         compare(listCombo.count, 3)
-        mpdState.mockPlaylistsClear()
+        mpdState.mockReset()
         compare(listCombo.count, 0)
     }
 
     function test_comboBoxInitWithPlaylists() {
-        mpdState.mockPlaylistsSet(2)
-        resetTestItem()
+        mpdState.r.playlistsCreate(2)
+        initTestItem()
         compare(findChild(testItem, 'listCombo').count, 2)
     }
 }

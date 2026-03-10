@@ -248,20 +248,21 @@ Item {
             return
         }
 
-        executable.execCmd("listallinfo", [], function (exitCode, stdout) {
-            if (exitCode !== 0) {
-                return
-            }
-            _libraryRequested = false
-            if (stdout) {
-                stdout = JSON.parse(stdout)
-            } else {
-                stdout = []
-            }
-            library = new SongLibrary.SongLibrary(stdout, {
-                unknownAlbumTitle: qsTr("Unknown Album"),
-                unknownArtistTitle: qsTr("Unknown Artist"),
-            })
+        executable.execCmd("listallinfo", [], _getLibraryClb)
+    }
+    function _getLibraryClb(exitCode, stdout) {
+        if (exitCode !== 0) {
+            return
+        }
+        _libraryRequested = false
+        if (stdout) {
+            stdout = JSON.parse(stdout)
+        } else {
+            stdout = []
+        }
+        library = new SongLibrary.SongLibrary(stdout, {
+            unknownAlbumTitle: qsTr("Unknown Album"),
+            unknownArtistTitle: qsTr("Unknown Artist"),
         })
     }
 
@@ -361,25 +362,24 @@ Item {
         executable.execList(() => root.lastPlayedPlaylist = playlist)
     }
 
-    function getPlaylists() {
-        executable.execCmd("listplaylists", [], function (exitCode, stdout) {
-            if (exitCode !== 0) {
-                return
-            }
-            root._playlistsRequested = false
-            if (stdout === "") {
-                root.mpdPlaylists = []
-                return
-            }
-            let playlists = JSON.parse(stdout)
-            playlists = playlists.map((playlist) => playlist.playlist)
-            playlists = playlists.sort(function (a, b) {
-                let textA = a.toLowerCase()
-                let textB = b.toLowerCase()
-                return (textA < textB) ? -1 : (textA > textB) ? 1 : 0
-            })
-            root.mpdPlaylists = playlists
+    function getPlaylists() { executable.execCmd("listplaylists", [], _getPlaylistsClb) }
+    function _getPlaylistsClb (exitCode, stdout) {
+        if (exitCode !== 0) {
+            return
+        }
+        root._playlistsRequested = false
+        if (stdout === "") {
+            root.mpdPlaylists = []
+            return
+        }
+        let playlists = JSON.parse(stdout)
+        playlists = playlists.map((playlist) => playlist.playlist)
+        playlists = playlists.sort(function (a, b) {
+            let textA = a.toLowerCase()
+            let textB = b.toLowerCase()
+            return (textA < textB) ? -1 : (textA > textB) ? 1 : 0
         })
+        root.mpdPlaylists = playlists
     }
 
     function getPlaylist(playlist) {

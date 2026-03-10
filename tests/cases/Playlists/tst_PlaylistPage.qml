@@ -19,7 +19,11 @@ TestCase {
     Kirigami.ApplicationItem { id: mockApp }
     Kirigami.Page { id: mockPage }
 
-    function resetTestItem() {
+    function cleanup() {
+        mpdState.mockReset()
+    }
+
+    function initTestItem() {
         testItem = createTemporaryObject(Qt.createComponent(
             "../../../package/contents/ui/Components/Playlists/PlaylistsPage.qml"),
             null,
@@ -32,26 +36,24 @@ TestCase {
     }
 
     function test_noPlaylists() {
-        mpdState.mockPlaylistsClear()
-        resetTestItem()
+        initTestItem()
         const list = findChild(testItem, 'playlistsList')
         compare(list.count, 0)
     }
 
     function test_updatePlaylists() {
-        mpdState.mockPlaylistsClear()
-        resetTestItem()
+        initTestItem()
         const list = findChild(testItem, 'playlistsList')
         compare(list.count, 0)
-        mpdState.mockPlaylistsSet(3)
+        mpdState.r.playlistsCreate(3)
         compare(list.count, 3)
-        mpdState.mockPlaylistsClear()
+        mpdState.mockReset()
         compare(list.count, 0)
     }
 
     function test_comboBoxInitWithPlaylists() {
-        mpdState.mockPlaylistsSet(2)
-        resetTestItem()
+        mpdState.r.playlistsCreate(2)
+        initTestItem()
         const list = findChild(testItem, 'playlistsList')
         compare(list.count, 2)
     }
