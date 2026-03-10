@@ -24,7 +24,7 @@ Kirigami.PromptDialog {
             text: qsTr("Save")
             id: actionButton
             icon.name: Mpdw.icons.dialogOk
-            enabled: !newPlaylistTitle.playlistTitleExists && newPlaylistTitle.text
+            enabled: !newPlaylistTitle._playlistTitleExists && newPlaylistTitle.text
             onTriggered: {
                 root.mpdState.savedQueueAsPlaylist.connect(afterSave)
                 root.mpdState.saveQueueAsPlaylist(newPlaylistTitle.text)
@@ -55,13 +55,28 @@ Kirigami.PromptDialog {
         PlasmaComponents.TextField {
             id: newPlaylistTitle
 
-            property bool playlistTitleExists
+            property bool _playlistTitleExists
+            property bool _showPlaylistsTitleExistsWarning
 
             Layout.fillWidth: true
             placeholderText: qsTr("New Playlist Name…")
 
             function updatePlaylistTitleExists() {
-                playlistTitleExists = root.mpdState.mpdPlaylists.indexOf(text) !== -1
+                _playlistTitleExists = root.mpdState.mpdPlaylists.indexOf(text) !== -1
+
+                if (!_playlistTitleExists) {
+                    _showPlaylistsTitleExistsWarning = false
+                } else {
+                    playlistExistsTimer.restart()
+                }
+            }
+
+            Timer {
+                id: playlistExistsTimer
+                interval: 1000
+                onTriggered: {
+                    newPlaylistTitle._showPlaylistsTitleExistsWarning = newPlaylistTitle._playlistTitleExists
+                }
             }
 
             onTextChanged: {
@@ -105,7 +120,7 @@ Kirigami.PromptDialog {
         Kirigami.InlineMessage {
             id: playlistExistsMessage
             Layout.fillWidth: true
-            visible: newPlaylistTitle.playlistTitleExists
+            visible: newPlaylistTitle._showPlaylistsTitleExistsWarning
             type: Kirigami.MessageType.Warning
             text: qsTr("Playlist with same name already exists.")
         }
