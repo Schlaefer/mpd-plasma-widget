@@ -43,10 +43,19 @@ KCMUtils.SimpleKCM {
         }
 
         PlasmaComponents.Button {
-            text: i18n("Reload MPD Data")
-            icon.name: Mpdw.icons.mpdUpdate
+            text: i18n("Refresh Local Client Data")
+            icon.name: Mpdw.icons.mpdDownload
             onClicked: {
                 root.cfg_appContext.getMpdState().forceReloadEverything()
+            }
+        }
+
+        PlasmaComponents.Button {
+            // Technically only an Update, but Update is less descriptive.
+            text: i18n("Start Server Library Rescan")
+            icon.name: Mpdw.icons.mpdRescan
+            onClicked: {
+                root.cfg_appContext.getMpdState().startServerUpdate()
             }
         }
 
@@ -74,7 +83,7 @@ KCMUtils.SimpleKCM {
             }
 
             PlasmaComponents.Button {
-                text: i18n("Select Folder")
+                text: i18n("Select Folder…")
                 onClicked: cfgCacheRoot.open()
             }
 

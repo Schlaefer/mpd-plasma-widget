@@ -47,7 +47,8 @@ const icons = {
     appSearch: "system-search",
 
     clearCache: "emblem-warning",
-    mpdUpdate: "view-refresh",
+    mpdRescan: "view-refresh",
+    mpdDownload: "download",
 
     navBack: "go-previous",
 }

@@ -475,6 +475,11 @@ Item {
         executable.exec(cmd, clb)
     }
 
+
+    function startServerUpdate() {
+        executable.execCmd("update")
+    }
+
     /**************************************************************************/
 
     // If something is happening on the queue let's have it settle on the mpd side.
@@ -516,6 +521,13 @@ Item {
 
                 if (stdout.includes('"options"')) {
                     root._getStatus()
+                }
+
+                //  Emits to "update" events on start and finish. Only emits
+                // "database" event if songs were added, not on removal.
+                if (stdout.includes('update') || stdout.includes('database')) {
+                    root.getLibrary()
+                    root.getPlaylists()
                 }
 
                 if (stdout.includes('playlist')) {
