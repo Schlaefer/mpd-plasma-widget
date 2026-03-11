@@ -8,7 +8,6 @@ const icons = {
     queueConsume: "draw-eraser",
     queueRandom: "media-playlist-shuffle",
     queueRepeat: "media-playlist-repeat",
-    queueShowCurrent: "mark-location",
     queueSaveNew: "document-save-as",
     queueSaveReplace: "document-replace",
     queueRemoveSingle: "edit-delete",

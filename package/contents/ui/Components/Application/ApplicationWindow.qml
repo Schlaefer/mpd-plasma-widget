@@ -470,7 +470,6 @@ PlasmaCore.Window {
             id: showCurrentSongAction
             shortcut: "L"
             text: qsTr("Show Current Song")
-            icon.name: Mpdw.icons.queueShowCurrent
             onTriggered: {
                 app.showPage('queue')
                 let page = app.getPage('queue')
