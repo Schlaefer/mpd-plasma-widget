@@ -26,15 +26,11 @@ QtObject {
     }
 
     function playlistsGetResponse() {
-        let _mockPlaylistsResponse = ""
-        if (_mockPlaylists.length > 0) {
-            for(const item in _mockPlaylists) {
-                _mockPlaylistsResponse = _mockPlaylistsResponse.concat(`{"playlist": "${item}"},`)
-            }
-            _mockPlaylistsResponse = _mockPlaylistsResponse.slice(0, -1)
-            _mockPlaylistsResponse = `[${_mockPlaylistsResponse}]`
+        if (_mockPlaylists.length === 0) {
+            return ""
         }
-        return _mockPlaylistsResponse
+
+        return JSON.stringify(_mockPlaylists)
     }
 
     function _playlistsReset() {
