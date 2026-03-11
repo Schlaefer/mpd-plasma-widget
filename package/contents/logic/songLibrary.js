@@ -137,18 +137,18 @@ class SongLibrary {
 
     _songSorter(songs) {
         return songs.sort((a, b) => {
-            if (a.date !== "" && b.date !== "") {
-                let aDate = parseInt(a.date)
-                let bDate = parseInt(b.date)
-                if (aDate > bDate) return 1
-                if (aDate < bDate) return -1
+            const aAlbum = a.album?.toLowerCase() || ""
+            const bAlbum = b.album?.toLowerCase() || ""
+            const sameAlbum = aAlbum === bAlbum
+
+            if (!sameAlbum && a.date && b.date) {
+                if (a.date > b.date) return 1
+                if (a.date < b.date) return -1
             }
 
-            if (a.album && b.album) {
-                let aAlbum = a.album.toLowerCase()
-                let bAlbum = b.album.toLowerCase()
-                if (aAlbum > bAlbum) return 1
-                if (aAlbum < bAlbum) return -1
+            if (aAlbum && bAlbum) {
+                const diff = aAlbum.localeCompare(bAlbum)
+                if (diff !== 0) return diff
             }
 
             if (a.disc !== "" && b.disc !== "") {
@@ -157,8 +157,8 @@ class SongLibrary {
             }
 
             if (a.track !== "" && b.track !== "") {
-                let aTrack = a.track !== "" ? parseInt(a.track) : 0
-                let bTrack = b.track !== "" ? parseInt(b.track) : 0
+                const aTrack = parseInt(a.track)
+                const bTrack = parseInt(b.track)
 
                 if (aTrack > bTrack) return 1
                 if (aTrack < bTrack) return -1

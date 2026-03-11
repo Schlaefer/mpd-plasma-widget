@@ -1,5 +1,6 @@
 # Next
 
+- Fixes scrambled song order for songs with different year on same album
 - Adds more code test cases
 
 # 6.10.0
