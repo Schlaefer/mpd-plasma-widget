@@ -1,5 +1,6 @@
 # Next
 
+- Adds search for artist if different from album-artist to queue context menu
 - Adds automatic data update on mpd-server library update
 - Adds option in widget configuration for library scanning to pick up new songs
 - Fixes scrambled song order for songs with different year on same album
@@ -8,7 +9,7 @@
 # 6.10.0
 
 - Adds library showing songs with empty album and/or albumartist
-- Adds search for artist or album to queue item context menu
+- Adds search for album-artist or album to queue item context menu
 - Adds short delay on saving playlists for duplicate warning
 - Fixes context-menu placing and behavior in song-lists
 - Code refactoring

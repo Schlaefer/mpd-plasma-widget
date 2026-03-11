@@ -11,7 +11,12 @@ DynamicMenu {
     signal searchLibrary(string term)
 
     Component.onCompleted: {
-        if (showSearchActions) actions = actions.concat(_searchActions)
+        if (showSearchActions) {
+            actions = actions.concat(_searchActions)
+            if (model.artist && model.artist !== model.albumartist) {
+                actions = actions.concat(_searchArtist)
+            }
+        }
     }
 
     actions: [
@@ -67,6 +72,13 @@ DynamicMenu {
             text: qsTr("Search for Album-Artist"),
             enabled: model.albumartist,
             handler: () => root.searchLibrary(parentView.model.get(index).albumartist)
+        },
+    ]
+
+    property var _searchArtist: [
+        {
+            text: qsTr("Search for Artist"),
+            handler: () => root.searchLibrary(parentView.model.get(index).artist),
         },
     ]
 }
