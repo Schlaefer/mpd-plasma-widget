@@ -1,6 +1,7 @@
 # Next
 
 - Adds search for artist if different from album-artist to queue context menu
+- Adds searching for artist in library search-field
 - Adds automatic data update on mpd-server library update
 - Adds option in widget configuration for library scanning to pick up new songs
 - Fixes scrambled song order for songs with different year on same album

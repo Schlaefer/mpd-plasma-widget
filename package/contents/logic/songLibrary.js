@@ -67,7 +67,7 @@ class SongLibrary {
 
         const search = searchText.toLowerCase()
         const albumsByArtist = this._albums;
-        const songFields = ['title', 'genre', 'composer']
+        const songFields = ['title', 'artist', 'genre', 'composer']
 
         for (const aartist in this._albums) {
             const aartistLower = aartist.toLowerCase()
