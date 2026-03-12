@@ -1,5 +1,7 @@
 # Next
 
+# 6.11.0
+
 - Adds search for artist if different from album-artist to queue context menu
 - Adds searching for artist in library search-field
 - Adds automatic data update on mpd-server library update
