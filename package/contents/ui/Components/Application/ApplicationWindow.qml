@@ -48,6 +48,10 @@ PlasmaCore.Window {
         property bool narrowLayout: app.width < narrowBreakPoint
         property int windowPreMinimizeSize: -1
 
+        Component.onCompleted: {
+            mpdState.registerClient()
+        }
+
         /**
           * Global properties for pages
           */

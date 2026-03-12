@@ -5,6 +5,7 @@
 - Adds automatic data update on mpd-server library update
 - Adds option in widget configuration for library scanning to pick up new songs
 - Fixes scrambled song order for songs with different year on same album
+- Fixes Playlist view sometimes unloading
 - Adds more code test cases
 
 # 6.10.0

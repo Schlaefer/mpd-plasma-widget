@@ -71,7 +71,6 @@ Item {
     }
 
     Component.onCompleted: {
-        root.mpdState.registerClient()
         if (root.mpdState.library) {
             filter()
         }
