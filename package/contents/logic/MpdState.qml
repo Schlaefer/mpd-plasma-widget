@@ -510,7 +510,7 @@ Item {
                 // Restart the idle loop
                 mpdIdleLoopTimer.start()
 
-                if (stdout.includes('player')) {
+                if (stdout.includes('"player"')) {
                     // start, pause, stop, skip/play different position in queue
                     infoUpdateTimer.restart()
                 }
@@ -525,12 +525,12 @@ Item {
 
                 //  Emits to "update" events on start and finish. Only emits
                 // "database" event if songs were added, not on removal.
-                if (stdout.includes('update') || stdout.includes('database')) {
+                if (stdout.includes('"update"') || stdout.includes('"database"')) {
                     root.getLibrary()
                     root.getPlaylists()
                 }
 
-                if (stdout.includes('playlist')) {
+                if (stdout.includes('"playlist"')) {
                     queueUpdateTimer.restart()
                     // A) If the queue got updated above the currently playing item
                     // (inserts, removes) we have to requery the position of the
@@ -541,7 +541,7 @@ Item {
                     infoUpdateTimer.restart()
                 }
 
-                if (stdout.includes('stored_playlist')) {
+                if (stdout.includes('"stored_playlist"')) {
                     root.getPlaylists()
                 }
             }
