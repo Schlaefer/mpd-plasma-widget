@@ -9,6 +9,15 @@ set -e
 cd "$(dirname "$0")"
 cd ..
 
+# Run tests
+if tests/run; then
+    echo "✅ Tests pass"
+else
+    echo
+    echo "❌ Tests failed"
+    exit 1
+fi
+
 # Get git tag
 TAG=$(git describe --tags --abbrev=0)
 TAG_DASHED=${TAG//./-}
@@ -27,3 +36,4 @@ mv "release/${ZIP_NAME}" "release/${PLASMOID_NAME}"
 REALPATH=$(realpath "release/${PLASMOID_NAME}")
 echo
 echo "✅ Plasmoid created: ${REALPATH}"
+
