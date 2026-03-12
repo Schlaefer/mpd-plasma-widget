@@ -496,6 +496,20 @@ Item {
             root._getInfo()
         }
     }
+    Timer {
+        id: playlistsUpdateTimer
+        interval: 100
+        onTriggered: {
+            root.getPlaylists()
+        }
+    }
+    Timer {
+        id: libraryUpdateTimer
+        interval: 100
+        onTriggered: {
+            root.getLibrary()
+        }
+    }
 
     Timer {
         id: mpdIdleLoopTimer
@@ -523,11 +537,11 @@ Item {
                     root._getStatus()
                 }
 
-                //  Emits to "update" events on start and finish. Only emits
+                //  Emits two "update" events on start and finish. Only emits
                 // "database" event if songs were added, not on removal.
                 if (stdout.includes('"update"') || stdout.includes('"database"')) {
-                    root.getLibrary()
-                    root.getPlaylists()
+                    libraryUpdateTimer.restart()
+                    playlistsUpdateTimer.restart()
                 }
 
                 if (stdout.includes('"playlist"')) {
@@ -542,7 +556,7 @@ Item {
                 }
 
                 if (stdout.includes('"stored_playlist"')) {
-                    root.getPlaylists()
+                    playlistsUpdateTimer.restart()
                 }
             }
 
