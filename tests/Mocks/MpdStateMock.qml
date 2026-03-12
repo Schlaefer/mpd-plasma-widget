@@ -17,6 +17,7 @@ MpdState {
     }
 
     function getLibrary() { _getLibraryClb(0, r.libraryGetResponse())}
+    function getPlaylist(title) { _getPlaylistClb(0, r.playlistGetResponse(title)) }
     function getPlaylists() { _getPlaylistsClb(0, r.playlistsGetResponse()) }
 
     Connections {

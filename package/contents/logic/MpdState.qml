@@ -382,13 +382,13 @@ Item {
         root.mpdPlaylists = playlists
     }
 
-    function getPlaylist(playlist) {
-        executable.execCmd("listplaylistinfo", [playlist], function(exitCode, stdout) {
-            if (exitCode !== 0) {
-                return
-            }
-            gotPlaylist(JSON.parse(stdout))
-        })
+    function getPlaylist(playlist) { executable.execCmd("listplaylistinfo", [playlist], _getPlaylistClb) }
+    function _getPlaylistClb(exitCode, stdout) {
+        if (exitCode !== 0) {
+            return
+        }
+        const data = stdout === "" ? [] : JSON.parse(stdout)
+        gotPlaylist(data)
     }
 
     /**

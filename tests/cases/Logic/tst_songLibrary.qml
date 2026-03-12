@@ -3,6 +3,8 @@ import QtTest
 import "../../Mocks"
 
 TestCase {
+    name: "songLibrary"
+
     property MpdStateMock testItem: MpdStateMock {
         id: mpdState
         cfgMpdHost: ""

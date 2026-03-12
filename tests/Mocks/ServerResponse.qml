@@ -11,26 +11,31 @@ QtObject {
     }
 
     // #############################################
-    // # Playlists - listplaylists
+    // # Playlists
     // #############################################
 
     property var _mockPlaylists: []
 
     function playlistsCreate(numberOfItems) {
         for (let i = 0; i < numberOfItems; i++) {
-            _mockPlaylists.push({playlist: `Pl ${i + 1}`})
+            _mockPlaylists.push({playlist: `Pl ${i + 1}`, songs: []})
         }
 
         dataChanged()
         return this
     }
 
-    function playlistsGetResponse() {
-        if (_mockPlaylists.length === 0) {
-            return ""
-        }
+    // listplaylists
+    function playlistsGetResponse(): string {
+        if (_mockPlaylists.length === 0) return ""
+        return JSON.stringify(_mockPlaylists.map(p => ({ playlist: p.playlist })))
+    }
 
-        return JSON.stringify(_mockPlaylists)
+    // listplaylistinfo
+    function playlistGetResponse(title: string): string {
+        const songs = _mockPlaylists.find(pl => pl.playlist === title).songs
+        if (songs.length === 0) return ""
+        return JSON.stringify(songs)
     }
 
     function _playlistsReset() {
