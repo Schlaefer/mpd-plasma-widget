@@ -1,13 +1,16 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
+import org.kde.kirigami as Kirigami
 
 import "../../../logic"
 
 Item {
     id: root
 
+    property bool active
     required property MpdState mpdState
+    required property Kirigami.PageRow pageStack
     required property ListView view
     property string viewState: "normal"
     property string searchTerm: ""
@@ -44,9 +47,17 @@ Item {
             root.view.positionViewAtIndex(0, ListView.Beginning)
             break
         case "startSearch":
+            while (pageStack.depth > 1) {
+                pageStack.pop()
+            }
             searchField.forceActiveFocus()
             break
         case "search":
+            while (pageStack.depth > 1) {
+                pageStack.pop()
+            }
+            break
+        case "subpage":
             break
         case "normal":
         default:
@@ -70,16 +81,9 @@ Item {
         }
     }
 
-    Component.onCompleted: {
-        if (root.mpdState.library) {
-            filter()
+    onActiveChanged: {
+        if (!root.mpdState.library) {
+            root.mpdState.getLibrary()
         }
-        root.mpdState.getLibrary()
-        return
-    }
-
-    Component.onDestruction: {
-        // onDestruction is triggered when main.qml destroys the window
-        root.mpdState.unregisterClient()
     }
 }

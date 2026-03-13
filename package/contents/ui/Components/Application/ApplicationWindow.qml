@@ -35,6 +35,11 @@ PlasmaCore.Window {
         height = (initialHeight > 800 ? 0.8 : 0.95) * initialHeight
         width = height / 1.8
         AppContext.setApp(app)
+        app.mpdState.registerClient()
+    }
+
+    Component.onDestruction: {
+        app.mpdState.unregisterClient()
     }
 
     mainItem: Kirigami.ApplicationItem {
@@ -42,19 +47,16 @@ PlasmaCore.Window {
 
         anchors.fill: parent
 
+        property alias currentIndex: stackLayout.currentIndex
         readonly property MpdState mpdState: AppContext.getMpdState()
         readonly property VolumeState volumeState: AppContext.getVolumeState()
         property int narrowBreakPoint
         property bool narrowLayout: app.width < narrowBreakPoint
         property int windowPreMinimizeSize: -1
 
-        Component.onCompleted: {
-            mpdState.registerClient()
-        }
-
         /**
-          * Global properties for pages
-          */
+         * Global page properties
+         */
         readonly property var pages: [
             {
                 name: "queue",
@@ -62,7 +64,7 @@ PlasmaCore.Window {
                 shortcut: "1",
                 text: qsTr("Queue"),
                 tooltip: qsTr("Show Queue"),
-                component: () => queuePageComponent
+                layoutIndex: 0,
             },
             {
                 name: "albumartists",
@@ -70,7 +72,7 @@ PlasmaCore.Window {
                 shortcut: "2",
                 text: qsTr("Artists"),
                 tooltip: qsTr("Show Artists"),
-                component: () => albumartistsPageComponent
+                layoutIndex: 1,
             },
             {
                 name: "playlist",
@@ -78,54 +80,14 @@ PlasmaCore.Window {
                 shortcut: "3",
                 text: qsTr("Playlists"),
                 tooltip: qsTr("Show Playlists"),
-                component: () => playlistPageComponent
+                layoutIndex: 2,
             }
         ]
 
-        /**
-         * Current page according to pages.name
-         */
-        property string currentPage: "queue"
-
-        /**
-         * Set initial page from page cache
-         */
-        pageStack.initialPage: getPage(currentPage)
-
-        /**
-         * Cache for page components
-         */
-        property var pageCache: ({})
-
-        function showPage(name) {
-            if (currentPage === name) {
-                return
-            }
-
-            currentPage = name
-
-            while (app.pageStack.depth > 0) {
-                app.pageStack.pop()
-            }
-
-            app.pageStack.push(getPage(name))
-        }
-
-        /**
-         * Get page from component cache
-         *
-         * @param {string} name Human readable page.name
-         */
-        function getPage(name) {
-            if (!pageCache[name]) {
-                const entry = pages.find(p => p.name === name)
-                pageCache[name] = entry.component().createObject(app)
-            }
-            return pageCache[name]
-        }
-
-        Component {
-            id: queuePageComponent
+        StackLayout {
+            id: stackLayout
+            anchors.fill: parent
+            currentIndex: 0
             QueuePage {
                 app: app
                 mpdState: app.mpdState
@@ -133,32 +95,26 @@ PlasmaCore.Window {
 
                 onSearchLibrary: (term) => app.searchLibrary(term)
             }
-        }
-
-        Component {
-            id: albumartistsPageComponent
             AlbumartistsPage {
                 app: app
                 mpdState: app.mpdState
                 narrowLayout: app.narrowLayout
-                pageStack: app.pageStack
             }
-        }
-
-        Component {
-            id: playlistPageComponent
             PlaylistsPage {
                 app: app
                 mpdState: app.mpdState
                 narrowLayout: app.narrowLayout
-                pageStack: app.pageStack
             }
         }
 
+        function showPage(name) {
+            const entry = pages.find(p => p.name === name)
+            stackLayout.currentIndex = entry.layoutIndex
+            return stackLayout.itemAt(stackLayout.currentIndex)
+        }
+
         function searchLibrary(artist) {
-            const page = 'albumartists'
-            showPage(page)
-            getPage(page).searchField.text = artist
+            showPage('albumartists').searchField.text = artist
         }
 
         Repeater {
@@ -417,19 +373,17 @@ PlasmaCore.Window {
 
         Kirigami.Action {
             shortcut: StandardKey.Find
-            onTriggered: {
-                app.showPage("albumartists")
-                while (app.pageStack.depth > 1) { app.pageStack.pop() } // Exit subviews
-                app.getPage("albumartists").viewState = "startSearch"
-            }
+            onTriggered: app.showPage("albumartists").viewState = "startSearch"
         }
 
         Kirigami.Action {
             shortcut:  "Ctrl+Shift+F"
             onTriggered: {
-                app.showPage("playlist")
-                while (app.pageStack.depth > 1) { app.pageStack.pop() } // Exit subviews
-                app.getPage('playlist').searchField.forceActiveFocus()
+                const page = app.showPage("playlist")
+                while (page.depth > 1) {
+                    page.pop()
+                }
+                page.searchField.forceActiveFocus()
             }
         }
 
@@ -475,8 +429,7 @@ PlasmaCore.Window {
             shortcut: "L"
             text: qsTr("Show Current Song")
             onTriggered: {
-                app.showPage('queue')
-                let page = app.getPage('queue')
+                const page = app.showPage('queue')
                 page.followMode.autoMode = true
                 page.followMode.showCurrent()
             }

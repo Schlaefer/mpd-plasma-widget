@@ -1,5 +1,6 @@
 # Next
 
+- Adds subviewes will remember the navigation state
 - Fixes size of cover feedback overlay if started with no cover
 
 # 6.11.0

@@ -206,8 +206,12 @@ Item {
         })
     }
 
+    // #############################################
+    // # Memory Management
+    // #############################################
     function registerClient() {
         libraryClients++
+        libraryUnloadTimer.stop()
     }
 
     function unregisterClient() {
@@ -215,20 +219,13 @@ Item {
         if (libraryClients < 0) {
             throw new Error ("Number of registred MPD Library clients went negative.")
         }
+        libraryUnloadTimer.start()
     }
 
     Timer {
-        id: libraryUnloader
+        id: libraryUnloadTimer
         interval: 120000 // 2 min
-        running: true
-        repeat: true
-        onTriggered: {
-            if (libraryClients > 0) {
-                restart()
-                return
-            }
-            root._clearMemory()
-        }
+        onTriggered: root._clearMemory()
     }
 
     /**
@@ -238,6 +235,7 @@ Item {
         library = null
         mpdPlaylists = []
     }
+    // #############################################
 
     /**
      * Download whole song library

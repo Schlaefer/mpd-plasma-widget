@@ -6,256 +6,236 @@ import "../../Mpdw.js" as Mpdw
 import "../../Components/Elements"
 import "../../../logic"
 
-Kirigami.ScrollablePage {
+Kirigami.PageRow {
     id: root
 
     required property MpdState mpdState
     required property bool narrowLayout
-    required property Kirigami.PageRow pageStack
     required property Kirigami.ApplicationItem app
-    property int depth: 1
     property string shownAlbumartist
     property alias searchField: navSearchField
     property alias viewState: controller.viewState
 
+    // becoming true the first time triggers page data loading
     visible: false
 
-    AlbumartistsController {
-        id: controller
-        mpdState: root.mpdState
-        view: listView
-    }
+    initialPage: Kirigami.ScrollablePage {
+        AlbumartistsController {
+            id: controller
+            active: root.visible
+            mpdState: root.mpdState
+            pageStack: root
+            view: listView
+        }
 
-    globalToolBarStyle: Kirigami.ApplicationHeaderStyle.None
-    header: QQC2.ToolBar {
-        RowLayout {
-            anchors.fill: parent
-            GlobalNav {
-                app: root.app
-                narrowLayout: root.narrowLayout
-             }
-            QQC2.ToolButton {
-                id: shuffleBtn
-                icon.name: Mpdw.icons.queueRandom
-                checkable: true
-                checked: controller.viewState === "shuffle"
-                onClicked: checked ? controller.viewState = "shuffle" : controller.viewState = "normal"
-                QQC2.ToolTip {
-                    text: qsTr("Suggest")
+        globalToolBarStyle: Kirigami.ApplicationHeaderStyle.None
+        header: QQC2.ToolBar {
+            RowLayout {
+                anchors.fill: parent
+                GlobalNav {
+                    app: root.app
+                    narrowLayout: root.narrowLayout
                 }
-            }
-            NavSearchField {
-                id: navSearchField
-                pageWidth: root.width
-                placeholder: qsTr("Search…")
-                tooltip: "Ctrl+F"
-                onEscapePressed: controller.viewState = "normal"
-                onTabPressed: listView.forceActiveFocus()
-                onTextChanged: controller.searchTerm = text
+                QQC2.ToolButton {
+                    id: shuffleBtn
+                    icon.name: Mpdw.icons.queueRandom
+                    checkable: true
+                    checked: controller.viewState === "shuffle"
+                    onClicked: checked ? controller.viewState = "shuffle" : controller.viewState = "normal"
+                    QQC2.ToolTip {
+                        text: qsTr("Suggest")
+                    }
+                }
+                NavSearchField {
+                    id: navSearchField
+                    pageWidth: root.width
+                    placeholder: qsTr("Search…")
+                    tooltip: "Ctrl+F"
+                    onEscapePressed: controller.viewState = "normal"
+                    onTabPressed: listView.forceActiveFocus()
+                    onTextChanged: controller.searchTerm = text
+                }
             }
         }
-    }
 
-    ListViewGeneric {
-        id: listView
+        ListViewGeneric {
+            id: listView
 
-        model: ListModel { }
+            model: ListModel { }
 
-        delegate: SwipeListItemGeneric {
-            id: listItemPlaylist
+            delegate: SwipeListItemGeneric {
+                id: listItemPlaylist
 
-            required property string albumartist
+                required property string albumartist
 
-            width: ListView.view ? ListView.view.width : implicitWidth
+                width: ListView.view ? ListView.view.width : implicitWidth
 
 
-            contentItem: MouseArea {
-                implicitHeight: mainLayout.implicitHeight
-                implicitWidth: mainLayout.implicitWidth
+                contentItem: MouseArea {
+                    implicitHeight: mainLayout.implicitHeight
+                    implicitWidth: mainLayout.implicitWidth
 
-                acceptedButtons: Qt.LeftButton | Qt.RightButton
-                onClicked: function (mouse) {
-                    if (mouse.button === Qt.RightButton) {
-                        if (!artistContextMenuLoader.item) {
-                            artistContextMenuLoader.sourceComponent = contextMenuComponent
+                    acceptedButtons: Qt.LeftButton | Qt.RightButton
+                    onClicked: function (mouse) {
+                        if (mouse.button === Qt.RightButton) {
+                            if (!artistContextMenuLoader.item) {
+                                artistContextMenuLoader.sourceComponent = contextMenuComponent
+                            }
+                            if (!artistContextMenuLoader.item.visible) {
+                                artistContextMenuLoader.item.popup()
+                            }
+
+                            return
                         }
-                        if (!artistContextMenuLoader.item.visible) {
-                            artistContextMenuLoader.item.popup()
+
+                        shownAlbumartist = listItemPlaylist.albumartist
+                        let properties = {
+                            "mpdState": root.mpdState,
+                            "narrowLayout": Qt.binding(() => root.narrowLayout),
+                            "pageStack": root,
+                            "songs": root.mpdState.library.getSongsOfAartist(listItemPlaylist.albumartist),
+                            "title": listItemPlaylist.albumartist,
+                        }
+                        root.push(Qt.resolvedUrl("AlbumartistSongsPage.qml"), properties)
+                        root.viewState = "subpage"
+                    }
+
+                    Loader {
+                        id: artistContextMenuLoader
+                        property var getSongs: function () {
+                            return root.mpdState.library.getSongsOfAartist(listItemPlaylist.albumartist)
+                        }
+                    }
+
+                    RowLayout {
+                        id: mainLayout
+                        // Layout.fillWidth: true
+                        anchors.fill: parent
+
+                        QQC2.Label {
+                            Layout.fillWidth: true
+                            text: listItemPlaylist.albumartist
+                            wrapMode: Text.Wrap
+                            Layout.alignment: Qt.AlignVCenter
                         }
 
-                        return
-                    }
+                        GridLayout {
+                            columns: root.narrowLayout ? 4 : 6
+                            rows: root.narrowLayout ? 1 : -1
 
-                    shownAlbumartist = listItemPlaylist.albumartist
-                    let properties = {
-                        "depth": root.depth + 1,
-                        "mpdState": root.mpdState,
-                        "narrowLayout": Qt.binding(() => root.narrowLayout),
-                        "pageStack": root.pageStack,
-                        "songs": root.mpdState.library.getSongsOfAartist(listItemPlaylist.albumartist),
-                        "title": listItemPlaylist.albumartist,
-                    }
-                    root.pageStack.push(Qt.resolvedUrl("AlbumartistSongsPage.qml"), properties)
-                }
+                            Layout.alignment: Qt.AlignRight
 
-                Loader {
-                    id: artistContextMenuLoader
-                    property var getSongs: function () {
-                        return root.mpdState.library.getSongsOfAartist(listItemPlaylist.albumartist)
-                    }
-                }
+                            Repeater {
+                                id: images
+                                model: ListModel {}
+                                delegate: ListCoverimage {
+                                    id: image
 
-                RowLayout {
-                    id: mainLayout
-                    // Layout.fillWidth: true
-                    anchors.fill: parent
+                                    loadingPriority: 200
+                                    narrowLayout: root.narrowLayout
 
-                    QQC2.Label {
-                        Layout.fillWidth: true
-                        text: listItemPlaylist.albumartist
-                        wrapMode: Text.Wrap
-                        Layout.alignment: Qt.AlignVCenter
-                    }
+                                    // Move picture inside the automatic Kirigami
+                                    // mouse hover highlight
+                                    Layout.rightMargin: Kirigami.Units.smallSpacing
 
-                    GridLayout {
-                        columns: root.narrowLayout ? 4 : 6
-                        rows: root.narrowLayout ? 1 : -1
-
-                        Layout.alignment: Qt.AlignRight
-
-                        Repeater {
-                            id: images
-                            model: ListModel {}
-                            delegate: ListCoverimage {
-                                id: image
-
-                                loadingPriority: 200
-                                narrowLayout: root.narrowLayout
-
-                                // Move picture inside the automatic Kirigami
-                                // mouse hover highlight
-                                Layout.rightMargin: Kirigami.Units.smallSpacing
-
-                                QQC2.ToolTip {
-                                    text: model.album
-                                    delay: -1
-                                    visible: mouseArea.containsMouse
-                                }
-
-                                MouseArea {
-                                    id: mouseArea
-                                    hoverEnabled: true
-                                    anchors.fill: image
-                                    acceptedButtons: Qt.LeftButton | Qt.RightButton
-                                    onClicked: {
-                                        if (mouse.button == Qt.LeftButton) {
-                                            let properties = {
-                                                "depth": root.depth + 1,
-                                                "mpdState": root.mpdState,
-                                                "narrowLayout": Qt.binding(() => root.narrowLayout),
-                                                "pageStack": root.pageStack,
-                                                "songs": root.mpdState.library.getSongsByAartistAndAlbum(
-                                                             model.album,
-                                                             model.albumartist),
-                                                // @i18n
-                                                "title": model.album + " - " + model.albumartist,
-                                            }
-                                            root.pageStack.push(Qt.resolvedUrl("AlbumartistSongsPage.qml"),
-                                                                     properties)
-                                        } else if (mouse.button == Qt.RightButton) {
-                                            if (!contextMenuLoader.item) {
-                                                contextMenuLoader.sourceComponent = contextMenuComponent
-                                            }
-                                            if (!contextMenuLoader.item.visible) {
-                                                contextMenuLoader.item.popup()
-                                            }
-                                        }
+                                    QQC2.ToolTip {
+                                        text: model.album
+                                        delay: -1
+                                        visible: mouseArea.containsMouse
                                     }
 
-                                    Loader {
-                                        id: contextMenuLoader
-                                        property var getSongs: function () {
-                                            return root.mpdState.library.getSongsByAartistAndAlbum(model.album,
-                                                                                              model.albumartist)
+                                    MouseArea {
+                                        id: mouseArea
+                                        hoverEnabled: true
+                                        anchors.fill: image
+                                        acceptedButtons: Qt.LeftButton | Qt.RightButton
+                                        onClicked: (mouse) => {
+                                            if (mouse.button == Qt.LeftButton) {
+                                                let properties = {
+                                                    "mpdState": root.mpdState,
+                                                    "narrowLayout": Qt.binding(() => root.narrowLayout),
+                                                    "pageStack": root,
+                                                    "songs": root.mpdState.library.getSongsByAartistAndAlbum(
+                                                                model.album,
+                                                                model.albumartist),
+                                                    // @i18n
+                                                    "title": model.album + " - " + model.albumartist,
+                                                }
+                                                root.push(Qt.resolvedUrl("AlbumartistSongsPage.qml"),
+                                                                        properties)
+                                                root.viewState = "subpage"
+                                            } else if (mouse.button == Qt.RightButton) {
+                                                if (!contextMenuLoader.item) {
+                                                    contextMenuLoader.sourceComponent = contextMenuComponent
+                                                }
+                                                if (!contextMenuLoader.item.visible) {
+                                                    contextMenuLoader.item.popup()
+                                                }
+                                            }
+                                        }
+
+                                        Loader {
+                                            id: contextMenuLoader
+                                            property var getSongs: function () {
+                                                return root.mpdState.library.getSongsByAartistAndAlbum(model.album,
+                                                                                                model.albumartist)
+                                            }
                                         }
                                     }
                                 }
                             }
+
+                            Component.onCompleted: {
+                                let songs = root.mpdState.library.getASongsByAartistPerAlbum(listItemPlaylist.albumartist)
+                                songs.forEach(function (song) {
+                                    images.model.append(song)
+                                })
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        Component {
+            id: contextMenuComponent
+            // PlasmaComponent.Menu creates wierd transparency and border?
+            QQC2.Menu {
+                id: contextMenu
+                QQC2.MenuItem {
+                    icon.name: Mpdw.icons.queuePlay
+                    text: qsTr("Play")
+                    onTriggered: {
+                        let songs = getSongs()
+                        root.mpdState.replaceQueue(songs.map(song => song.file))
+                    }
+                }
+                QQC2.MenuSeparator {}
+                QQC2.MenuItem {
+                    text: qsTr("Append")
+                    icon.name: Mpdw.icons.queueAppend
+                    onTriggered: {
+                        let songs = getSongs()
+                        let callback = function() {
+                            AppContext.notify(qsTr("%n appended", "", songs.length))
                         }
 
-                        Component.onCompleted: {
-                            let songs = root.mpdState.library.getASongsByAartistPerAlbum(listItemPlaylist.albumartist)
-                            songs.forEach(function (song) {
-                                images.model.append(song)
-                            })
+                        root.mpdState.addSongsToQueue(songs.map(song => song.file), "append", callback)
+                    }
+                }
+                QQC2.MenuItem {
+                    text: qsTr("Insert")
+                    icon.name:Mpdw.icons.queueInsert
+                    onTriggered: {
+                        let songs = getSongs()
+                        let callback = function() {
+                            AppContext.notify(qsTr("%n inserted", "", songs.length))
                         }
+                        root.mpdState.addSongsToQueue(songs.map(song => song.file), "insert", callback)
                     }
                 }
             }
+
         }
     }
-
-    Component {
-        id: contextMenuComponent
-        // PlasmaComponent.Menu creates wierd transparency and border?
-        QQC2.Menu {
-            id: contextMenu
-            QQC2.MenuItem {
-                icon.name: Mpdw.icons.queuePlay
-                text: qsTr("Play")
-                onTriggered: {
-                    let songs = getSongs()
-                    root.mpdState.replaceQueue(songs.map(song => song.file))
-                }
-            }
-            QQC2.MenuSeparator {}
-            QQC2.MenuItem {
-                text: qsTr("Append")
-                icon.name: Mpdw.icons.queueAppend
-                onTriggered: {
-                    let songs = getSongs()
-                    let callback = function() {
-                        AppContext.notify(qsTr("%n appended", "", songs.length))
-                    }
-
-                    root.mpdState.addSongsToQueue(songs.map(song => song.file), "append", callback)
-                }
-            }
-            QQC2.MenuItem {
-                text: qsTr("Insert")
-                icon.name:Mpdw.icons.queueInsert
-                onTriggered: {
-                    let songs = getSongs()
-                    let callback = function() {
-                        AppContext.notify(qsTr("%n inserted", "", songs.length))
-                    }
-                    root.mpdState.addSongsToQueue(songs.map(song => song.file), "insert", callback)
-                }
-            }
-        }
-
-    }
-
-
-    /*
-    // @FEATURE figure out how to keep the second column visible in width layout
-    Timer {
-        id: fooTimer
-        interval: 0
-        onTriggered: {
-            appWindow.pageStack.push(Qt.resolvedUrl("AlbumartistSongsPage.qml"), {
-                                           "depth": root.depth + 1,
-                                           "songs": root.songs
-                                       })
-        }
-    }
-
-    onVisibleChanged: {
-        if (visible && shownAlbumartist) {
-            if (appWindow.width > 720) {
-                fooTimer.start()
-            }
-        }
-    }
-    */
 }
