@@ -23,7 +23,7 @@ RowLayout {
             icon.name: modelData.icon
             text: root.narrowLayout ? "" : modelData.text
             checkable: true
-            checked: root.app.currentPage === modelData.name
+            checked: root.app.currentIndex === modelData.layoutIndex
             onClicked: root.app.showPage(modelData.name)
             Kirigami.MnemonicData.enabled: false
 
