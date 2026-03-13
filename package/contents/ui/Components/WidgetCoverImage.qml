@@ -204,7 +204,7 @@ Item {
         Kirigami.Icon {
             id: overlayIcon
             anchors.centerIn: parent
-            width: coverImage.paintedHeight / 5
+            width: (coverImage.visible ? coverImage.paintedHeight : coverPlaceholderIcon.paintedHeight) / 5
             height: width
             source: Mpdw.icons.queuePlay
             visible: false
@@ -213,7 +213,7 @@ Item {
         Label {
             id: overlayText
             anchors.centerIn: parent
-            width: coverImage.paintedHeight / 7
+            width: (coverImage.visible ? coverImage.paintedHeight : coverPlaceholderIcon.paintedHeight) / 7
             height: width
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter

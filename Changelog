@@ -1,5 +1,7 @@
 # Next
 
+- Fixes size of cover feedback overlay if started with no cover
+
 # 6.11.0
 
 - Adds search for artist if different from album-artist to queue context menu
