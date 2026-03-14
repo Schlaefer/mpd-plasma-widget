@@ -7,9 +7,10 @@ import org.kde.kirigami as Kirigami
 import "./Components"
 import "./Components/Elements"
 import "../logic"
+import "Mpdw.js" as Mpdw
 import "../scripts/formatHelpers.js" as FormatHelpers
 
-Item {
+MouseArea {
     id: root
 
     required property int alignment
@@ -25,8 +26,12 @@ Item {
     property alias cornerRadius: coverImage.coverRadius
     property alias shadowColor: coverImage.shadowColor
     property alias shadowSpread: coverImage.shadowSpread
+    property bool showPin: false
 
     anchors.fill: parent
+
+    enabled: showPin
+    hoverEnabled: true
 
     states: [
         State {
@@ -215,6 +220,28 @@ Item {
                         }
                     }
                 ]
+            }
+        }
+    }
+
+    // Pin to keep panel pop-up open
+    PlasmaComponents.ToolButton {
+        id: windowPin
+        anchors.right: root.right
+        width: Math.round(Kirigami.Units.gridUnit * 1.25)
+        height: width
+        opacity: root.containsMouse ? 1 : 0
+        visible: root.showPin
+        icon.name: Mpdw.icons.windowPin
+        checkable: true
+        onCheckedChanged: root.main.hideOnWindowDeactivate = !checked
+        PlasmaComponents.ToolTip {
+            text: qsTr("Keep Open")
+        }
+        Behavior on opacity {
+            OpacityAnimator {
+                duration: 200
+                easing.type: Easing.InQuad
             }
         }
     }
