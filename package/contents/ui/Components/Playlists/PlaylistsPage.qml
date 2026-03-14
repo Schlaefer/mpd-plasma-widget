@@ -169,8 +169,11 @@ Kirigami.PageRow {
     }
 
     onVisibleChanged: {
-        if (visible && root.mpdState.mpdPlaylists.length === 0) {
+        if (!visible) return
+        if (root.mpdState.mpdPlaylists.length === 0) {
             root.mpdState.getPlaylists()
+            return
         }
+        playlistList.populateModel()
     }
 }

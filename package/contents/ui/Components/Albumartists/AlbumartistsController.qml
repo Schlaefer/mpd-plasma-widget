@@ -82,8 +82,11 @@ Item {
     }
 
     onActiveChanged: {
+        if (!active) return
         if (!root.mpdState.library) {
             root.mpdState.getLibrary()
+            return
         }
+        root.filter()
     }
 }
