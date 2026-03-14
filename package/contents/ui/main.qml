@@ -137,6 +137,7 @@ PlasmoidItem {
             useCustomFontColor: main.cfgUseCustomFontColor
             customFontColor: main.cfgCustomFontColor
             horizontalLayout: main.cfgHorizontalLayout
+            showPin: main.compactRepresentationItem && main.compactRepresentationItem.visible
             shadowColor: main.cfgShadowColor
             shadowSpread: main.cfgShadowSpread
             showVolumeSlider: main.cfgShowVolumeSlider

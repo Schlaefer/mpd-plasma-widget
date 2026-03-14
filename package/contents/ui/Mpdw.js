@@ -50,4 +50,5 @@ const icons = {
     mpdDownload: "download",
 
     navBack: "go-previous",
+    windowPin: "window-pin",
 }
