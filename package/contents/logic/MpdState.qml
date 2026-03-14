@@ -216,10 +216,12 @@ Item {
 
     function unregisterClient() {
         libraryClients--
+        if (libraryClients === 0) {
+            libraryUnloadTimer.start()
+        }
         if (libraryClients < 0) {
             throw new Error ("Number of registred MPD Library clients went negative.")
         }
-        libraryUnloadTimer.start()
     }
 
     Timer {

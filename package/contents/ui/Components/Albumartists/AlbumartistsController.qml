@@ -21,10 +21,6 @@ Item {
       * @param {string} searchtext
       */
     function filter() {
-        viewState = searchTerm !== "" ? "search" : "normal"
-        if (searchTerm !== "") {
-            viewState = "search"
-        }
         root.view.model.clear()
         root.mpdState.library.filterLibrary(searchTerm)
         let hits = root.mpdState.library.getAartists(searchTerm)
