@@ -13,11 +13,15 @@ Kirigami.PageRow {
     required property bool narrowLayout
     required property Kirigami.ApplicationItem app
     property string shownAlbumartist
-    property alias searchField: navSearchField
-    property alias viewState: controller.viewState
 
     // becoming true the first time triggers page data loading
     visible: false
+
+    function search(term = "") {
+        controller.viewState = "search"
+        if (term === "") navSearchField.forceActiveFocus()
+        controller.searchTerm = term
+    }
 
     initialPage: Kirigami.ScrollablePage {
         AlbumartistsController {
@@ -54,6 +58,18 @@ Kirigami.PageRow {
                     onEscapePressed: controller.viewState = "normal"
                     onTabPressed: listView.forceActiveFocus()
                     onTextChanged: controller.searchTerm = text
+
+                    Connections {
+                        target: controller
+                        function onSearchTermChanged() {
+                            if (controller.searchTerm === navSearchField.text) return
+                            navSearchField.text = controller.searchTerm
+                        }
+
+                        function onFocusSearchField() {
+                            navSearchField.forceActiveFocus()
+                        }
+                    }
                 }
             }
         }

@@ -113,8 +113,8 @@ PlasmaCore.Window {
             return stackLayout.itemAt(stackLayout.currentIndex)
         }
 
-        function searchLibrary(artist) {
-            showPage('albumartists').searchField.text = artist
+        function searchLibrary(term: string) {
+            showPage('albumartists').search(term)
         }
 
         Repeater {
@@ -373,17 +373,14 @@ PlasmaCore.Window {
 
         Kirigami.Action {
             shortcut: StandardKey.Find
-            onTriggered: app.showPage("albumartists").viewState = "startSearch"
+            onTriggered: app.showPage("albumartists").search()
         }
 
         Kirigami.Action {
             shortcut:  "Ctrl+Shift+F"
             onTriggered: {
                 const page = app.showPage("playlist")
-                while (page.depth > 1) {
-                    page.pop()
-                }
-                page.searchField.forceActiveFocus()
+                page.search()
             }
         }
 

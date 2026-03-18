@@ -14,10 +14,20 @@ Kirigami.PageRow {
     required property bool narrowLayout
     required property MpdState mpdState
     required property Kirigami.ApplicationItem app
-    property alias searchField: navSearchField
+    property PlaylistSongsPage _currentSubPage
+    property bool _firstLoad: true
+
+    signal searchLibrary(string term)
 
     // becoming true the first time triggers page data loading
     visible: false
+
+    function search() {
+        while (root.depth > 1) {
+            root.pop()
+        }
+        navSearchField.forceActiveFocus()
+    }
 
     initialPage: Kirigami.ScrollablePage {
         property int depth: 1

@@ -38,15 +38,9 @@ Item {
     onViewStateChanged: {
         switch (viewState) {
         case "shuffle":
-            searchField.text = ""
+            searchTerm.text = ""
             shuffle()
             root.view.positionViewAtIndex(0, ListView.Beginning)
-            break
-        case "startSearch":
-            while (pageStack.depth > 1) {
-                pageStack.pop()
-            }
-            searchField.forceActiveFocus()
             break
         case "search":
             while (pageStack.depth > 1) {
@@ -57,7 +51,7 @@ Item {
             break
         case "normal":
         default:
-            searchField.text = ""
+            searchTerm.text = ""
             filter()
             root.view.positionViewAtIndex(0, ListView.Beginning)
             root.view.forceActiveFocus()
