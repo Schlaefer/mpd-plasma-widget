@@ -64,10 +64,6 @@ Kirigami.PageRow {
                             if (controller.searchTerm === navSearchField.text) return
                             navSearchField.text = controller.searchTerm
                         }
-
-                        function onFocusSearchField() {
-                            navSearchField.forceActiveFocus()
-                        }
                     }
                 }
             }
@@ -251,5 +247,10 @@ Kirigami.PageRow {
             }
 
         }
+    }
+
+    onVisibleChanged: {
+        if (!visible) return
+        forceActiveFocus()
     }
 }

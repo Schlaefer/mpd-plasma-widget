@@ -308,9 +308,8 @@ Kirigami.ScrollablePage {
     }
 
     onVisibleChanged: {
-        if (visible) {
-            songlistView.forceActiveFocus()
-        }
+        if (!visible) return
+        songlistView.forceActiveFocus()
     }
 
     Loader {
