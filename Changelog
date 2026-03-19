@@ -1,5 +1,7 @@
 # Next
 
+# 6.12.0
+
 - Adds search for album-/artist/album to song context-menu in playlists
 - Adds pin to keep panel popup open
 - Adds scrollwheel left/right on widget cover image to skip songs
