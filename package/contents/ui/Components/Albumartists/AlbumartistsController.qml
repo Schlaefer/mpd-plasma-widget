@@ -14,6 +14,7 @@ Item {
     required property ListView view
     property string viewState: "normal"
     property string searchTerm: ""
+    property bool _firstLoad: true
 
     /**
       * Populates list model with hits according ot search field content
@@ -73,6 +74,10 @@ Item {
 
     onActiveChanged: {
         if (!active) return
+
+        if (!_firstLoad) return
+        _firstLoad = false
+
         if (!root.mpdState.library) {
             root.mpdState.getLibrary()
             return

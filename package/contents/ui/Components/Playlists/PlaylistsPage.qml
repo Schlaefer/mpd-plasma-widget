@@ -180,6 +180,10 @@ Kirigami.PageRow {
 
     onVisibleChanged: {
         if (!visible) return
+
+        if (!_firstLoad) return
+        _firstLoad = false
+
         if (root.mpdState.mpdPlaylists.length === 0) {
             root.mpdState.getPlaylists()
             return
