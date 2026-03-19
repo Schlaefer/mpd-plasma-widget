@@ -294,6 +294,10 @@ Item {
         executable.execCmd("next")
     }
 
+    function playPrevious() {
+        executable.execCmd("previous")
+    }
+
     function toggleOption(option) {
         if (typeof option !==  'string') {
             throw new Error("Invalid argument: mpd-option must be an string")

@@ -44,6 +44,16 @@ Item {
         }
 
         onWheel: function (wheel) {
+            if (wheel.angleDelta.x !== 0) {
+                if (wheel.angleDelta.x < 0) {
+                    nextSong()
+                } else {
+                    previousSong()
+                }
+
+                return
+            }
+
             volumeStateConnection.enabled = true
             feedbackOverlayTimer.restart()
             root.volumeState.wheel(wheel.angleDelta.y)
@@ -52,6 +62,11 @@ Item {
         function nextSong() {
             root.mpdState.playNext()
             root.showFeedback({icon: Mpdw.icons.queueSkipNext})
+        }
+
+        function previousSong() {
+            root.mpdState.playPrevious()
+            root.showFeedback({icon: Mpdw.icons.queueSkipPrevious})
         }
     }
 
