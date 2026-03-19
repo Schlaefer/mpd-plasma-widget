@@ -5,6 +5,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
 
+// @BOGUS Why is this a RowLayout and not the Kirigami.Searchfield itself?
 RowLayout {
     id: root
 

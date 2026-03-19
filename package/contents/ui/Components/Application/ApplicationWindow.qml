@@ -374,7 +374,7 @@ PlasmaCore.Window {
         }
 
         Kirigami.Action {
-            shortcut: StandardKey.Find
+            shortcut: StandardKey.Find // "Ctrl+F"
             onTriggered: app.showPage("albumartists").search()
         }
 
