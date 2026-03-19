@@ -12,7 +12,6 @@ Kirigami.PageRow {
     required property MpdState mpdState
     required property bool narrowLayout
     required property Kirigami.ApplicationItem app
-    property string shownAlbumartist
 
     // becoming true the first time triggers page data loading
     visible: false
@@ -104,7 +103,6 @@ Kirigami.PageRow {
                             return
                         }
 
-                        shownAlbumartist = listItemPlaylist.albumartist
                         let properties = {
                             "mpdState": root.mpdState,
                             "narrowLayout": Qt.binding(() => root.narrowLayout),

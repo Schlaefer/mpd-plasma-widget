@@ -93,7 +93,7 @@ PlasmaCore.Window {
                 mpdState: app.mpdState
                 narrowLayout: app.narrowLayout
 
-                onSearchLibrary: (term) => app.searchLibrary(term)
+                onSearchLibrary: term => app.searchLibrary(term)
             }
             AlbumartistsPage {
                 app: app
@@ -104,6 +104,8 @@ PlasmaCore.Window {
                 app: app
                 mpdState: app.mpdState
                 narrowLayout: app.narrowLayout
+
+                onSearchLibrary: term => app.searchLibrary(term)
             }
         }
 

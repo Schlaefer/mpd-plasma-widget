@@ -35,6 +35,13 @@ Kirigami.PageRow {
         visible: false
         title: qsTr("Playlists")
 
+        Connections {
+            target: root._currentSubPage
+            function onSearchLibrary(term) {
+                root.searchLibrary(term)
+            }
+        }
+
         globalToolBarStyle: Kirigami.ApplicationHeaderStyle.None
         header: ToolBar {
             RowLayout {
@@ -71,7 +78,7 @@ Kirigami.PageRow {
                         "playlistId": listItemPlaylist.title,
                         "title": listItemPlaylist.title,
                     }
-                    root.push(Qt.resolvedUrl("PlaylistSongsPage.qml"), properties)
+                    root._currentSubPage = root.push(Qt.resolvedUrl("PlaylistSongsPage.qml"), properties)
                 }
                 actions: [
                     Kirigami.Action {

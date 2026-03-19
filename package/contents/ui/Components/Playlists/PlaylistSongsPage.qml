@@ -11,6 +11,8 @@ Kirigami.ScrollablePage {
     required property Kirigami.PageRow pageStack
     property alias playlistId: listView.playlistId
 
+    signal searchLibrary(term: string)
+
     header: SonglistNav {
         id: nav
         pageStack: root.pageStack
@@ -31,6 +33,9 @@ Kirigami.ScrollablePage {
             narrowLayout: root.narrowLayout
             parentView: listView
             carretIndex: listView.currentIndex
+            contextmenuShowSearchActions: true
+
+            onSearchLibrary: term => root.searchLibrary(term)
         }
 
         Component.onCompleted: {
