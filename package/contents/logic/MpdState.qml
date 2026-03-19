@@ -91,11 +91,10 @@ Item {
                 return
             }
 
-            mpdNetworkTimeoutTimer.interval = mpdNetworkTimeoutTimer.startInterval
-            mpdIdleLoopTimer.start()
             _connected = true
-
+            mpdNetworkTimeoutTimer.reset()
             root._getStatus(() => root._getInfo(() => root._getQueue()))
+            mpdIdleLoopTimer.start()
 
             if (_libraryRequested) getLibrary()
             if (_playlistsRequested) getPlaylists()
@@ -576,8 +575,6 @@ Item {
         running: false
         triggeredOnStart: true
         onTriggered: {
-            _disconnect()
-
             // Gradually increase reconnect time until we find a minimum time
             // necessary for a device stationary within the mpd network (desktop).
             // At worst try a reconnect every minute (devices leaving the
@@ -585,7 +582,11 @@ Item {
             if (interval < 60000)
                 interval = interval + 500
 
-            root.checkMpdConnectionAvailable()
+            connect()
+        }
+
+        function reset() {
+            interval = startInterval
         }
     }
 
@@ -712,8 +713,10 @@ Item {
         let fmtMsg = msg
         if (fmtMsg.includes("ConnectionRefusedError")) {
             fmtMsg = qsTr("Connection refused. - Check the MPD server configuration in the widget settings.")
-        } else if (fmtMsg.match(/Errno [-9|101]/)) {
+        } else if (fmtMsg.match(/Errno (-9|101)/)) {
             fmtMsg = qsTr("No network connection")
+        } else if (fmtMsg.match(/Errno 104/)) {
+            fmtMsg = qsTr("Connection reset by peer")
         } else if (fmtMsg.includes("no python in")) {
             fmtMsg = qsTr("'python3' wasn't found. - Please install it on your system. It should be available in your system's package manager.")
         }
@@ -730,7 +733,7 @@ Item {
                     return
                 }
                 ErrorHandler.lastError = fmtErrorMessage(stderr)
-                mpdNetworkTimeoutTimer.start()
+                mpdNetworkTimeoutTimer.restart()
 
                 return
             }
