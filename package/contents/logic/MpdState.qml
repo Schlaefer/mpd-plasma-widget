@@ -43,6 +43,12 @@ Item {
         Stop
     }
 
+    enum PlaylistSaveCodes {
+        Success,
+        UnknownError,
+        PlaylistExists
+    }
+
     /**
      * Starts the bootstrap process of a fresh connection to the mpd instance
      */
@@ -367,6 +373,17 @@ Item {
         executable.execList(() => root.lastPlayedPlaylist = playlist)
     }
 
+    function popPlaylist(title) {
+        executable.startList()
+        clearQueue()
+        loadPlaylist(title)
+        playInQueue(0)
+        removePlaylist(title)
+        // We don't catch a "stored_playlist" event in the idle-loop, let's initiate
+        // it manually.
+        executable.execList(() => {playlistsUpdateTimer.restart()})
+    }
+
     function getPlaylists() { executable.execCmd("listplaylists", [], _getPlaylistsClb) }
     function _getPlaylistsClb (exitCode, stdout) {
         if (exitCode !== 0) {
@@ -413,7 +430,22 @@ Item {
      */
     function saveQueueAsPlaylist(title) {
         executable.execCmd("save", [title], function (exitCode) {
+            if (exitCode !== 0) return
             savedQueueAsPlaylist(!exitCode)
+        })
+    }
+
+    function stashQueue(title, callback) {
+        title = PlaylistUtils.sanitize(title)
+        executable.startList()
+        saveQueueAsPlaylist(title)
+        clearQueue()
+        executable.execList(function(exitCode, stdout, stderr) {
+            if (!callback) return
+
+            let _exitCode = exitCode ? MpdState.PlaylistSaveCodes.UnknownError : MpdState.PlaylistSaveCodes.Success
+            if (_exitCode && stderr.includes("Playlist already exists")) _exitCode = MpdState.PlaylistSaveCodes.PlaylistExists
+            callback(_exitCode)
         })
     }
 

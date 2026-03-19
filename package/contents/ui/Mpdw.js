@@ -50,6 +50,7 @@ const icons = {
     mpdRescan: "view-refresh",
     mpdDownload: "download",
 
+    moreMenu: "view-more-symbolic",
     navBack: "go-previous",
     windowPin: "window-pin",
 }

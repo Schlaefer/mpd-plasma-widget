@@ -88,24 +88,16 @@ Kirigami.PageRow {
                         }
                     },
                     Kirigami.Action {
-                        icon.name: Mpdw.icons.queueAppend
-                        tooltip: qsTr("Append to End of Queue")
+                        icon.name: Mpdw.icons.moreMenu
+                        tooltip: qsTr("More…")
                         onTriggered: {
-                            let playlistTitle = listItemPlaylist.title
-                            let callback = () => {
-                                AppContext.notify(qsTr("Added playlist %1").arg(playlistTitle))
+                            contextMenuLoader.plTitle = listItemPlaylist.title
+                            contextMenuLoader.active = true
+                            if (!contextMenuLoader.item.visible) {
+                                contextMenuLoader.item.popup()
                             }
-                            root.mpdState.loadPlaylist(playlistTitle, callback)
                         }
                     },
-                    Kirigami.Action {
-                        icon.name: Mpdw.icons.playlistDelete
-                        tooltip: qsTr("Remove Playlist…")
-                        onTriggered: {
-                            deleteConfirmationDialog.itemTitle = listItemPlaylist.title
-                            deleteConfirmationDialog.open()
-                        }
-                    }
                 ]
 
                 contentItem: RowLayout {
@@ -182,6 +174,54 @@ Kirigami.PageRow {
                 }
             }
         }
+
+        Loader {
+            id: contextMenuLoader
+            sourceComponent: contextMenuComponent
+            property string plTitle
+        }
+
+
+        Component {
+            id: contextMenuComponent
+            Menu {
+                id: menu
+                MenuItem {
+                    icon.name: Mpdw.icons.queueAppend
+                    text: qsTr("Append")
+                    ToolTip {
+                        text: qsTr("Append to End of Queue")
+                    }
+                    onTriggered: {
+                        const playlistTitle = contextMenuLoader.plTitle
+                        const callback = () => {
+                            AppContext.notify(qsTr("Added playlist %1").arg(playlistTitle))
+                        }
+                        root.mpdState.loadPlaylist(playlistTitle, callback)
+                    }
+                }
+                MenuSeparator {}
+                MenuItem {
+                    text: qsTr('Pop')
+                    ToolTip {
+                        text: qsTr("Play as New Queue and Delete Playlist")
+                    }
+                    onTriggered: {
+                        root.mpdState.popPlaylist(contextMenuLoader.plTitle)
+                    }
+                }
+                MenuSeparator {}
+                MenuItem {
+                    icon.name: Mpdw.icons.playlistDelete
+                    text: qsTr('Delete…')
+                    onTriggered: {
+                        deleteConfirmationDialog.itemTitle = contextMenuLoader.plTitle
+                        deleteConfirmationDialog.open()
+                    }
+                }
+            }
+        }
+
     }
 
     onVisibleChanged: {

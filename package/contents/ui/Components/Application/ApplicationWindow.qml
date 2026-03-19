@@ -435,6 +435,40 @@ PlasmaCore.Window {
         }
 
         Kirigami.Action {
+            id: stashAction
+            shortcut: "S"
+            text: qsTr("Stash")
+            tooltip: qsTr("Quick Save to Playlist and Clear Queue")
+            onTriggered: {
+                if (app.mpdState.mpdQueue.length === 0) {
+                    AppContext.notify(qsTr("Nothing on Queue"))
+                    return
+                }
+                const date = new Date()
+                const day = Qt.formatDateTime(date, "yy-MM-dd")
+                const time = date.toLocaleTimeString(Locale.ShortFormat)
+                const song = app.mpdState.mpdQueue[0]
+                const title = song.albumartist || song.artist || song.title
+                const plTitle = qsTr("%1 %2 - %3").arg(day).arg(time).arg(title)
+                app.mpdState.stashQueue(plTitle, (exitCode) => {
+                    let message = "Stashed"
+                    switch (exitCode) {
+                        case MpdState.PlaylistSaveCodes.Success:
+                            message = qsTr("Stashed")
+                            break
+                        case MpdState.PlaylistSaveCodes.PlaylistExists:
+                            message = qsTr("Playlist With Same Name Exists")
+                            break
+                        case MpdState.PlaylistSaveCodes.UnknwonError:
+                        default:
+                            message = qsTr("Unknown Error Occured")
+                    }
+                    AppContext.notify(message)
+                })
+            }
+        }
+
+        Kirigami.Action {
             shortcut: "F9"
             onTriggered: {
                 if (!debugWindowLoader.item) {

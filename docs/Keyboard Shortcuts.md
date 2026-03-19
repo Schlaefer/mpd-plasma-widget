@@ -42,3 +42,4 @@
 | L        | Jump to Current Song  |
 | Shift+C  | Clear Queue           |
 | Del      | Delete Selected Items |
+| S        | Stash Queue           |

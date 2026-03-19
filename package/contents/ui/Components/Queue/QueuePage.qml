@@ -41,6 +41,12 @@ Kirigami.ScrollablePage {
                             text: qsTr("Queue")
                             Kirigami.MnemonicData.enabled: false
                             Kirigami.Action {
+                                text: stashAction.text
+                                shortcut: stashAction.shortcut
+                                tooltip: stashAction.tooltip
+                                onTriggered: stashAction.onTriggered()
+                            }
+                            Kirigami.Action {
                                 icon.name: Mpdw.icons.queueSaveNew
                                 text: qsTr("Save as New Playlist…")
                                 shortcut: "Ctrl+S"
