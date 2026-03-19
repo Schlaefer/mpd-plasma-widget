@@ -26,19 +26,26 @@ TestCase {
     function initTestItem() {
         testItem = createTemporaryObject(Qt.createComponent(
             "../../../package/contents/ui/Components/Playlists/PlaylistsPage.qml"),
-            null,
+            parent,
             {
                 app: mockApp,
                 mpdState: mpdState,
                 narrowLayout: false,
-                pageStack: Kirigami.PageRow
+                visible: true,
             })
     }
 
-    function test_noPlaylists() {
+    function test_initWithNoPlaylists() {
         initTestItem()
         const list = findChild(testItem, 'playlistsList')
         compare(list.count, 0)
+    }
+
+    function test_initWithPlaylists() {
+        mpdState.r.playlistsCreate(2)
+        initTestItem()
+        const list = findChild(testItem, 'playlistsList')
+        compare(list.count, 2)
     }
 
     function test_updatePlaylists() {
@@ -49,12 +56,5 @@ TestCase {
         compare(list.count, 3)
         mpdState.mockReset()
         compare(list.count, 0)
-    }
-
-    function test_comboBoxInitWithPlaylists() {
-        mpdState.r.playlistsCreate(2)
-        initTestItem()
-        const list = findChild(testItem, 'playlistsList')
-        compare(list.count, 2)
     }
 }
