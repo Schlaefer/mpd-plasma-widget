@@ -110,6 +110,8 @@ Item {
         _connected = false
         mpdInfo = undefined
         mpdQueue = []
+        if (library) _libraryRequested = true
+        if (mpdPlaylists.length > 0) _playlistsRequested = true
         _clearMemory()
     }
 
