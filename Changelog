@@ -1,5 +1,7 @@
 # Next
 
+# 6.13.0
+
 - Adds Stash command to quickly save queue to playlist and clear queue
 - Adds Pop command to playlists to quickly replace queue with playlist, play queue and delete playlist
 - Adds warning to playlist saving if title contains disallowed characters
