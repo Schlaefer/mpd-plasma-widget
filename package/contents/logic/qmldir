@@ -1,2 +1,5 @@
 singleton AppContext 1.0 AppContext.qml
 singleton ErrorHandler 1.0 ErrorHandler.qml
+
+singleton PlaylistUtils 1.0 PlaylistUtils.qml
+PlaylistObject 1.0 PlaylistObject.qml

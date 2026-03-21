@@ -1,5 +1,7 @@
 # Next
 
+- Adds warning to playlist saving if title contains disallowed characters
+
 # 6.12.0
 
 - Adds search for album-/artist/album to song context-menu in playlists

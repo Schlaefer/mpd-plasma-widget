@@ -19,15 +19,25 @@ Kirigami.PromptDialog {
     dialogType: Kirigami.PromptDialog.None
     iconName: ""
 
+    PlaylistObject {
+        id: plObj
+        title: newTitle.text
+        playlists: root.mpdState.mpdPlaylists
+
+        Component.onCompleted: {
+            root.mpdState.getPlaylists()
+        }
+    }
+
     customFooterActions: [
         Kirigami.Action {
             text: qsTr("Save")
             id: actionButton
             icon.name: Mpdw.icons.dialogOk
-            enabled: !newPlaylistTitle._playlistTitleExists && newPlaylistTitle.text
+            enabled: plObj.canSave
             onTriggered: {
                 root.mpdState.savedQueueAsPlaylist.connect(afterSave)
-                root.mpdState.saveQueueAsPlaylist(newPlaylistTitle.text)
+                root.mpdState.saveQueueAsPlaylist(plObj.title)
             }
 
             function afterSave(success) {
@@ -53,43 +63,10 @@ Kirigami.PromptDialog {
 
     ColumnLayout {
         PlasmaComponents.TextField {
-            id: newPlaylistTitle
-
-            property bool _playlistTitleExists
-            property bool _showPlaylistsTitleExistsWarning
+            id: newTitle
 
             Layout.fillWidth: true
             placeholderText: qsTr("New Playlist Name…")
-
-            function updatePlaylistTitleExists() {
-                _playlistTitleExists = root.mpdState.mpdPlaylists.indexOf(text) !== -1
-
-                if (!_playlistTitleExists) {
-                    _showPlaylistsTitleExistsWarning = false
-                } else {
-                    playlistExistsTimer.restart()
-                }
-            }
-
-            Timer {
-                id: playlistExistsTimer
-                interval: 1000
-                onTriggered: {
-                    newPlaylistTitle._showPlaylistsTitleExistsWarning = newPlaylistTitle._playlistTitleExists
-                }
-            }
-
-            onTextChanged: {
-                updatePlaylistTitleExists()
-            }
-
-            Connections {
-                target: root.mpdState
-
-                function onMpdPlaylistsChanged() {
-                    newPlaylistTitle.updatePlaylistTitleExists()
-                }
-            }
 
             Connections {
                 function onVisibleChanged() {
@@ -100,10 +77,6 @@ Kirigami.PromptDialog {
                 target: root
             }
 
-            Component.onCompleted: {
-                root.mpdState.getPlaylists()
-            }
-
             Timer {
                 id: waitForAnimationToFinish
                 running: false
@@ -111,20 +84,48 @@ Kirigami.PromptDialog {
                 interval: Kirigami.Units.longDuration
                 onTriggered: {
                     // Set cursor into textfield for quick type-ahead
-                    newPlaylistTitle.forceActiveFocus()
+                    newTitle.forceActiveFocus()
                 }
             }
+        }
 
+        // === Validate Playlist Name
+        Kirigami.InlineMessage {
+            id: playlistInvalidMessage
+            Layout.fillWidth: true
+            visible: !plObj.isEmpty && !plObj.isValid
+            type: Kirigami.MessageType.Warning
+            text: qsTr("Playlist name invalid.")
+        }
+
+        // === Check if playlist exists ===
+        // Prevent viusal noise if user uses a common prefix for their titles.
+        Timer {
+            id: playlistExistsTimer
+            interval: 1000
+            onTriggered: playlistExistsMessage.visible = !plObj.isUnique
         }
 
         Kirigami.InlineMessage {
             id: playlistExistsMessage
             Layout.fillWidth: true
-            visible: newPlaylistTitle._showPlaylistsTitleExistsWarning
+            visible: false
             type: Kirigami.MessageType.Warning
             text: qsTr("Playlist with same name already exists.")
+
+            Connections {
+                target: plObj
+                function onIsUniqueChanged() {
+                    if (plObj.isUnique) {
+                        playlistExistsMessage.visible = false
+                        return
+                    }
+                    playlistExistsTimer.start()
+                }
+            }
         }
 
+        // === Saving Playlist failed ===
         Kirigami.InlineMessage {
             id: newPlaylistErrorMsg
             Layout.fillWidth: true
