@@ -52,7 +52,7 @@ Kirigami.PageRow {
                 NavSearchField {
                     id: navSearchField
                     pageWidth: root.width
-                    placeholder: qsTr("Search…")
+                    placeholderText: qsTr("Search…")
                     tooltip: "Ctrl+F"
                     onEscapePressed: controller.viewState = "normal"
                     onTabPressed: listView.forceActiveFocus()
