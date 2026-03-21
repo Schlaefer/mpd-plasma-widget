@@ -1,6 +1,7 @@
 # Next
 
 - Adds warning to playlist saving if title contains disallowed characters
+- Adds improved layout in playlist delete dialog
 
 # 6.12.0
 

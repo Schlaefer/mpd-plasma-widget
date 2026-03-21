@@ -15,6 +15,7 @@ PlasmaComponents.Label {
     // Naive way to find out if we are on light or dark theme/text
     property bool isDark: color.hslLightness < 0.5
 
+    textFormat: Text.PlainText
     font.pointSize: root.fontSize
     horizontalAlignment: root.alignment == 2 ? Text.AlignRight : (root.alignment == 1 ? Text.AlignHCenter : Text.AlignLeft)
     elide: Text.ElideRight
