@@ -54,7 +54,6 @@ Kirigami.PageRow {
                     id: navSearchField
                     placeholderText: qsTr("Search Playlists…")
                     tooltip: "Ctrl+Shift+F"
-                    pageWidth: root.width
                     onEscapePressed: playlistList.forceActiveFocus()
                     onTabPressed: playlistList.forceActiveFocus()
                     onTextChanged: playlistList.populateModel(text)
